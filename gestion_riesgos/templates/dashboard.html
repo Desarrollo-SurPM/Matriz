@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard de Riesgos{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Dashboard de Inteligencia de Riesgos</h1>
+
+<div class="row">
+    <div class="col-lg-6 mb-4">
+        <div class="card shadow">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Distribución de Riesgos por Clasificación</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="clasificacionChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-6 mb-4">
+        <div class="card shadow">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Jerarquía de Medidas de Control Aplicadas</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="jerarquiaChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Hacemos una petición para obtener los datos del gráfico desde nuestra API
+        fetch("{% url 'dashboard_chart_data' %}")
+            .then(response => response.json())
+            .then(data => {
+                // --- Configuración del Gráfico de Clasificación (Gráfico de Torta) ---
+                const ctxClasificacion = document.getElementById('clasificacionChart').getContext('2d');
+                new Chart(ctxClasificacion, {
+                    type: 'doughnut',
+                    data: {
+                        labels: data.clasificacion_labels,
+                        datasets: [{
+                            label: 'N° de Riesgos',
+                            data: data.clasificacion_counts,
+                            backgroundColor: [
+                                'rgba(217, 83, 79, 0.7)', // Intolerable
+                                'rgba(240, 173, 78, 0.7)', // Importante
+                                'rgba(255, 243, 205, 0.9)', // Moderado
+                                'rgba(212, 237, 218, 0.9)', // Tolerable
+                                'rgba(200, 200, 200, 0.7)'  // Trivial/Otros
+                            ],
+                            borderColor: 'white',
+                            borderWidth: 2
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: { legend: { position: 'top' } }
+                    }
+                });
+
+                // --- Configuración del Gráfico de Jerarquía (Gráfico de Barras) ---
+                const ctxJerarquia = document.getElementById('jerarquiaChart').getContext('2d');
+                new Chart(ctxJerarquia, {
+                    type: 'bar',
+                    data: {
+                        labels: data.jerarquia_labels,
+                        datasets: [{
+                            label: 'Cantidad de Controles Implementados',
+                            data: data.jerarquia_counts,
+                            backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                            borderColor: 'rgba(54, 162, 235, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        indexAxis: 'y', // Hace que el gráfico sea horizontal
+                        responsive: true,
+                        scales: { x: { beginAtZero: true } },
+                        plugins: { legend: { display: false } }
+                    }
+                });
+            });
+    });
+</script>
+{% endblock %}

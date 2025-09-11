@@ -7,40 +7,64 @@
 </div>
 
 <div class="table-responsive">
-    <table class="table table-bordered table-hover table-riesgos">
+    <table class="table table-bordered table-hover table-riesgos align-middle">
         <thead class="table-dark">
             <tr>
-                <th>Proceso / Tarea</th>
-                <th>Código</th>
-                <th>Riesgo Específico</th>
-                <th>P</th>
-                <th>C</th>
-                <th>VEP</th>
-                <th>Clasificación</th>
-                <th>Acciones</th>
+                <th rowspan="2">Proceso / Tarea</th>
+                <th rowspan="2">Riesgo Específico</th>
+                <th colspan="3" class="text-center">Riesgo Inherente</th>
+                <th rowspan="2">Medidas de Control</th>
+                <th colspan="3" class="text-center">Riesgo Residual</th>
+                <th rowspan="2">Acciones</th>
+            </tr>
+            <tr>
+                <th class="text-center">P</th>
+                <th class="text-center">C</th>
+                <th class="text-center">VEP</th>
+                <th class="text-center">P</th>
+                <th class="text-center">C</th>
+                <th class="text-center">VEP</th>
             </tr>
         </thead>
         <tbody>
             {% for riesgo in riesgos %}
-            <tr class="clasificacion-{{ riesgo.clasificacion_riesgo }}">
+            <tr>
                 <td>
                     <strong>{{ riesgo.subproceso.proceso.nombre }}</strong><br>
                     <small>{{ riesgo.subproceso.tarea }}</small>
                 </td>
-                <td>{{ riesgo.codigo|default:"-" }}</td>
-                <td>{{ riesgo.riesgo_especifico }}</td>
-                <td>{{ riesgo.get_probabilidad_display }}</td>
-                <td>{{ riesgo.get_consecuencia_valor_display }}</td>
-                <td><strong>{{ riesgo.valor_vep }}</strong></td>
-                <td>{{ riesgo.clasificacion_riesgo }}</td>
                 <td>
-                    <a href="{% url 'riesgo_update' riesgo.pk %}" class="btn btn-sm btn-primary">Editar</a>
-                    <a href="{% url 'riesgo_delete' riesgo.pk %}" class="btn btn-sm btn-danger">Eliminar</a>
+                    <a href="{% url 'riesgo_detail' riesgo.pk %}">{{ riesgo.riesgo_especifico }}</a>
+                </td>
+                <td class="text-center">{{ riesgo.probabilidad }}</td>
+                <td class="text-center">{{ riesgo.consecuencia_valor }}</td>
+                <td class="text-center clasificacion-{{ riesgo.clasificacion_riesgo }}">
+                    <b>{{ riesgo.valor_vep }}</b>
+                </td>
+
+                <td>
+                    <small>
+                        {% for medida in riesgo.medidas_control.all %}
+                            - {{ medida.descripcion|truncatewords:5 }} <br>
+                        {% empty %}
+                            Sin medidas
+                        {% endfor %}
+                    </small>
+                </td>
+
+                <td class="text-center">{{ riesgo.probabilidad_residual|default:"-" }}</td>
+                <td class="text-center">{{ riesgo.consecuencia_residual|default:"-" }}</td>
+                <td class="text-center clasificacion-{{ riesgo.clasificacion_riesgo_residual }}">
+                    <b>{{ riesgo.valor_vep_residual|default:"-" }}</b>
+                </td>
+
+                <td>
+                    <a href="{% url 'riesgo_detail' riesgo.pk %}" class="btn btn-sm btn-info">Ver/Gestionar</a>
                 </td>
             </tr>
             {% empty %}
             <tr>
-                <td colspan="8" class="text-center">No hay riesgos en la matriz. <a href="{% url 'riesgo_create' %}">Añade el primero</a>.</td>
+                <td colspan="10" class="text-center">No hay riesgos en la matriz. <a href="{% url 'riesgo_create' %}">Añade el primero</a>.</td>
             </tr>
             {% endfor %}
         </tbody>

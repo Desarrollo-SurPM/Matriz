@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% block title %}Detalle del Riesgo{% endblock %}
+
+{% block content %}
+<a href="{% url 'matriz_riesgos' %}" class="btn btn-secondary mb-3">&larr; Volver a la Matriz</a>
+
+<div class="card mb-4">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h4 class="mb-0">Detalle del Riesgo</h4>
+        <div>
+            <a href="{% url 'riesgo_update' riesgo.pk %}" class="btn btn-primary btn-sm">Editar y Re-evaluar</a>
+            <a href="{% url 'riesgo_delete' riesgo.pk %}" class="btn btn-danger btn-sm">Eliminar Riesgo</a>
+        </div>
+    </div>
+    <div class="card-body">
+        <h5>{{ riesgo.riesgo_especifico }}</h5>
+        <p><strong>Proceso:</strong> {{ riesgo.subproceso.proceso.nombre }}</p>
+        <p><strong>Tarea:</strong> {{ riesgo.subproceso.tarea }}</p>
+        <p><strong>Consecuencias:</strong> {{ riesgo.consecuencias|default:"No especificadas" }}</p>
+        
+        <div class="row text-center mt-3">
+            <div class="col-md-6">
+                <h6>Riesgo Inherente</h6>
+                <p class="clasificacion-{{ riesgo.clasificacion_riesgo }} p-2 rounded">
+                    VEP: <strong>{{ riesgo.valor_vep }}</strong> ({{ riesgo.clasificacion_riesgo }})
+                </p>
+            </div>
+            <div class="col-md-6">
+                <h6>Riesgo Residual</h6>
+                <p class="clasificacion-{{ riesgo.clasificacion_riesgo_residual }} p-2 rounded">
+                    VEP: <strong>{{ riesgo.valor_vep_residual|default:"N/A" }}</strong> ({{ riesgo.clasificacion_riesgo_residual }})
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h4 class="mb-0">Medidas de Control</h4>
+    </div>
+    <div class="card-body">
+        <h5>Añadir Nueva Medida</h5>
+        <form action="{% url 'medida_create' riesgo.pk %}" method="post">
+            {% csrf_token %}
+            {{ medida_form.as_p }}
+            <button type="submit" class="btn btn-success">Guardar Medida</button>
+        </form>
+        <hr>
+
+        <h5>Medidas Implementadas</h5>
+        <ul class="list-group">
+            {% for medida in medidas %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <div>
+                    <strong>{{ medida.get_tipo_control_display }}:</strong> {{ medida.descripcion }}<br>
+                    <small class="text-muted">Responsable: {{ medida.responsable }} | Plazo: {{ medida.plazo_implementacion }}</small>
+                </div>
+                <div>
+                    <a href="{% url 'medida_update' medida.pk %}" class="btn btn-secondary btn-sm">Editar</a>
+                    <a href="{% url 'medida_delete' medida.pk %}" class="btn btn-danger btn-sm">Eliminar</a>
+                </div>
+            </li>
+            {% empty %}
+            <li class="list-group-item">Aún no se han registrado medidas de control para este riesgo.</li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+{% endblock %}
