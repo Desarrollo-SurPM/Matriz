@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block title %}Confirmar Eliminación{% endblock %}
+{% block content %}
+<h1>¿Estás seguro?</h1>
+<p>Estás a punto de eliminar permanentemente: <strong>{{ object }}</strong>.</p>
+<form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">Sí, eliminar</button>
+    <a href="{{ request.META.HTTP_REFERER }}" class="btn btn-secondary">Cancelar</a>
+</form>
+{% endblock %}

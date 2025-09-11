@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block title %}Gestionar Procesos{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1>Procesos</h1>
+    <a href="{% url 'proceso_create' %}" class="btn btn-success">Crear Proceso</a>
+</div>
+<ul class="list-group">
+    {% for proceso in object_list %}
+    <li class="list-group-item d-flex justify-content-between align-items-center">
+        {{ proceso.nombre }}
+        <div>
+            <a href="{% url 'proceso_update' proceso.pk %}" class="btn btn-sm btn-primary">Editar</a>
+            <a href="{% url 'proceso_delete' proceso.pk %}" class="btn btn-sm btn-danger">Eliminar</a>
+        </div>
+    </li>
+    {% empty %}
+    <li class="list-group-item">No hay procesos.</li>
+    {% endfor %}
+</ul>
+{% endblock %}

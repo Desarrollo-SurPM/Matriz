@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block title %}Gestionar Tareas{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1>Tareas / Subprocesos</h1>
+    <a href="{% url 'subproceso_create' %}" class="btn btn-success">Crear Tarea</a>
+</div>
+<ul class="list-group">
+    {% for subproceso in object_list %}
+    <li class="list-group-item d-flex justify-content-between align-items-center">
+        <div>
+            <strong>{{ subproceso.tarea }}</strong><br>
+            <small class="text-muted">Proceso: {{ subproceso.proceso.nombre }}</small>
+        </div>
+        <div>
+            <a href="{% url 'subproceso_update' subproceso.pk %}" class="btn btn-sm btn-primary">Editar</a>
+            <a href="{% url 'subproceso_delete' subproceso.pk %}" class="btn btn-sm btn-danger">Eliminar</a>
+        </div>
+    </li>
+    {% empty %}
+    <li class="list-group-item">No hay tareas.</li>
+    {% endfor %}
+</ul>
+{% endblock %}

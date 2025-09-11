@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% block title %}Matriz de Riesgos IPER{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1>Matriz de Riesgos IPER</h1>
+    <a href="{% url 'riesgo_create' %}" class="btn btn-success">Añadir Nuevo Riesgo</a>
+</div>
+
+<div class="table-responsive">
+    <table class="table table-bordered table-hover table-riesgos">
+        <thead class="table-dark">
+            <tr>
+                <th>Proceso / Tarea</th>
+                <th>Código</th>
+                <th>Riesgo Específico</th>
+                <th>P</th>
+                <th>C</th>
+                <th>VEP</th>
+                <th>Clasificación</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for riesgo in riesgos %}
+            <tr class="clasificacion-{{ riesgo.clasificacion_riesgo }}">
+                <td>
+                    <strong>{{ riesgo.subproceso.proceso.nombre }}</strong><br>
+                    <small>{{ riesgo.subproceso.tarea }}</small>
+                </td>
+                <td>{{ riesgo.codigo|default:"-" }}</td>
+                <td>{{ riesgo.riesgo_especifico }}</td>
+                <td>{{ riesgo.get_probabilidad_display }}</td>
+                <td>{{ riesgo.get_consecuencia_valor_display }}</td>
+                <td><strong>{{ riesgo.valor_vep }}</strong></td>
+                <td>{{ riesgo.clasificacion_riesgo }}</td>
+                <td>
+                    <a href="{% url 'riesgo_update' riesgo.pk %}" class="btn btn-sm btn-primary">Editar</a>
+                    <a href="{% url 'riesgo_delete' riesgo.pk %}" class="btn btn-sm btn-danger">Eliminar</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="8" class="text-center">No hay riesgos en la matriz. <a href="{% url 'riesgo_create' %}">Añade el primero</a>.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

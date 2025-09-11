@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block title %}Bienvenido a SG-IPER{% endblock %}
+{% block content %}
+<div class="p-5 mb-4 bg-light rounded-3 text-center">
+    <div class="container-fluid py-5">
+        <h1 class="display-5 fw-bold">Plataforma Inteligente SG-IPER</h1>
+        <p class="fs-4">Su herramienta para crear y gestionar Matrices de Identificación de Peligros y Evaluación de Riesgos de forma eficiente y estandarizada.</p>
+        <a href="{% url 'matriz_riesgos' %}" class="btn btn-primary btn-lg">Ir a la Matriz</a>
+    </div>
+</div>
+{% endblock %}
