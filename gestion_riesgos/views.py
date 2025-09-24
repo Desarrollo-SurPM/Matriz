@@ -24,7 +24,7 @@ class MatrizRiesgosView(ListView):
 
 class RiesgoDetailView(DetailView):
     model = Riesgo
-    template_name = 'gestion/riesgo_detail.html'
+    template_name = 'riesgo_detail.html'
     context_object_name = 'riesgo'
 
     def get_context_data(self, **kwargs):
