@@ -16,7 +16,13 @@ DEBUG = config('DEBUG', default=False, cast=bool)
 
 # Configura los hosts permitidos desde una variable de entorno.
 # Ejemplo: ALLOWED_HOSTS="miapp.railway.app,www.miapp.com"
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='127.0.0.1,localhost').split(',')
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='127.0.0.1,localhost,healthcheck.railway.app').split(',')
+
+# Agregar hosts adicionales para Railway
+ALLOWED_HOSTS += [
+    'healthcheck.railway.app',  # Para healthchecks de Railway
+    '.railway.app',  # Para cualquier subdominio de railway.app
+]
 
 
 # Application definition
