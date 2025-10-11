@@ -1,89 +1,202 @@
 {% extends 'base.html' %}
-{% block title %}Dashboard de Riesgos{% endblock %}
+{% block title %}Dashboard Principal{% endblock %}
 
 {% block content %}
-<h1 class="mb-4">Dashboard de Inteligencia de Riesgos</h1>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Dashboard Principal</h1>
+    <div>
+        <a href="{% url 'recordatorio_create' %}" class="btn btn-info">
+            <i class="bi bi-bell"></i> Crear Recordatorio
+        </a>
+        <a href="{% url 'visita_create' %}" class="btn btn-success">
+            <i class="bi bi-plus-circle"></i> Agendar Visita
+        </a>
+    </div>
+</div>
 
-<div class="row">
-    <div class="col-lg-6 mb-4">
-        <div class="card shadow">
-            <div class="card-header">
-                <h5 class="card-title mb-0">Distribución de Riesgos por Clasificación</h5>
-            </div>
+<ul class="nav nav-tabs" id="dashboardTabs" role="tablist">
+    <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="planificacion-tab" data-bs-toggle="tab" data-bs-target="#planificacion" type="button" role="tab" aria-controls="planificacion" aria-selected="true">
+            <i class="bi bi-calendar-week"></i> Planificación
+        </button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="riesgos-tab" data-bs-toggle="tab" data-bs-target="#riesgos" type="button" role="tab" aria-controls="riesgos" aria-selected="false">
+            <i class="bi bi-graph-up"></i> Inteligencia de Riesgos
+        </button>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="{% url 'reporte_accidente_list' %}">Reporte de Accidentes</a>
+    </li>
+</ul>
+
+<div class="tab-content" id="dashboardTabsContent">
+    
+    <div class="tab-pane fade show active" id="planificacion" role="tabpanel" aria-labelledby="planificacion-tab">
+        <div class="card shadow-sm border-top-0 rounded-0 rounded-bottom">
             <div class="card-body">
-                <canvas id="clasificacionChart"></canvas>
+                <div id='calendar'></div>
+
+                <hr>
+                <h5 class="mt-4">Próximos Eventos</h5>
+                <div class="list-group">
+                    {% for evento in proximos_eventos %}
+                        {% if evento.asunto %} {# Es una Visita #}
+                            <a href="{% url 'visita_update' evento.pk %}" class="list-group-item list-group-item-action">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h6 class="mb-1"><i class="bi bi-building text-primary"></i> Visita: {{ evento.asunto }}</h6>
+                                    <small>{{ evento.fecha_hora|date:"d M, H:i" }}</small>
+                                </div>
+                                <p class="mb-1 small text-muted">{{ evento.empresa.razon_social }}</p>
+                            </a>
+                        {% else %} {# Es un Recordatorio #}
+                            <a href="{% url 'recordatorio_update' evento.pk %}" class="list-group-item list-group-item-action">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h6 class="mb-1"><i class="bi bi-bell text-success"></i> Recordatorio: {{ evento.titulo }}</h6>
+                                    <small>{{ evento.fecha_hora|date:"d M, H:i" }}</small>
+                                </div>
+                                <p class="mb-1 small text-muted">{{ evento.descripcion|truncatewords:15 }}</p>
+                            </a>
+                        {% endif %}
+                    {% empty %}
+                        <div class="list-group-item">
+                            <p class="text-muted text-center mb-0">No tienes eventos próximos agendados.</p>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <ul class="list-inline mt-4 mb-0">
+                    <li class="list-inline-item"><span class="badge" style="background-color:#dc3545;">&nbsp;</span> Vencimiento Legal</li>
+                    <li class="list-inline-item"><span class="badge" style="background-color:#0d6efd;">&nbsp;</span> Visita</li>
+                    <li class="list-inline-item"><span class="badge" style="background-color:#198754;">&nbsp;</span> Recordatorio</li>
+                </ul>
             </div>
         </div>
     </div>
 
-    <div class="col-lg-6 mb-4">
-        <div class="card shadow">
-            <div class="card-header">
-                <h5 class="card-title mb-0">Jerarquía de Medidas de Control Aplicadas</h5>
-            </div>
+    <div class="tab-pane fade" id="riesgos" role="tabpanel" aria-labelledby="riesgos-tab">
+        <div class="card shadow-sm border-top-0 rounded-0 rounded-bottom">
             <div class="card-body">
-                <canvas id="jerarquiaChart"></canvas>
+                <div class="row">
+                    <div class="col-lg-6 mb-4">
+                        <h5 class="card-title mb-3 text-center">Distribución de Riesgos por Clasificación</h5>
+                        <canvas id="clasificacionChart"></canvas>
+                    </div>
+                    <div class="col-lg-6 mb-4">
+                        <h5 class="card-title mb-3 text-center">Jerarquía de Medidas de Control Aplicadas</h5>
+                        <canvas id="jerarquiaChart"></canvas>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
+<div class="modal fade" id="eventDetailModal" tabindex="-1" aria-labelledby="eventDetailModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="eventDetailModalLabel">Detalles del Evento</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p><strong>Evento:</strong> <span id="eventTitle"></span></p>
+                <p><strong>Fecha:</strong> <span id="eventDate"></span></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <a id="editEventButton" href="#" class="btn btn-primary">Editar / Ver Detalles</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+{{ block.super }}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        // Hacemos una petición para obtener los datos del gráfico desde nuestra API
-        fetch("{% url 'dashboard_chart_data' %}")
-            .then(response => response.json())
-            .then(data => {
-                // --- Configuración del Gráfico de Clasificación (Gráfico de Torta) ---
-                const ctxClasificacion = document.getElementById('clasificacionChart').getContext('2d');
-                new Chart(ctxClasificacion, {
-                    type: 'doughnut',
-                    data: {
-                        labels: data.clasificacion_labels,
-                        datasets: [{
-                            label: 'N° de Riesgos',
-                            data: data.clasificacion_counts,
-                            backgroundColor: [
-                                'rgba(217, 83, 79, 0.7)', // Intolerable
-                                'rgba(240, 173, 78, 0.7)', // Importante
-                                'rgba(255, 243, 205, 0.9)', // Moderado
-                                'rgba(212, 237, 218, 0.9)', // Tolerable
-                                'rgba(200, 200, 200, 0.7)'  // Trivial/Otros
-                            ],
-                            borderColor: 'white',
-                            borderWidth: 2
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        plugins: { legend: { position: 'top' } }
-                    }
-                });
+document.addEventListener('DOMContentLoaded', function () {
+    // --- LÓGICA DEL CALENDARIO ---
+    var calendarEl = document.getElementById('calendar');
+    var eventModal = new bootstrap.Modal(document.getElementById('eventDetailModal'));
 
-                // --- Configuración del Gráfico de Jerarquía (Gráfico de Barras) ---
-                const ctxJerarquia = document.getElementById('jerarquiaChart').getContext('2d');
-                new Chart(ctxJerarquia, {
-                    type: 'bar',
-                    data: {
-                        labels: data.jerarquia_labels,
-                        datasets: [{
-                            label: 'Cantidad de Controles Implementados',
-                            data: data.jerarquia_counts,
-                            backgroundColor: 'rgba(54, 162, 235, 0.6)',
-                            borderColor: 'rgba(54, 162, 235, 1)',
-                            borderWidth: 1
-                        }]
-                    },
-                    options: {
-                        indexAxis: 'y', // Hace que el gráfico sea horizontal
-                        responsive: true,
-                        scales: { x: { beginAtZero: true } },
-                        plugins: { legend: { display: false } }
-                    }
-                });
-            });
+    var calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'dayGridMonth',
+        headerToolbar: {
+            left: 'prev,next today',
+            center: 'title',
+            right: 'dayGridMonth,timeGridWeek,listWeek'
+        },
+        events: "{% url 'all_events' %}",
+        locale: 'es',
+        buttonText: { today: 'Hoy', month: 'Mes', week: 'Semana', list: 'Lista' },
+        
+        eventClick: function(info) {
+            info.jsEvent.preventDefault(); 
+            
+            document.getElementById('eventTitle').textContent = info.event.title;
+            
+            let eventDate = info.event.start;
+            let dateOptions = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false };
+            let formattedDate = eventDate ? eventDate.toLocaleDateString('es-CL', dateOptions).replace(',', '') : 'Todo el día';
+            document.getElementById('eventDate').textContent = formattedDate;
+
+            document.getElementById('editEventButton').href = info.event.url;
+            
+            eventModal.show();
+        }
     });
+    calendar.render();
+
+    // --- LÓGICA DE LOS GRÁFICOS DE RIESGOS ---
+    const riskTab = document.getElementById('riesgos-tab');
+    let chartsLoaded = false;
+    
+    riskTab.addEventListener('shown.bs.tab', function () {
+        if (!chartsLoaded) {
+            fetch("{% url 'dashboard_chart_data' %}")
+                .then(response => response.json())
+                .then(data => {
+                    // Gráfico de Clasificación
+                    const ctxClasificacion = document.getElementById('clasificacionChart').getContext('2d');
+                    new Chart(ctxClasificacion, {
+                        type: 'doughnut',
+                        data: {
+                            labels: data.clasificacion_labels,
+                            datasets: [{
+                                label: 'N° de Riesgos',
+                                data: data.clasificacion_counts,
+                                backgroundColor: ['rgba(217, 83, 79, 0.7)', 'rgba(240, 173, 78, 0.7)', 'rgba(255, 243, 205, 0.9)', 'rgba(212, 237, 218, 0.9)', 'rgba(200, 200, 200, 0.7)'],
+                                borderColor: 'white',
+                                borderWidth: 2
+                            }]
+                        },
+                        options: { responsive: true, plugins: { legend: { position: 'top' } } }
+                    });
+
+                    // Gráfico de Jerarquía
+                    const ctxJerarquia = document.getElementById('jerarquiaChart').getContext('2d');
+                    new Chart(ctxJerarquia, {
+                        type: 'bar',
+                        data: {
+                            labels: data.jerarquia_labels,
+                            datasets: [{
+                                label: 'Cantidad de Controles Implementados',
+                                data: data.jerarquia_counts,
+                                backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                                borderColor: 'rgba(54, 162, 235, 1)',
+                                borderWidth: 1
+                            }]
+                        },
+                        options: { indexAxis: 'y', responsive: true, scales: { x: { beginAtZero: true } }, plugins: { legend: { display: false } } }
+                    });
+
+                    chartsLoaded = true;
+                });
+        }
+    });
+});
 </script>
 {% endblock %}

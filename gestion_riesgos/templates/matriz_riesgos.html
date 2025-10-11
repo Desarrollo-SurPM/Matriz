@@ -30,8 +30,8 @@
             {% for riesgo in riesgos %}
             <tr>
                 <td>
-                    <strong>{{ riesgo.subproceso.proceso.nombre }}</strong><br>
-                    <small>{{ riesgo.subproceso.tarea }}</small>
+                    <strong>{{ riesgo.tarea.proceso.nombre }}</strong><br>
+                    <small>{{ riesgo.tarea.descripcion }}</small>
                 </td>
                 <td>
                     <a href="{% url 'riesgo_detail' riesgo.pk %}">{{ riesgo.riesgo_especifico }}</a>

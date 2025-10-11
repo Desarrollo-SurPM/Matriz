@@ -34,7 +34,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'whitenoise.runserver_nostatic',  # Añade esto
     'django.contrib.staticfiles',
-    'gestion_riesgos', # Mueve tu app aquí
+    'gestion_riesgos',
+    'cumplimiento',
+    'agenda',
+    'accidentes', # Mueve tu app aquí
 ]
 
 MIDDLEWARE = [
@@ -100,6 +103,10 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 # Configuración de WhiteNoise para servir archivos estáticos eficientemente
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
 
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+LOGIN_REDIRECT_URL = '/'

@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% block title %}Detalle del Reporte{% endblock %}
+
+{% block content %}
+<a href="{% url 'reporte_accidente_list' %}" class="btn btn-secondary mb-3">&larr; Volver a la Lista</a>
+
+<div class="row">
+    <div class="col-md-5">
+        <div class="card shadow-sm mb-4">
+            <div class="card-header">
+                <h4>Detalles del Evento</h4>
+            </div>
+            <div class="card-body">
+                <p><strong>Empresa:</strong> {{ reporte.empresa.razon_social }}</p>
+                <p><strong>Fecha del Evento:</strong> {{ reporte.fecha_accidente|date:"d-m-Y H:i" }}</p>
+                <p><strong>Lugar:</strong> {{ reporte.lugar_exacto }}</p>
+                <p><strong>Tipo:</strong> <span class="badge bg-info">{{ reporte.get_tipo_accidente_display }}</span></p>
+                <hr>
+                <p><strong>Involucrados:</strong> {{ reporte.nombres_involucrados }}</p>
+                <p><strong>Descripción del Evento:</strong><br>{{ reporte.descripcion_evento|linebreaks }}</p>
+                <p><strong>Lesiones Sufridas:</strong><br>{{ reporte.lesiones_sufridas|default:"No se reportaron." }}</p>
+                
+                {% if reporte.evidencia_fotografica %}
+                    <hr>
+                    <p><strong>Evidencia Fotográfica:</strong></p>
+                    <img src="{{ reporte.evidencia_fotografica.url }}" class="img-fluid rounded" alt="Evidencia del accidente">
+                {% endif %}
+            </div>
+            <div class="card-footer text-muted">
+                Reportado por: {{ reporte.reportado_por.username }} el {{ reporte.fecha_reporte|date:"d-m-Y" }}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-7">
+        <div class="card shadow-sm">
+            <div class="card-header">
+                <h4>Investigación del Accidente</h4>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button type="submit" class="btn btn-primary w-100">Guardar Investigación</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

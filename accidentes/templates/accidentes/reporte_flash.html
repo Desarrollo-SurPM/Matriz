@@ -1,0 +1,280 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Reporte Flash de Accidente{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card shadow-sm">
+        <div class="card-header bg-danger text-white">
+            <h1 class="mb-0 h3">&#9888; REPORTE FLASH DE ACCIDENTE / INCIDENTE</h1>
+            <p class="mb-0 small">(Uso interno – Comunicación inmediata)</p>
+        </div>
+        <div class="card-body">
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <fieldset class="border p-3 mb-4 rounded">
+                    <legend class="w-auto px-2 h5">1. Información General</legend>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.empresa.id_for_label }}" class="form-label"><b>Empresa / Contratista</b></label>
+                            {{ form.empresa }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.area_departamento.id_for_label }}" class="form-label"><b>Área / Departamento</b></label>
+                            {{ form.area_departamento }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.supervisor_responsable.id_for_label }}" class="form-label"><b>Supervisor Responsable</b></label>
+                            {{ form.supervisor_responsable }}
+                        </div>
+                    </div>
+                </fieldset>
+
+                <fieldset class="border p-3 mb-4 rounded">
+                    <legend class="w-auto px-2 h5">2. Datos del Accidentado</legend>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.nombre_completo_accidentado.id_for_label }}" class="form-label"><b>Nombre Completo</b></label>
+                            {{ form.nombre_completo_accidentado }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.rut_accidentado.id_for_label }}" class="form-label"><b>RUT</b></label>
+                            {{ form.rut_accidentado }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.cargo_accidentado.id_for_label }}" class="form-label"><b>Cargo / Función</b></label>
+                            {{ form.cargo_accidentado }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.antiguedad_cargo_accidentado.id_for_label }}" class="form-label"><b>Antigüedad en el Cargo</b></label>
+                            {{ form.antiguedad_cargo_accidentado }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.turno_accidentado.id_for_label }}" class="form-label"><b>Turno</b></label>
+                            {{ form.turno_accidentado }}
+                        </div>
+                    </div>
+                </fieldset>
+
+                <fieldset class="border p-3 mb-4 rounded">
+                    <legend class="w-auto px-2 h5">3. Descripción del Accidente</legend>
+                    <div class="mb-3">
+                        <label for="{{ form.descripcion_evento.id_for_label }}" class="form-label"><b>Relato conciso y objetivo del hecho (qué, cómo, dónde, cuándo)</b></label>
+                        {{ form.descripcion_evento }}
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.lugar_exacto.id_for_label }}" class="form-label"><b>Lugar Específico</b></label>
+                            {{ form.lugar_exacto }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.fecha_accidente.id_for_label }}" class="form-label"><b>Fecha y Hora del Accidente</b></label>
+                            {{ form.fecha_accidente }}
+                        </div>
+                    </div>
+                     <hr class="my-4">
+                     <h5 class="h6">4. Tipo de Accidente</h5>
+                     <div class="mb-3">
+                        {{ form.tipo_accidente }}
+                    </div>
+                </fieldset>
+
+                <fieldset class="border p-3 mb-4 rounded">
+                    <legend class="w-auto px-2 h5">5. Lesión / Daño</legend>
+                    <div class="row align-items-center">
+                        <div class="col-md-7">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <p class="form-label mb-0"><b>Parte del cuerpo afectada (Haga clic en el modelo):</b></p>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="multiSelectToggle">
+                                    <label class="form-check-label" for="multiSelectToggle">Marcar múltiples lesiones</label>
+                                </div>
+                            </div>
+                            <div id="human-model-container" style="height: 500px; border-radius: 8px; cursor: pointer; border: 1px solid #ddd;"></div>
+                            <input type="hidden" name="parte_cuerpo_afectada" id="id_parte_cuerpo_afectada">
+                            <div class="alert alert-secondary mt-2">
+                                Partes seleccionadas: <strong id="parte-seleccionada-texto">Ninguna</strong>
+                                <button type="button" class="btn btn-sm btn-outline-danger float-end" id="clear-markers-btn">Limpiar</button>
+                            </div>
+                        </div>
+                        <div class="col-md-5">
+                            <div class="mb-3">
+                                <label for="{{ form.tipo_lesion.id_for_label }}" class="form-label"><b>Tipo de Lesión</b></label>
+                                {{ form.tipo_lesion }}
+                            </div>
+                            <div class="mb-3">
+                                <label for="{{ form.tratamiento_inicial.id_for_label }}" class="form-label"><b>Tratamiento Inicial</b></label>
+                                {{ form.tratamiento_inicial }}
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+
+                <fieldset class="border p-3 mb-4 rounded">
+                    <legend class="w-auto px-2 h5">6. Causas Inmediatas (Preliminares)</legend>
+                    <div class="mb-3">
+                        <label for="{{ form.causas_inmediatas.id_for_label }}" class="form-label"><b>Observaciones iniciales (Ej: Falta de orden, acto inseguro, etc.)</b></label>
+                        {{ form.causas_inmediatas }}
+                    </div>
+                </fieldset>
+                <fieldset class="border p-3 mb-4 rounded">
+                    <legend class="w-auto px-2 h5">7. Medidas Inmediatas Adoptadas</legend>
+                    <div class="mb-3">
+                         <label for="{{ form.medidas_inmediatas.id_for_label }}" class="form-label"><b>Acciones tomadas (Ej: Se brindó primeros auxilios, se aisló el área, etc.)</b></label>
+                        {{ form.medidas_inmediatas }}
+                    </div>
+                </fieldset>
+                <fieldset class="border p-3 mb-4 rounded">
+                     <legend class="w-auto px-2 h5">8. Registro Fotográfico</legend>
+                     <p class="text-muted">&#128248; Si es posible, adjunte 1 a 3 fotos.</p>
+                     {{ form.evidencia_fotografica }}
+                </fieldset>
+
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-danger btn-lg">Enviar Reporte Flash</button>
+                    <a href="{% url 'reporte_accidente_list' %}" class="btn btn-secondary">Cancelar</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+{{ block.super }}
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const container = document.getElementById('human-model-container');
+    const parteSeleccionadaInput = document.getElementById('id_parte_cuerpo_afectada');
+    const parteSeleccionadaTexto = document.getElementById('parte-seleccionada-texto');
+    const multiSelectToggle = document.getElementById('multiSelectToggle');
+    const clearMarkersBtn = document.getElementById('clear-markers-btn');
+
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0xffffff);
+    const camera = new THREE.PerspectiveCamera(50, container.clientWidth / container.clientHeight, 0.1, 1000);
+    
+    // **MEJORA 1: Cámara MUY alejada**
+    camera.position.set(0, 1, 25); // Valor final para una vista muy amplia
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(container.clientWidth, container.clientHeight);
+    container.appendChild(renderer.domElement);
+
+    const ambientLight = new THREE.AmbientLight(0xffffff, 1.5);
+    scene.add(ambientLight);
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+    directionalLight.position.set(5, 10, 7.5);
+    scene.add(directionalLight);
+
+    const controls = new THREE.OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.target.set(0, 0.9, 0);
+
+    let modelLoaded = false;
+    const loader = new THREE.GLTFLoader();
+    const modelPath = "{% static 'gestion_riesgos/models/FinalBaseMesh.glb' %}";
+    
+    loader.load(modelPath, function (gltf) {
+        const model = gltf.scene;
+        model.traverse((child) => {
+            if (child.isMesh) {
+                child.material = new THREE.MeshStandardMaterial({ color: 0x505050 });
+            }
+        });
+        const box = new THREE.Box3().setFromObject(model);
+        const center = box.getCenter(new THREE.Vector3());
+        model.position.sub(center); 
+        scene.add(model);
+        modelLoaded = true;
+    }, undefined, function (error) {
+        console.error("Error al cargar el modelo:", error);
+        container.innerHTML = '<div class="alert alert-danger">Error al cargar el modelo 3D.</div>';
+    });
+
+    const raycaster = new THREE.Raycaster();
+    const mouse = new THREE.Vector2();
+    let clickMarkers = [];
+    let selectedParts = [];
+
+    function updateSelectedParts() {
+        const uniqueParts = [...new Set(selectedParts)]; // Eliminar duplicados
+        if (uniqueParts.length === 0) {
+            parteSeleccionadaTexto.textContent = 'Ninguna';
+        } else {
+            parteSeleccionadaTexto.textContent = uniqueParts.join(', ');
+        }
+        parteSeleccionadaInput.value = uniqueParts.join(',');
+    }
+
+    container.addEventListener('click', function (event) {
+        if (!modelLoaded) return;
+        
+        const rect = renderer.domElement.getBoundingClientRect();
+        mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+        mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+
+        raycaster.setFromCamera(mouse, camera);
+        const intersects = raycaster.intersectObjects(scene.children, true);
+
+        if (intersects.length > 0) {
+            const intersection = intersects[0];
+            const clickedObject = intersection.object;
+
+            if (clickedObject.name === 'click-marker') { return; }
+
+            if (!multiSelectToggle.checked) {
+                clickMarkers.forEach(marker => scene.remove(marker));
+                clickMarkers = [];
+                selectedParts = [];
+            }
+
+            // **MEJORA 2: Marcador 4 veces más grande**
+            const markerGeometry = new THREE.TorusGeometry(0.8, 0.03, 16, 100); // Radio principal 0.8, grosor 0.03
+            const markerMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000, depthTest: false });
+            const newMarker = new THREE.Mesh(markerGeometry, markerMaterial);
+            newMarker.name = 'click-marker';
+
+            const normal = intersection.face.normal.clone();
+            const offset = normal.multiplyScalar(0.01);
+            newMarker.position.copy(intersection.point).add(offset);
+            newMarker.lookAt(new THREE.Vector3().addVectors(intersection.point, intersection.face.normal));
+            
+            scene.add(newMarker);
+            clickMarkers.push(newMarker);
+            
+            const partName = clickedObject.name || 'Parte no identificada';
+            selectedParts.push(partName);
+
+            updateSelectedParts();
+        }
+    });
+
+    clearMarkersBtn.addEventListener('click', function() {
+        clickMarkers.forEach(marker => scene.remove(marker));
+        clickMarkers = [];
+        selectedParts = [];
+        updateSelectedParts();
+    });
+
+    function animate() {
+        requestAnimationFrame(animate);
+        controls.update();
+        renderer.render(scene, camera);
+    }
+    animate();
+
+    window.addEventListener('resize', () => {
+        camera.aspect = container.clientWidth / container.clientHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(container.clientWidth, container.clientHeight);
+    }, false);
+});
+</script>
+{% endblock %}

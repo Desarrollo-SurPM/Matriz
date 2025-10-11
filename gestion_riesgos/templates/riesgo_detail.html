@@ -1,70 +1,106 @@
 {% extends 'base.html' %}
-{% block title %}Detalle del Riesgo{% endblock %}
+{% block title %}Detalle y Evaluación del Riesgo{% endblock %}
 
 {% block content %}
-<a href="{% url 'matriz_riesgos' %}" class="btn btn-secondary mb-3">&larr; Volver a la Matriz</a>
+<a href="{% url 'matriz_detail' riesgo.tarea.proceso.matriz.pk %}" class="btn btn-secondary mb-3">&larr; Volver a la Matriz</a>
 
 <div class="card mb-4">
     <div class="card-header d-flex justify-content-between align-items-center">
-        <h4 class="mb-0">Detalle del Riesgo</h4>
-        <div>
-            <a href="{% url 'riesgo_update' riesgo.pk %}" class="btn btn-primary btn-sm">Editar y Re-evaluar</a>
-            <a href="{% url 'riesgo_delete' riesgo.pk %}" class="btn btn-danger btn-sm">Eliminar Riesgo</a>
-        </div>
+        <h4 class="mb-0">Detalle: {{ riesgo.peligro.riesgo_especifico }}</h4>
+        <a href="{% url 'riesgo_delete' riesgo.pk %}" class="btn btn-danger btn-sm">Eliminar Riesgo</a>
     </div>
     <div class="card-body">
-        <h5>{{ riesgo.riesgo_especifico }}</h5>
-        <p><strong>Proceso:</strong> {{ riesgo.subproceso.proceso.nombre }}</p>
-        <p><strong>Tarea:</strong> {{ riesgo.subproceso.tarea }}</p>
-        <p><strong>Consecuencias:</strong> {{ riesgo.consecuencias|default:"No especificadas" }}</p>
-        
-        <div class="row text-center mt-3">
-            <div class="col-md-6">
-                <h6>Riesgo Inherente</h6>
-                <p class="clasificacion-{{ riesgo.clasificacion_riesgo }} p-2 rounded">
-                    VEP: <strong>{{ riesgo.valor_vep }}</strong> ({{ riesgo.clasificacion_riesgo }})
-                </p>
-            </div>
-            <div class="col-md-6">
-                <h6>Riesgo Residual</h6>
-                <p class="clasificacion-{{ riesgo.clasificacion_riesgo_residual }} p-2 rounded">
-                    VEP: <strong>{{ riesgo.valor_vep_residual|default:"N/A" }}</strong> ({{ riesgo.clasificacion_riesgo_residual }})
-                </p>
-            </div>
-        </div>
+        <p><strong>Proceso:</strong> {{ riesgo.tarea.proceso.nombre }}</p>
+        <p><strong>Tarea:</strong> {{ riesgo.tarea.descripcion }}</p>
     </div>
 </div>
 
-<div class="card">
-    <div class="card-header">
-        <h4 class="mb-0">Medidas de Control</h4>
-    </div>
-    <div class="card-body">
-        <h5>Añadir Nueva Medida</h5>
-        <form action="{% url 'medida_create' riesgo.pk %}" method="post">
-            {% csrf_token %}
-            {{ medida_form.as_p }}
-            <button type="submit" class="btn btn-success">Guardar Medida</button>
-        </form>
-        <hr>
+<form method="post">
+    {% csrf_token %}
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <ul class="nav nav-tabs card-header-tabs" id="evaluationTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="seguridad-tab" data-bs-toggle="tab" data-bs-target="#seguridad" type="button" role="tab">Seguridad</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="higienicos-tab" data-bs-toggle="tab" data-bs-target="#higienicos" type="button" role="tab">Higiene</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="psicosocial-tab" data-bs-toggle="tab" data-bs-target="#psicosocial" type="button" role="tab">Psicosocial</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="ergonomia-tab" data-bs-toggle="tab" data-bs-target="#ergonomia" type="button" role="tab">Músculo-Esq.</button>
+                        </li>
+                         <li class="nav-item" role="presentation">
+                            <button class="nav-link text-success" id="residual-tab" data-bs-toggle="tab" data-bs-target="#residual" type="button" role="tab"><strong>Residual</strong></button>
+                        </li>
+                    </ul>
+                </div>
+                <div class="card-body tab-content" id="evaluationTabsContent">
+                    <div class="tab-pane fade show active" id="seguridad" role="tabpanel">
+                        <h5>Riesgo Inherente: Seguridad y Emergencias</h5>
+                        {% include 'partials/evaluacion_radios.html' with prob_field=form.probabilidad_seguridad cons_field=form.consecuencia_seguridad %}
+                    </div>
+                    <div class="tab-pane fade" id="higienicos" role="tabpanel">
+                        <h5>Riesgo Inherente: Higiénicos</h5>
+                        {% include 'partials/evaluacion_radios.html' with prob_field=form.probabilidad_higienicos cons_field=form.consecuencia_higienicos %}
+                    </div>
+                    <div class="tab-pane fade" id="psicosocial" role="tabpanel">
+                        <h5>Riesgo Inherente: Psicosociales</h5>
+                        {% include 'partials/evaluacion_radios.html' with prob_field=form.probabilidad_psicosociales cons_field=form.consecuencia_psicosociales %}
+                    </div>
+                    <div class="tab-pane fade" id="ergonomia" role="tabpanel">
+                        <h5>Riesgo Inherente: Músculo-Esqueléticos</h5>
+                        {% include 'partials/evaluacion_radios.html' with prob_field=form.probabilidad_musculoesqueleticos cons_field=form.consecuencia_musculoesqueleticos %}
+                    </div>
+                    <div class="tab-pane fade" id="residual" role="tabpanel">
+                        <h5 class="text-success">Riesgo Residual (con controles)</h5>
+                        {% include 'partials/evaluacion_radios.html' with prob_field=form.probabilidad_residual cons_field=form.consecuencia_residual %}
+                    </div>
+                </div>
+            </div>
+        </div>
 
-        <h5>Medidas Implementadas</h5>
-        <ul class="list-group">
-            {% for medida in medidas %}
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-                <div>
-                    <strong>{{ medida.get_tipo_control_display }}:</strong> {{ medida.descripcion }}<br>
-                    <small class="text-muted">Responsable: {{ medida.responsable }} | Plazo: {{ medida.plazo_implementacion }}</small>
-                </div>
-                <div>
-                    <a href="{% url 'medida_update' medida.pk %}" class="btn btn-secondary btn-sm">Editar</a>
-                    <a href="{% url 'medida_delete' medida.pk %}" class="btn btn-danger btn-sm">Eliminar</a>
-                </div>
-            </li>
-            {% empty %}
-            <li class="list-group-item">Aún no se han registrado medidas de control para este riesgo.</li>
-            {% endfor %}
-        </ul>
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header"><h5 class="mb-0">Resultados VEP</h5></div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        Seguridad: <span class="badge clasificacion-{{ riesgo.clasificacion_riesgo_seguridad }}">{{ riesgo.valor_vep_seguridad|default:"-" }}</span>
+                    </li>
+                     <li class="list-group-item d-flex justify-content-between align-items-center">
+                        Higiene: <span class="badge clasificacion-{{ riesgo.clasificacion_riesgo_higienicos }}">{{ riesgo.valor_vep_higienicos|default:"-" }}</span>
+                    </li>
+                     <li class="list-group-item d-flex justify-content-between align-items-center">
+                        Psicosocial: <span class="badge clasificacion-{{ riesgo.clasificacion_riesgo_psicosociales }}">{{ riesgo.valor_vep_psicosociales|default:"-" }}</span>
+                    </li>
+                     <li class="list-group-item d-flex justify-content-between align-items-center">
+                        Músculo-Esq.: <span class="badge clasificacion-{{ riesgo.clasificacion_riesgo_musculoesqueleticos }}">{{ riesgo.valor_vep_musculoesqueleticos|default:"-" }}</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center bg-light">
+                        <strong>Inherente (Máx):</strong> <span class="badge fs-6 clasificacion-{{ riesgo.clasificacion_riesgo_inherente_maximo }}">{{ riesgo.valor_vep_inherente_maximo|default:"-" }}</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center text-success">
+                        <strong>Residual:</strong> <span class="badge fs-6 clasificacion-{{ riesgo.clasificacion_riesgo_residual }}">{{ riesgo.valor_vep_residual|default:"-" }}</span>
+                    </li>
+                </ul>
+            </div>
+            <div class="d-grid mt-3">
+                 <button type="submit" class="btn btn-primary btn-lg">Guardar Evaluación</button>
+            </div>
+        </div>
     </div>
-</div>
+</form>
+
+<style>
+    /* Estilos para que la clasificación sea visual */
+    .clasificacion-Intolerable { background-color: #dc3545 !important; color: white; }
+    .clasificacion-Importante { background-color: #fd7e14 !important; color: black; }
+    .clasificacion-Moderado { background-color: #ffc107 !important; color: black; }
+    .clasificacion-Tolerable { background-color: #198754 !important; color: white; }
+    .clasificacion-No.evaluado { background-color: #e9ecef !important; color: black; }
+</style>
 {% endblock %}

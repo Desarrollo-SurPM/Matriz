@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Mis Empresas Clientes</h1>
+    <a href="{% url 'empresa_create' %}" class="btn btn-primary">
+        + Añadir Empresa
+    </a>
+</div>
+
+<div class="row">
+    {% for empresa in empresas %}
+    <div class="col-md-4 mb-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title">{{ empresa.razon_social }}</h5>
+                <p class="card-text text-muted">{{ empresa.rut }}</p>
+                <a href="{{ empresa.get_absolute_url }}" class="btn btn-outline-primary">Gestionar</a>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12">
+        <div class="alert alert-info">
+            No tienes empresas registradas. ¡Comienza añadiendo tu primer cliente!
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

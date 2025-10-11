@@ -4,8 +4,29 @@
 <h1>{{ titulo }}</h1>
 <form method="post">
     {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" class="btn btn-primary">Guardar</button>
-    <a href="{{ request.META.HTTP_REFERER }}" class="btn btn-secondary">Cancelar</a>
+    
+    {% for field in form %}
+        <div class="mb-3">
+            {{ field.label_tag }}
+            
+            {% if field.name == 'peligro' %}
+                <div class="input-group">
+                    {{ field }}
+                    <a href="{% url 'peligro_create' %}" class="btn btn-outline-success" target="_blank" title="Añadir nuevo peligro al catálogo">+</a>
+                </div>
+                <div class="form-text">Si el peligro no está en la lista, puedes añadirlo con el botón "+". Luego, refresca esta página.</div>
+            {% else %}
+                {{ field }}
+            {% endif %}
+            
+            {% if field.help_text %}
+                <div class="form-text">{{ field.help_text }}</div>
+            {% endif %}
+            {{ field.errors }}
+        </div>
+    {% endfor %}
+
+    <button type="submit" class="btn btn-primary">{{ boton_texto|default:"Guardar" }}</button>
+    <a href="{{ request.META.HTTP_REFERER|default:_('empresa_list') }}" class="btn btn-secondary">Cancelar</a>
 </form>
 {% endblock %}

@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2>Matriz: {{ matriz.nombre_proyecto }}</h2>
+        <p class="text-muted">Cliente: <a href="{% url 'empresa_detail' matriz.empresa.pk %}">{{ matriz.empresa.razon_social }}</a></p>
+    </div>
+    <div>
+        <a href="{% url 'matriz_delete' matriz.pk %}" class="btn btn-danger">Eliminar Matriz</a>
+    </div>
+</div>
+
+<hr>
+
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h4>Estructura de la Matriz</h4>
+        <a href="{% url 'proceso_create' matriz_pk=matriz.pk %}" class="btn btn-primary">Añadir Proceso</a>
+    </div>
+    <div class="card-body">
+        {% for proceso in matriz.procesos.all %}
+            <div class="accordion" id="accordionProceso{{ proceso.pk }}">
+                <div class="accordion-item mb-2">
+                    <h2 class="accordion-header" id="heading{{ proceso.pk }}">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ proceso.pk }}" aria-expanded="false" aria-controls="collapse{{ proceso.pk }}">
+                            <strong>Proceso:</strong> {{ proceso.nombre }}
+                        </button>
+                    </h2>
+                    <div id="collapse{{ proceso.pk }}" class="accordion-collapse collapse" aria-labelledby="heading{{ proceso.pk }}">
+                        <div class="accordion-body">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <div>
+                                    <a href="{% url 'proceso_update' proceso.pk %}" class="btn btn-sm btn-secondary">Editar Proceso</a>
+                                    <a href="{% url 'proceso_delete' proceso.pk %}" class="btn btn-sm btn-outline-danger">Eliminar Proceso</a>
+                                </div>
+                                <a href="{% url 'tarea_create' proceso_pk=proceso.pk %}" class="btn btn-sm btn-success">Añadir Tarea</a>
+                            </div>
+                            <ul class="list-group">
+                                {% for tarea in proceso.tareas.all %}
+                                    <li class="list-group-item">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <span>
+                                                <strong>Tarea:</strong> {{ tarea.descripcion }} (<em>Puesto: {{ tarea.puesto_trabajo }}</em>)
+                                            </span>
+                                            <div>
+                                                <a href="{% url 'tarea_update' tarea.pk %}" class="btn btn-sm btn-outline-secondary">Editar</a>
+                                                <a href="{% url 'tarea_delete' tarea.pk %}" class="btn btn-sm btn-outline-danger">Eliminar</a>
+                                            </div>
+                                        </div>
+                                        <hr class="my-2">
+                                        <a href="{% url 'riesgo_create' tarea_pk=tarea.pk %}" class="btn btn-sm btn-warning mb-2">Identificar Riesgo</a>
+                                        <ul class="list-group list-group-flush">
+                                            {% for riesgo in tarea.riesgos.all %}
+                                                <a href="{% url 'riesgo_detail' riesgo.pk %}" class="list-group-item list-group-item-action list-group-item-light py-1">
+                                                    - {{ riesgo.peligro.riesgo_especifico }}
+                                                </a>
+                                            {% empty %}
+                                                <li class="list-group-item list-group-item-light py-1"><em>No hay riesgos identificados para esta tarea.</em></li>
+                                            {% endfor %}
+                                        </ul>
+                                    </li>
+                                {% empty %}
+                                    <li class="list-group-item">No hay tareas para este proceso.</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <p class="text-center text-muted">Aún no has añadido procesos a esta matriz.</p>
+        {% endfor %}
+    </div>
+</div>
+<div class="mt-4">
+    <a href="{% url 'empresa_detail' matriz.empresa.pk %}" class="btn btn-outline-secondary">&larr; Volver a la Empresa</a>
+</div>
+{% endblock %}

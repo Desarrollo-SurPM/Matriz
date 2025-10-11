@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% block title %}Calendario de Cumplimiento Legal{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Calendario de Cumplimiento Legal</h1>
+    <a href="{% url 'tarea_legal_create' %}" class="btn btn-primary">+ Añadir Obligación</a>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <table class="table table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>Próximo Vencimiento</th>
+                    <th>Obligación</th>
+                    <th>Empresa</th>
+                    <th>Frecuencia</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for tarea in tareas %}
+                <tr>
+                    <td>{{ tarea.proxima_fecha_vencimiento|date:"d-m-Y" }}</td>
+                    <td>{{ tarea.nombre_obligacion }}</td>
+                    <td>{{ tarea.empresa.razon_social }}</td>
+                    <td>{{ tarea.get_frecuencia_display }}</td>
+                    <td>
+                        {% if tarea.completada %}
+                            <span class="badge bg-success">Completada</span>
+                        {% else %}
+                            <span class="badge bg-warning text-dark">Pendiente</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="{% url 'tarea_legal_update' tarea.pk %}" class="btn btn-sm btn-info">Editar</a>
+                        <a href="{% url 'tarea_legal_delete' tarea.pk %}" class="btn btn-sm btn-danger">Eliminar</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="text-center">No hay obligaciones legales pendientes.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

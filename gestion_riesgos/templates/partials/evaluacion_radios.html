@@ -1,0 +1,19 @@
+<p class="mb-1">{{ prob_field.label_tag }}</p>
+<div class="text-center mb-3">
+{% for radio in prob_field %}
+    <div class="form-check form-check-inline">
+        {{ radio.tag }}
+        <label class="form-check-label" for="{{ radio.id_for_label }}">{{ radio.choice_label }}</label>
+    </div>
+{% endfor %}
+</div>
+
+<p class="mb-1">{{ cons_field.label_tag }}</p>
+<div class="text-center">
+{% for radio in cons_field %}
+    <div class="form-check form-check-inline">
+        {{ radio.tag }}
+        <label class="form-check-label" for="{{ radio.id_for_label }}">{{ radio.choice_label }}</label>
+    </div>
+{% endfor %}
+</div>

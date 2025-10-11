@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% block title %}Gestión de Visitas{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Gestión de Visitas</h1>
+    <a href="{% url 'visita_create' %}" class="btn btn-primary">+ Agendar Visita</a>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <table class="table table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>Fecha y Hora</th>
+                    <th>Empresa</th>
+                    <th>Asunto</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for visita in visitas %}
+                <tr>
+                    <td>{{ visita.fecha_hora|date:"d-m-Y H:i" }}</td>
+                    <td>{{ visita.empresa.razon_social }}</td>
+                    <td>{{ visita.asunto }}</td>
+                    <td><span class="badge bg-info text-dark">{{ visita.get_estado_display }}</span></td>
+                    <td>
+                        <a href="{% url 'visita_update' visita.pk %}" class="btn btn-sm btn-info">Editar</a>
+                        <a href="{% url 'visita_delete' visita.pk %}" class="btn btn-sm btn-danger">Eliminar</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="text-center">No hay visitas agendadas.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
