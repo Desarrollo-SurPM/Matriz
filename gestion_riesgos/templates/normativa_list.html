@@ -1,46 +1,82 @@
 {% extends 'base.html' %}
-{% block title %}Biblioteca de Normativas{% endblock %}
+{% block title %}Biblioteca de Normativas - Prevencionista OS{% endblock %}
+
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <h1>Biblioteca de Normativas</h1>
-    <a href="{% url 'normativa_create' %}" class="btn btn-primary">Añadir Nueva Normativa</a>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="text-gradient" style="font-size: 2.5rem; font-weight: 700; margin-bottom: 0.5rem;">
+            <i class="bi bi-book me-2"></i>Biblioteca de Normativas
+        </h1>
+        <p style="color: var(--text-secondary); margin: 0;">Accede a normativas y regulaciones de seguridad laboral</p>
+    </div>
+    <a href="{% url 'normativa_create' %}" class="btn-primary-modern">
+        <i class="bi bi-plus-circle me-2"></i>Añadir Normativa
+    </a>
 </div>
 
-<div class="card">
+<div class="card-modern">
     <div class="table-responsive">
-        <table class="table table-striped table-hover mb-0">
-            <thead class="table-dark">
-                <tr>
-                    <th>Nombre</th>
-                    <th>Categoría</th>
-                    <th>Descripción</th>
-                    <th>Acciones</th>
+        <table class="table mb-0" style="color: var(--text-primary);">
+            <thead>
+                <tr style="border-bottom: 2px solid var(--border-color);">
+                    <th style="padding: 1rem; color: var(--text-primary); font-weight: 700;">Nombre</th>
+                    <th style="padding: 1rem; color: var(--text-primary); font-weight: 700;">Categoría</th>
+                    <th style="padding: 1rem; color: var(--text-primary); font-weight: 700;">Descripción</th>
+                    <th style="padding: 1rem; color: var(--text-primary); font-weight: 700; text-align: center;">Acciones</th>
                 </tr>
             </thead>
             <tbody>
                 {% for normativa in normativas %}
-                <tr>
-                    <td>
+                <tr style="border-bottom: 1px solid var(--border-color); transition: all var(--transition-base);" onmouseover="this.style.background='var(--bg-hover)'" onmouseout="this.style.background='transparent'">
+                    <td style="padding: 1rem;">
                         {% if normativa.fuente %}
-                            <a href="{{ normativa.fuente }}" target="_blank">{{ normativa.nombre }} <i class="bi bi-box-arrow-up-right"></i></a>
+                            <a href="{{ normativa.fuente }}" target="_blank" style="color: var(--accent-primary); text-decoration: none; font-weight: 600;">
+                                <i class="bi bi-file-text me-2"></i>{{ normativa.nombre }}
+                                <i class="bi bi-box-arrow-up-right ms-1" style="font-size: 0.8rem;"></i>
+                            </a>
                         {% else %}
-                            {{ normativa.nombre }}
+                            <span style="color: var(--text-primary); font-weight: 600;">
+                                <i class="bi bi-file-text me-2" style="color: var(--accent-primary);"></i>{{ normativa.nombre }}
+                            </span>
                         {% endif %}
                     </td>
-                    <td><span class="badge bg-secondary">{{ normativa.categoria|default:"Sin categoría" }}</span></td>
-                    <td>{{ normativa.descripcion|truncatewords:20 }}</td>
-                    <td>
-                        <a href="{% url 'normativa_update' normativa.pk %}" class="btn btn-sm btn-primary">Editar</a>
-                        <a href="{% url 'normativa_delete' normativa.pk %}" class="btn btn-sm btn-danger">Eliminar</a>
+                    <td style="padding: 1rem;">
+                        <span class="badge-modern">{{ normativa.categoria|default:"Sin categoría" }}</span>
+                    </td>
+                    <td style="padding: 1rem; color: var(--text-secondary);">
+                        {{ normativa.descripcion|truncatewords:20 }}
+                    </td>
+                    <td style="padding: 1rem; text-align: center;">
+                        <div class="d-flex gap-2 justify-content-center">
+                            <a href="{% url 'normativa_update' normativa.pk %}" class="btn-ghost" style="padding: 0.5rem 1rem;" title="Editar">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                            <a href="{% url 'normativa_delete' normativa.pk %}" class="btn-ghost" style="padding: 0.5rem 1rem; color: var(--danger);" title="Eliminar">
+                                <i class="bi bi-trash"></i>
+                            </a>
+                        </div>
                     </td>
                 </tr>
                 {% empty %}
                 <tr>
-                    <td colspan="4" class="text-center">Aún no has añadido normativas a tu biblioteca.</td>
+                    <td colspan="4" style="padding: 4rem 2rem; text-align: center;">
+                        <i class="bi bi-journal-x" style="font-size: 4rem; color: var(--text-muted); opacity: 0.3; display: block; margin-bottom: 1rem;"></i>
+                        <p style="color: var(--text-muted); margin: 0;">Aún no has añadido normativas a tu biblioteca.</p>
+                        <a href="{% url 'normativa_create' %}" class="btn-primary-modern mt-3">
+                            <i class="bi bi-plus-circle me-2"></i>Añadir Primera Normativa
+                        </a>
+                    </td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
 </div>
+
+<style>
+.table {
+    width: 100%;
+    border-collapse: collapse;
+}
+</style>
 {% endblock %}
