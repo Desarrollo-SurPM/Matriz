@@ -83,11 +83,12 @@ WSGI_APPLICATION = 'matriz.wsgi.application'
 
 
 # Database
-# Configuración dinámica para usar PostgreSQL en producción y SQLite en local.
+# Siempre usar PostgreSQL desde variable de entorno DATABASE_URL. No usar SQLite.
+if not config('DATABASE_URL', default=''):
+    raise ValueError("DATABASE_URL no está definido en el entorno.")
+
 DATABASES = {
-    'default': dj_database_url.config(
-        default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}"
-    )
+    'default': dj_database_url.config(env='DATABASE_URL', conn_max_age=600, ssl_require=not DEBUG)
 }
 
 
