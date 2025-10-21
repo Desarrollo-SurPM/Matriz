@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prevencionista OS - Gestión Inteligente de Riesgos</title>
+    {% load static %}
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+</head>
+<body>
+    <!-- Navbar Moderno -->
+    <nav class="navbar navbar-expand-lg navbar-modern">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'dashboard' %}">
+                <i class="bi bi-shield-check"></i>
+                <span>Prevencionista OS</span>
+            </a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#features">Características</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#benefits">Beneficios</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#about">Acerca de</a>
+                    </li>
+                    <li class="nav-item ms-3">
+                        {% if user.is_authenticated %}
+                            <a href="{% url 'dashboard' %}" class="btn-primary-modern">
+                                <i class="bi bi-speedometer2 me-2"></i>Dashboard
+                            </a>
+                        {% else %}
+                            <button id="loginBtn" class="btn-primary-modern">
+                                <i class="bi bi-box-arrow-in-right me-2"></i>Iniciar Sesión
+                            </button>
+                        {% endif %}
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="hero-particles"></div>
+        <div class="hero-content">
+            <h1 class="hero-title">
+                Gestión Inteligente de
+                <br>Riesgos Laborales
+            </h1>
+            <p class="hero-subtitle">
+                Plataforma profesional para crear, gestionar y analizar Matrices de Identificación
+                de Peligros y Evaluación de Riesgos (IPER) de forma eficiente y estandarizada.
+            </p>
+            <div class="hero-buttons">
+                {% if user.is_authenticated %}
+                    <a href="{% url 'dashboard' %}" class="btn-primary-modern">
+                        <i class="bi bi-speedometer2 me-2"></i>
+                        Ir al Dashboard
+                    </a>
+                    <a href="{% url 'empresa_list' %}" class="btn-outline-modern">
+                        <i class="bi bi-building me-2"></i>
+                        Mis Empresas
+                    </a>
+                {% else %}
+                    <button id="loginBtn2" class="btn-primary-modern">
+                        <i class="bi bi-rocket-takeoff me-2"></i>
+                        Comenzar Ahora
+                    </button>
+                    <a href="#features" class="btn-outline-modern">
+                        <i class="bi bi-info-circle me-2"></i>
+                        Conocer Más
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="features-section">
+        <div class="container">
+            <h2 class="section-title">
+                Características Principales
+            </h2>
+
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="bi bi-shield-fill-check"></i>
+                    </div>
+                    <h3 class="feature-title">Matrices IPER</h3>
+                    <p class="feature-description">
+                        Crea y gestiona matrices de identificación de peligros y evaluación de riesgos
+                        siguiendo estándares internacionales.
+                    </p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="bi bi-diagram-3-fill"></i>
+                    </div>
+                    <h3 class="feature-title">Gestión por Procesos</h3>
+                    <p class="feature-description">
+                        Organiza tu información por procesos, tareas y riesgos específicos
+                        para un control total.
+                    </p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="bi bi-graph-up-arrow"></i>
+                    </div>
+                    <h3 class="feature-title">Análisis y Reportes</h3>
+                    <p class="feature-description">
+                        Genera reportes detallados y visualiza estadísticas en tiempo real
+                        de tus evaluaciones de riesgos.
+                    </p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="bi bi-book-fill"></i>
+                    </div>
+                    <h3 class="feature-title">Biblioteca Normativa</h3>
+                    <p class="feature-description">
+                        Accede a un catálogo completo de normativas y regulaciones
+                        de seguridad laboral actualizadas.
+                    </p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="bi bi-calendar-check-fill"></i>
+                    </div>
+                    <h3 class="feature-title">Calendario Legal</h3>
+                    <p class="feature-description">
+                        Mantén el control de fechas límite, visitas programadas y
+                        recordatorios importantes.
+                    </p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="bi bi-file-earmark-text-fill"></i>
+                    </div>
+                    <h3 class="feature-title">Gestión Documental</h3>
+                    <p class="feature-description">
+                        Almacena y organiza documentos, certificados y registros de manera
+                        segura y centralizada.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Benefits Section -->
+    <section id="benefits" class="features-section" style="background: rgba(26, 33, 66, 0.3);">
+        <div class="container">
+            <h2 class="section-title">
+                ¿Por qué Prevencionista OS?
+            </h2>
+
+            <div class="row g-4 mt-4">
+                <div class="col-md-6">
+                    <div class="card-modern">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="feature-icon me-3" style="width: 48px; height: 48px; font-size: 1.5rem;">
+                                <i class="bi bi-lightning-charge-fill"></i>
+                            </div>
+                            <h4 class="mb-0" style="color: var(--text-primary);">Eficiencia y Velocidad</h4>
+                        </div>
+                        <p style="color: var(--text-secondary);">
+                            Reduce el tiempo de creación de matrices IPER hasta en un 70% con nuestras
+                            plantillas predefinidas y flujos de trabajo optimizados.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="card-modern">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="feature-icon me-3" style="width: 48px; height: 48px; font-size: 1.5rem;">
+                                <i class="bi bi-check-circle-fill"></i>
+                            </div>
+                            <h4 class="mb-0" style="color: var(--text-primary);">Cumplimiento Normativo</h4>
+                        </div>
+                        <p style="color: var(--text-secondary);">
+                            Mantén tu empresa en cumplimiento con las normativas locales e internacionales
+                            de seguridad y salud ocupacional.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="card-modern">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="feature-icon me-3" style="width: 48px; height: 48px; font-size: 1.5rem;">
+                                <i class="bi bi-people-fill"></i>
+                            </div>
+                            <h4 class="mb-0" style="color: var(--text-primary);">Colaboración en Equipo</h4>
+                        </div>
+                        <p style="color: var(--text-secondary);">
+                            Trabaja de manera colaborativa con tu equipo de prevención de riesgos
+                            en tiempo real desde cualquier lugar.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="card-modern">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="feature-icon me-3" style="width: 48px; height: 48px; font-size: 1.5rem;">
+                                <i class="bi bi-shield-lock-fill"></i>
+                            </div>
+                            <h4 class="mb-0" style="color: var(--text-primary);">Seguridad de Datos</h4>
+                        </div>
+                        <p style="color: var(--text-secondary);">
+                            Tus datos están protegidos con los más altos estándares de seguridad
+                            y encriptación de la industria.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="features-section">
+        <div class="container">
+            <div class="card-modern text-center" style="background: var(--accent-gradient); border: none; max-width: 800px; margin: 0 auto;">
+                <h2 class="mb-4" style="color: white; font-size: 2.5rem; font-weight: 700;">
+                    ¿Listo para transformar tu gestión de riesgos?
+                </h2>
+                <p class="mb-4" style="color: rgba(255,255,255,0.9); font-size: 1.2rem;">
+                    Únete a cientos de prevencionistas que ya confían en nuestra plataforma
+                </p>
+                {% if not user.is_authenticated %}
+                    <button id="loginBtn3" class="btn-outline-modern" style="border-color: white; color: white;">
+                        <i class="bi bi-rocket-takeoff me-2"></i>
+                        Comenzar Gratis
+                    </button>
+                {% else %}
+                    <a href="{% url 'dashboard' %}" class="btn-outline-modern" style="border-color: white; color: white;">
+                        <i class="bi bi-speedometer2 me-2"></i>
+                        Ir al Dashboard
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="text-center py-5" style="border-top: 1px solid var(--border-color);">
+        <div class="container">
+            <div class="mb-4">
+                <h3 class="text-gradient mb-3" style="font-size: 1.5rem; font-weight: 700;">
+                    <i class="bi bi-shield-check"></i> Prevencionista OS
+                </h3>
+                <p style="color: var(--text-secondary);">
+                    Plataforma profesional para la gestión de riesgos laborales
+                </p>
+            </div>
+            <div class="divider"></div>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">
+                &copy; {% now "Y" %} Prevencionista OS - Todos los derechos reservados
+            </p>
+        </div>
+    </footer>
+
+    <!-- Login Modal -->
+    {% if not user.is_authenticated %}
+    <div id="loginModal" class="login-modal">
+        <div class="login-container" style="position: relative;">
+            <button id="closeModal" class="close-modal">
+                <i class="bi bi-x-lg"></i>
+            </button>
+
+            <div class="login-header">
+                <h2 class="login-title">Iniciar Sesión</h2>
+                <p style="color: var(--text-secondary);">
+                    Accede a tu cuenta de Prevencionista OS
+                </p>
+            </div>
+
+            <form method="post" action="{% url 'login' %}">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label class="form-label-modern">Usuario</label>
+                    <input type="text" name="username" class="form-control-modern" required autofocus>
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label-modern">Contraseña</label>
+                    <input type="password" name="password" class="form-control-modern" required>
+                </div>
+
+                <input type="hidden" name="next" value="{% url 'dashboard' %}">
+
+                <button type="submit" class="btn-primary-modern w-100 mb-3">
+                    <i class="bi bi-box-arrow-in-right me-2"></i>
+                    Iniciar Sesión
+                </button>
+
+                <div class="text-center">
+                    <a href="#" style="color: var(--accent-primary); text-decoration: none; font-size: 0.9rem;">
+                        ¿Olvidaste tu contraseña?
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+    {% endif %}
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{% static 'js/main.js' %}"></script>
+    <script>
+        // Inicializar botones de login adicionales
+        document.addEventListener('DOMContentLoaded', function() {
+            const loginBtn2 = document.getElementById('loginBtn2');
+            const loginBtn3 = document.getElementById('loginBtn3');
+            const loginModal = document.getElementById('loginModal');
+
+            if (loginBtn2 && loginModal) {
+                loginBtn2.addEventListener('click', function() {
+                    loginModal.classList.add('active');
+                    document.body.style.overflow = 'hidden';
+                });
+            }
+
+            if (loginBtn3 && loginModal) {
+                loginBtn3.addEventListener('click', function() {
+                    loginModal.classList.add('active');
+                    document.body.style.overflow = 'hidden';
+                });
+            }
+        });
+    </script>
+</body>
+</html>

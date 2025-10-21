@@ -1,11 +1,40 @@
 {% extends 'base.html' %}
 {% block title %}Confirmar Eliminación{% endblock %}
+
 {% block content %}
-<h1>¿Estás seguro?</h1>
-<p>Estás a punto de eliminar permanentemente: <strong>{{ object }}</strong>.</p>
-<form method="post">
-    {% csrf_token %}
-    <button type="submit" class="btn btn-danger">Sí, eliminar</button>
-    <a href="{{ request.META.HTTP_REFERER }}" class="btn btn-secondary">Cancelar</a>
-</form>
+<div class="row justify-content-center">
+    <div class="col-lg-6">
+        <div class="card-modern text-center" style="padding: 3rem 2rem;">
+            <div class="mb-4">
+                <div class="d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px; background: rgba(239, 68, 68, 0.1); border-radius: 50%;">
+                    <i class="bi bi-exclamation-triangle-fill" style="font-size: 2.5rem; color: var(--danger);"></i>
+                </div>
+                <h2 style="color: var(--text-primary); font-weight: 700; margin-bottom: 1rem;">
+                    ¿Estás seguro?
+                </h2>
+                <p style="color: var(--text-secondary); font-size: 1.1rem; margin-bottom: 2rem;">
+                    Estás a punto de eliminar permanentemente:
+                </p>
+                <div style="background: var(--bg-secondary); padding: 1rem; border-radius: var(--radius-md); border: 1px solid var(--border-color); margin-bottom: 2rem;">
+                    <strong style="color: var(--text-primary); font-size: 1.1rem;">{{ object }}</strong>
+                </div>
+                <p style="color: var(--warning); font-size: 0.9rem;">
+                    <i class="bi bi-info-circle me-1"></i>Esta acción no se puede deshacer.
+                </p>
+            </div>
+
+            <form method="post">
+                {% csrf_token %}
+                <div class="d-flex gap-2 justify-content-center">
+                    <a href="{{ request.META.HTTP_REFERER }}" class="btn-outline-modern">
+                        <i class="bi bi-x-circle me-1"></i>Cancelar
+                    </a>
+                    <button type="submit" class="btn-primary-modern" style="background: var(--danger); box-shadow: 0 4px 6px -1px rgba(239, 68, 68, 0.4);">
+                        <i class="bi bi-trash me-1"></i>Sí, eliminar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 {% endblock %}

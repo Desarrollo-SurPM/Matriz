@@ -2,8 +2,8 @@
 from django.http import JsonResponse
 from django.db.models import Count
 from django.utils import timezone
-from itertools import chain 
-from operator import attrgetter 
+from itertools import chain
+from operator import attrgetter
 
 from django.views.generic import TemplateView
 from django.shortcuts import get_object_or_404
@@ -14,6 +14,10 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from agenda.models import Visita, Recordatorio
 from .models import Empresa, Matriz, MedidaControl, Normativa, Proceso, Tarea, Riesgo, Documento, Peligro
 from .forms import EmpresaForm, MatrizForm, ProcesoForm, TareaForm, RiesgoForm, DocumentoForm, PeligroForm, RiesgoEvaluarForm
+
+# --- LANDING PAGE ---
+class LandingPageView(TemplateView):
+    template_name = 'landing.html'
 
 # --- VISTAS DE EMPRESA (El corazón de la plataforma) ---
 # --- VISTA DEL DASHBOARD PRINCIPAL (MODIFICADA) ---

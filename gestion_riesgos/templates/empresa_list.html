@@ -1,28 +1,59 @@
 {% extends 'base.html' %}
 
+{% block title %}Mis Empresas - Prevencionista OS{% endblock %}
+
 {% block content %}
 <div class="d-flex justify-content-between align-items-center mb-4">
-    <h1>Mis Empresas Clientes</h1>
-    <a href="{% url 'empresa_create' %}" class="btn btn-primary">
-        + Añadir Empresa
+    <div>
+        <h1 class="text-gradient" style="font-size: 2.5rem; font-weight: 700; margin-bottom: 0.5rem;">
+            <i class="bi bi-building me-2"></i>Mis Empresas Clientes
+        </h1>
+        <p style="color: var(--text-secondary); margin: 0;">Gestiona tus empresas y sus matrices de riesgo</p>
+    </div>
+    <a href="{% url 'empresa_create' %}" class="btn-primary-modern">
+        <i class="bi bi-plus-circle me-2"></i>Añadir Empresa
     </a>
 </div>
 
 <div class="row">
     {% for empresa in empresas %}
-    <div class="col-md-4 mb-4">
-        <div class="card h-100">
-            <div class="card-body">
-                <h5 class="card-title">{{ empresa.razon_social }}</h5>
-                <p class="card-text text-muted">{{ empresa.rut }}</p>
-                <a href="{{ empresa.get_absolute_url }}" class="btn btn-outline-primary">Gestionar</a>
+    <div class="col-md-6 col-lg-4 mb-4">
+        <div class="card-modern h-100">
+            <div class="d-flex align-items-start mb-3">
+                <div class="feature-icon me-3" style="width: 56px; height: 56px; font-size: 1.5rem;">
+                    <i class="bi bi-building-fill"></i>
+                </div>
+                <div class="flex-grow-1">
+                    <h5 class="mb-1" style="color: var(--text-primary); font-weight: 700;">
+                        {{ empresa.razon_social }}
+                    </h5>
+                    <p class="mb-0" style="color: var(--text-secondary); font-size: 0.9rem;">
+                        <i class="bi bi-credit-card me-1"></i>{{ empresa.rut }}
+                    </p>
+                </div>
+            </div>
+
+            <div class="divider my-3"></div>
+
+            <div class="d-flex gap-2">
+                <a href="{{ empresa.get_absolute_url }}" class="btn-primary-modern flex-grow-1">
+                    <i class="bi bi-gear me-1"></i>Gestionar
+                </a>
+                <a href="{% url 'matriz_create' empresa.pk %}" class="btn-outline-modern" data-tooltip="Crear Matriz">
+                    <i class="bi bi-plus-lg"></i>
+                </a>
             </div>
         </div>
     </div>
     {% empty %}
     <div class="col-12">
-        <div class="alert alert-info">
-            No tienes empresas registradas. ¡Comienza añadiendo tu primer cliente!
+        <div class="card-modern text-center" style="padding: 4rem 2rem;">
+            <i class="bi bi-building-slash" style="font-size: 5rem; color: var(--text-muted); opacity: 0.3; margin-bottom: 1.5rem;"></i>
+            <h3 style="color: var(--text-primary); margin-bottom: 1rem;">No tienes empresas registradas</h3>
+            <p style="color: var(--text-secondary); margin-bottom: 2rem;">¡Comienza añadiendo tu primer cliente!</p>
+            <a href="{% url 'empresa_create' %}" class="btn-primary-modern">
+                <i class="bi bi-plus-circle me-2"></i>Añadir Primera Empresa
+            </a>
         </div>
     </div>
     {% endfor %}

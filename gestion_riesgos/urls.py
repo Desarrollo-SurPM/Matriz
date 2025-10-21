@@ -4,7 +4,8 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('', views.DashboardView.as_view(), name='dashboard'),
+    path('', views.LandingPageView.as_view(), name='landing'),
+    path('dashboard/', views.DashboardView.as_view(), name='dashboard'),
     path('api/chart-data/', views.dashboard_chart_data, name='dashboard_chart_data'),
 
     # --- Gestión de Empresas (CRUD) ---

@@ -4,51 +4,78 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Prevencionista OS{% endblock %}</title>
+    {% load static %}
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    {% block extra_css %}{% endblock %}
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <nav class="navbar navbar-expand-lg navbar-modern">
         <div class="container-fluid">
             <a class="navbar-brand" href="{% url 'dashboard' %}">
-                <i class="bi bi-shield-check"></i> Prevencionista OS
+                <i class="bi bi-shield-check"></i>
+                <span>Prevencionista OS</span>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            
+
             <div class="collapse navbar-collapse" id="navbarNav">
                 {% if user.is_authenticated %}
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'empresa_list' %}">Mis Empresas</a>
+                        <a class="nav-link" href="{% url 'dashboard' %}">
+                            <i class="bi bi-speedometer2 me-1"></i>Dashboard
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'peligro_list' %}">Catálogo de Peligros</a>
+                        <a class="nav-link" href="{% url 'empresa_list' %}">
+                            <i class="bi bi-building me-1"></i>Mis Empresas
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'normativa_list' %}">Biblioteca de Normativas</a>
+                        <a class="nav-link" href="{% url 'peligro_list' %}">
+                            <i class="bi bi-exclamation-triangle me-1"></i>Peligros
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'calendario_legal' %}">Calendario Legal</a>
+                        <a class="nav-link" href="{% url 'normativa_list' %}">
+                            <i class="bi bi-book me-1"></i>Normativas
+                        </a>
                     </li>
                     <li class="nav-item">
-    <a class="nav-link" href="{% url 'reporte_flash' %}">Reporte Flash</a>
-</li>
+                        <a class="nav-link" href="{% url 'calendario_legal' %}">
+                            <i class="bi bi-calendar-check me-1"></i>Calendario
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'reporte_flash' %}">
+                            <i class="bi bi-file-earmark-text me-1"></i>Reportes
+                        </a>
+                    </li>
                 </ul>
                 {% endif %}
 
-                <div class="d-flex ms-auto">
+                <div class="d-flex ms-auto align-items-center">
                     {% if user.is_authenticated %}
-                        <span class="navbar-text me-3">
-                            Hola, {{ user.first_name|default:user.username }}
+                        <span class="navbar-text me-3" style="color: var(--text-secondary);">
+                            <i class="bi bi-person-circle me-1"></i>
+                            Hola, <strong style="color: var(--text-primary);">{{ user.first_name|default:user.username }}</strong>
                         </span>
                         <form action="{% url 'logout' %}" method="post">
                             {% csrf_token %}
-                            <button type="submit" class="btn btn-outline-light btn-sm">Cerrar Sesión</button>
+                            <button type="submit" class="btn-ghost">
+                                <i class="bi bi-box-arrow-right me-1"></i>Cerrar Sesión
+                            </button>
                         </form>
                     {% else %}
-                        <a href="{% url 'login' %}" class="btn btn-primary">Iniciar Sesión</a>
+                        <a href="{% url 'login' %}" class="btn-primary-modern">
+                            <i class="bi bi-box-arrow-in-right me-2"></i>Iniciar Sesión
+                        </a>
                     {% endif %}
                 </div>
             </div>
@@ -59,13 +86,17 @@
         {% block content %}{% endblock %}
     </main>
 
-    <footer class="container text-center mt-5 mb-3 text-muted">
-        <hr>
-        <p>&copy; {% now "Y" %} Prevencionista OS - Todos los derechos reservados.</p>
+    <footer class="text-center mt-5 py-4" style="border-top: 1px solid var(--border-color);">
+        <div class="container">
+            <p style="color: var(--text-muted); margin: 0;">
+                &copy; {% now "Y" %} Prevencionista OS - Todos los derechos reservados.
+            </p>
+        </div>
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    
+    <script src="{% static 'js/main.js' %}"></script>
+
     {% block extra_js %}
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.14/index.global.min.js'></script>
     {% endblock %}

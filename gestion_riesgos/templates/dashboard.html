@@ -3,109 +3,175 @@
 
 {% block content %}
 <div class="d-flex justify-content-between align-items-center mb-4">
-    <h1>Dashboard Principal</h1>
     <div>
-        <a href="{% url 'recordatorio_create' %}" class="btn btn-info">
-            <i class="bi bi-bell"></i> Crear Recordatorio
+        <h1 class="text-gradient" style="font-size: 2.5rem; font-weight: 700; margin-bottom: 0.5rem;">Dashboard Principal</h1>
+        <p style="color: var(--text-secondary); margin: 0;">Bienvenido a tu panel de control</p>
+    </div>
+    <div class="d-flex gap-2">
+        <a href="{% url 'recordatorio_create' %}" class="btn-outline-modern">
+            <i class="bi bi-bell me-1"></i> Recordatorio
         </a>
-        <a href="{% url 'visita_create' %}" class="btn btn-success">
-            <i class="bi bi-plus-circle"></i> Agendar Visita
+        <a href="{% url 'visita_create' %}" class="btn-primary-modern">
+            <i class="bi bi-plus-circle me-1"></i> Agendar Visita
         </a>
     </div>
 </div>
 
+<style>
+.nav-tabs {
+    border-bottom: 2px solid var(--border-color);
+    margin-bottom: 2rem;
+}
+.nav-tabs .nav-link {
+    color: var(--text-secondary);
+    border: none;
+    border-bottom: 3px solid transparent;
+    padding: 1rem 1.5rem;
+    font-weight: 600;
+    transition: all var(--transition-base);
+}
+.nav-tabs .nav-link:hover {
+    color: var(--text-primary);
+    border-bottom-color: var(--accent-primary);
+    background: rgba(99, 102, 241, 0.1);
+}
+.nav-tabs .nav-link.active {
+    color: var(--accent-primary);
+    background: transparent;
+    border-bottom-color: var(--accent-primary);
+}
+.list-group-item {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    transition: all var(--transition-base);
+}
+.list-group-item:hover {
+    background: var(--bg-hover);
+    border-color: var(--border-light);
+    transform: translateX(4px);
+}
+.list-group-item h6 {
+    color: var(--text-primary);
+}
+.badge-legend {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border-radius: 4px;
+    margin-right: 8px;
+}
+</style>
+
 <ul class="nav nav-tabs" id="dashboardTabs" role="tablist">
     <li class="nav-item" role="presentation">
         <button class="nav-link active" id="planificacion-tab" data-bs-toggle="tab" data-bs-target="#planificacion" type="button" role="tab" aria-controls="planificacion" aria-selected="true">
-            <i class="bi bi-calendar-week"></i> Planificación
+            <i class="bi bi-calendar-week me-2"></i> Planificación
         </button>
     </li>
     <li class="nav-item" role="presentation">
         <button class="nav-link" id="riesgos-tab" data-bs-toggle="tab" data-bs-target="#riesgos" type="button" role="tab" aria-controls="riesgos" aria-selected="false">
-            <i class="bi bi-graph-up"></i> Inteligencia de Riesgos
+            <i class="bi bi-graph-up me-2"></i> Inteligencia de Riesgos
         </button>
     </li>
     <li class="nav-item">
-        <a class="nav-link" href="{% url 'reporte_accidente_list' %}">Reporte de Accidentes</a>
+        <a class="nav-link" href="{% url 'reporte_accidente_list' %}">
+            <i class="bi bi-clipboard-pulse me-2"></i> Reporte de Accidentes
+        </a>
     </li>
 </ul>
 
 <div class="tab-content" id="dashboardTabsContent">
-    
+
     <div class="tab-pane fade show active" id="planificacion" role="tabpanel" aria-labelledby="planificacion-tab">
-        <div class="card shadow-sm border-top-0 rounded-0 rounded-bottom">
-            <div class="card-body">
+        <div class="card-modern">
+            <div class="card-header-modern">
+                <h3><i class="bi bi-calendar3 me-2"></i>Calendario de Eventos</h3>
+            </div>
                 <div id='calendar'></div>
 
-                <hr>
-                <h5 class="mt-4">Próximos Eventos</h5>
+                <div class="divider"></div>
+                <h5 class="mt-4 mb-3" style="color: var(--text-primary);"><i class="bi bi-list-check me-2"></i>Próximos Eventos</h5>
                 <div class="list-group">
                     {% for evento in proximos_eventos %}
                         {% if evento.asunto %} {# Es una Visita #}
                             <a href="{% url 'visita_update' evento.pk %}" class="list-group-item list-group-item-action">
-                                <div class="d-flex w-100 justify-content-between">
-                                    <h6 class="mb-1"><i class="bi bi-building text-primary"></i> Visita: {{ evento.asunto }}</h6>
-                                    <small>{{ evento.fecha_hora|date:"d M, H:i" }}</small>
+                                <div class="d-flex w-100 justify-content-between align-items-start">
+                                    <div>
+                                        <h6 class="mb-1"><i class="bi bi-building" style="color: var(--info);"></i> Visita: {{ evento.asunto }}</h6>
+                                        <p class="mb-0 small" style="color: var(--text-secondary);">{{ evento.empresa.razon_social }}</p>
+                                    </div>
+                                    <span class="badge-modern">{{ evento.fecha_hora|date:"d M, H:i" }}</span>
                                 </div>
-                                <p class="mb-1 small text-muted">{{ evento.empresa.razon_social }}</p>
                             </a>
                         {% else %} {# Es un Recordatorio #}
                             <a href="{% url 'recordatorio_update' evento.pk %}" class="list-group-item list-group-item-action">
-                                <div class="d-flex w-100 justify-content-between">
-                                    <h6 class="mb-1"><i class="bi bi-bell text-success"></i> Recordatorio: {{ evento.titulo }}</h6>
-                                    <small>{{ evento.fecha_hora|date:"d M, H:i" }}</small>
+                                <div class="d-flex w-100 justify-content-between align-items-start">
+                                    <div>
+                                        <h6 class="mb-1"><i class="bi bi-bell" style="color: var(--success);"></i> Recordatorio: {{ evento.titulo }}</h6>
+                                        <p class="mb-0 small" style="color: var(--text-secondary);">{{ evento.descripcion|truncatewords:15 }}</p>
+                                    </div>
+                                    <span class="badge-modern">{{ evento.fecha_hora|date:"d M, H:i" }}</span>
                                 </div>
-                                <p class="mb-1 small text-muted">{{ evento.descripcion|truncatewords:15 }}</p>
                             </a>
                         {% endif %}
                     {% empty %}
-                        <div class="list-group-item">
-                            <p class="text-muted text-center mb-0">No tienes eventos próximos agendados.</p>
+                        <div class="list-group-item text-center">
+                            <i class="bi bi-calendar-x" style="font-size: 3rem; color: var(--text-muted); opacity: 0.3;"></i>
+                            <p style="color: var(--text-muted); margin-top: 1rem;">No tienes eventos próximos agendados.</p>
                         </div>
                     {% endfor %}
                 </div>
 
-                <ul class="list-inline mt-4 mb-0">
-                    <li class="list-inline-item"><span class="badge" style="background-color:#dc3545;">&nbsp;</span> Vencimiento Legal</li>
-                    <li class="list-inline-item"><span class="badge" style="background-color:#0d6efd;">&nbsp;</span> Visita</li>
-                    <li class="list-inline-item"><span class="badge" style="background-color:#198754;">&nbsp;</span> Recordatorio</li>
-                </ul>
-            </div>
+                <div class="mt-4 d-flex gap-3 flex-wrap" style="font-size: 0.9rem;">
+                    <div><span class="badge-legend" style="background-color:#dc3545;"></span> Vencimiento Legal</div>
+                    <div><span class="badge-legend" style="background-color:#0d6efd;"></span> Visita</div>
+                    <div><span class="badge-legend" style="background-color:#198754;"></span> Recordatorio</div>
+                </div>
         </div>
     </div>
 
     <div class="tab-pane fade" id="riesgos" role="tabpanel" aria-labelledby="riesgos-tab">
-        <div class="card shadow-sm border-top-0 rounded-0 rounded-bottom">
-            <div class="card-body">
+        <div class="card-modern">
+            <div class="card-header-modern">
+                <h3><i class="bi bi-pie-chart me-2"></i>Análisis de Riesgos</h3>
+            </div>
                 <div class="row">
                     <div class="col-lg-6 mb-4">
-                        <h5 class="card-title mb-3 text-center">Distribución de Riesgos por Clasificación</h5>
-                        <canvas id="clasificacionChart"></canvas>
+                        <h5 style="color: var(--text-primary); margin-bottom: 1.5rem; text-align: center;">
+                            <i class="bi bi-pie-chart-fill me-2"></i>Distribución de Riesgos por Clasificación
+                        </h5>
+                        <div style="background: var(--bg-secondary); padding: 1.5rem; border-radius: var(--radius-lg);">
+                            <canvas id="clasificacionChart"></canvas>
+                        </div>
                     </div>
                     <div class="col-lg-6 mb-4">
-                        <h5 class="card-title mb-3 text-center">Jerarquía de Medidas de Control Aplicadas</h5>
-                        <canvas id="jerarquiaChart"></canvas>
+                        <h5 style="color: var(--text-primary); margin-bottom: 1.5rem; text-align: center;">
+                            <i class="bi bi-bar-chart-fill me-2"></i>Jerarquía de Medidas de Control
+                        </h5>
+                        <div style="background: var(--bg-secondary); padding: 1.5rem; border-radius: var(--radius-lg);">
+                            <canvas id="jerarquiaChart"></canvas>
+                        </div>
                     </div>
                 </div>
-            </div>
         </div>
     </div>
 </div>
 
 <div class="modal fade" id="eventDetailModal" tabindex="-1" aria-labelledby="eventDetailModalLabel" aria-hidden="true">
     <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="eventDetailModalLabel">Detalles del Evento</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div class="modal-content" style="background: var(--bg-card); border: 1px solid var(--border-color);">
+            <div class="modal-header" style="border-bottom: 1px solid var(--border-color);">
+                <h5 class="modal-title text-gradient" id="eventDetailModalLabel">Detalles del Evento</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="filter: invert(1);"></button>
             </div>
             <div class="modal-body">
-                <p><strong>Evento:</strong> <span id="eventTitle"></span></p>
-                <p><strong>Fecha:</strong> <span id="eventDate"></span></p>
+                <p style="color: var(--text-primary);"><strong>Evento:</strong> <span id="eventTitle" style="color: var(--text-secondary);"></span></p>
+                <p style="color: var(--text-primary);"><strong>Fecha:</strong> <span id="eventDate" style="color: var(--text-secondary);"></span></p>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                <a id="editEventButton" href="#" class="btn btn-primary">Editar / Ver Detalles</a>
+            <div class="modal-footer" style="border-top: 1px solid var(--border-color);">
+                <button type="button" class="btn-ghost" data-bs-dismiss="modal">Cerrar</button>
+                <a id="editEventButton" href="#" class="btn-primary-modern">Editar / Ver Detalles</a>
             </div>
         </div>
     </div>

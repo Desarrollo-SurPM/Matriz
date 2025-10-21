@@ -1,32 +1,147 @@
 {% extends 'base.html' %}
 {% block title %}{{ titulo }}{% endblock %}
-{% block content %}
-<h1>{{ titulo }}</h1>
-<form method="post">
-    {% csrf_token %}
-    
-    {% for field in form %}
-        <div class="mb-3">
-            {{ field.label_tag }}
-            
-            {% if field.name == 'peligro' %}
-                <div class="input-group">
-                    {{ field }}
-                    <a href="{% url 'peligro_create' %}" class="btn btn-outline-success" target="_blank" title="Añadir nuevo peligro al catálogo">+</a>
-                </div>
-                <div class="form-text">Si el peligro no está en la lista, puedes añadirlo con el botón "+". Luego, refresca esta página.</div>
-            {% else %}
-                {{ field }}
-            {% endif %}
-            
-            {% if field.help_text %}
-                <div class="form-text">{{ field.help_text }}</div>
-            {% endif %}
-            {{ field.errors }}
-        </div>
-    {% endfor %}
 
-    <button type="submit" class="btn btn-primary">{{ boton_texto|default:"Guardar" }}</button>
-    <a href="{{ request.META.HTTP_REFERER|default:_('empresa_list') }}" class="btn btn-secondary">Cancelar</a>
-</form>
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="mb-4">
+            <h1 class="text-gradient" style="font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem;">
+                {{ titulo }}
+            </h1>
+        </div>
+
+        <div class="card-modern">
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                {% for field in form %}
+                    <div class="mb-4">
+                        <label for="{{ field.id_for_label }}" class="form-label-modern">
+                            {{ field.label }}
+                            {% if field.field.required %}
+                                <span style="color: var(--danger);">*</span>
+                            {% endif %}
+                        </label>
+
+                        {% if field.name == 'peligro' %}
+                            <div class="input-group">
+                                {{ field }}
+                                <a href="{% url 'peligro_create' %}" class="btn-outline-modern" target="_blank" title="Añadir nuevo peligro al catálogo">
+                                    <i class="bi bi-plus-lg"></i>
+                                </a>
+                            </div>
+                            <small style="color: var(--text-secondary); font-size: 0.85rem; display: block; margin-top: 0.5rem;">
+                                <i class="bi bi-info-circle me-1"></i>Si el peligro no está en la lista, puedes añadirlo con el botón "+". Luego, refresca esta página.
+                            </small>
+                        {% else %}
+                            {{ field }}
+                        {% endif %}
+
+                        {% if field.help_text %}
+                            <small style="color: var(--text-secondary); font-size: 0.85rem; display: block; margin-top: 0.5rem;">
+                                {{ field.help_text }}
+                            </small>
+                        {% endif %}
+
+                        {% if field.errors %}
+                            <div style="color: var(--danger); font-size: 0.85rem; margin-top: 0.5rem;">
+                                {% for error in field.errors %}
+                                    <i class="bi bi-exclamation-triangle me-1"></i>{{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+
+                <div class="divider my-4"></div>
+
+                <div class="d-flex gap-2 justify-content-end">
+                    <a href="{{ request.META.HTTP_REFERER|default:'empresa_list' }}" class="btn-ghost">
+                        <i class="bi bi-x-circle me-1"></i>Cancelar
+                    </a>
+                    <button type="submit" class="btn-primary-modern">
+                        <i class="bi bi-check-circle me-1"></i>{{ boton_texto|default:"Guardar" }}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Estilos para campos de formulario Django */
+.card-modern form input[type="text"],
+.card-modern form input[type="email"],
+.card-modern form input[type="number"],
+.card-modern form input[type="date"],
+.card-modern form input[type="time"],
+.card-modern form input[type="datetime-local"],
+.card-modern form input[type="url"],
+.card-modern form input[type="password"],
+.card-modern form input[type="file"],
+.card-modern form select,
+.card-modern form textarea {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    color: var(--text-primary);
+    padding: 0.75rem 1rem;
+    width: 100%;
+    transition: all var(--transition-base);
+}
+
+.card-modern form input:focus,
+.card-modern form select:focus,
+.card-modern form textarea:focus {
+    background: var(--bg-card);
+    border-color: var(--accent-primary);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+    outline: none;
+}
+
+.card-modern form select {
+    cursor: pointer;
+}
+
+.card-modern form textarea {
+    min-height: 120px;
+    resize: vertical;
+}
+
+.card-modern form input[type="checkbox"],
+.card-modern form input[type="radio"] {
+    width: auto;
+    margin-right: 0.5rem;
+    accent-color: var(--accent-primary);
+}
+
+.input-group {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.input-group select {
+    flex: 1;
+}
+
+/* File input styling */
+.card-modern form input[type="file"] {
+    padding: 0.5rem;
+}
+
+.card-modern form input[type="file"]::file-selector-button {
+    background: var(--accent-gradient);
+    border: none;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    margin-right: 1rem;
+    transition: all var(--transition-base);
+}
+
+.card-modern form input[type="file"]::file-selector-button:hover {
+    filter: brightness(1.1);
+}
+</style>
 {% endblock %}

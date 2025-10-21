@@ -1,60 +1,107 @@
 {% extends 'base.html' %}
 
+{% block title %}{{ empresa.razon_social }} - Prevencionista OS{% endblock %}
+
 {% block content %}
 <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
-        <h2>{{ empresa.razon_social }}</h2>
-        <p class="text-muted">{{ empresa.rut }}</p>
+        <h1 class="text-gradient" style="font-size: 2.5rem; font-weight: 700; margin-bottom: 0.5rem;">
+            <i class="bi bi-building-fill me-2"></i>{{ empresa.razon_social }}
+        </h1>
+        <p style="color: var(--text-secondary); margin: 0;">
+            <i class="bi bi-credit-card me-2"></i>RUT: {{ empresa.rut }}
+        </p>
     </div>
-    <div>
-        <a href="{% url 'empresa_update' empresa.pk %}" class="btn btn-secondary">Editar Datos</a>
-        <a href="{% url 'empresa_delete' empresa.pk %}" class="btn btn-danger">Eliminar Empresa</a>
+    <div class="d-flex gap-2">
+        <a href="{% url 'empresa_update' empresa.pk %}" class="btn-outline-modern">
+            <i class="bi bi-pencil me-1"></i>Editar
+        </a>
+        <a href="{% url 'empresa_delete' empresa.pk %}" class="btn-ghost" style="color: var(--danger); border-color: var(--danger);">
+            <i class="bi bi-trash me-1"></i>Eliminar
+        </a>
     </div>
 </div>
 
-<hr>
+<div class="divider mb-4"></div>
 
 <div class="row">
-    <div class="col-md-6">
-        <div class="card">
-            <div class="card-header d-flex justify-content-between align-items-center">
-                <h4>Matrices de Riesgo</h4>
-                <a href="{% url 'matriz_create' empresa_pk=empresa.pk %}" class="btn btn-success btn-sm">+ Crear</a>
+    <div class="col-lg-6 mb-4">
+        <div class="card-modern h-100">
+            <div class="card-header-modern d-flex justify-content-between align-items-center">
+                <h4 class="mb-0"><i class="bi bi-grid-3x3-gap-fill me-2"></i>Matrices de Riesgo</h4>
+                <a href="{% url 'matriz_create' empresa_pk=empresa.pk %}" class="btn-primary-modern">
+                    <i class="bi bi-plus-circle me-1"></i>Crear
+                </a>
             </div>
-            <div class="list-group list-group-flush">
+
+            <div class="list-group">
                 {% for matriz in empresa.matrices.all %}
                     <a href="{% url 'matriz_detail' matriz.pk %}" class="list-group-item list-group-item-action">
-                        {{ matriz.nombre_proyecto }}
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-file-earmark-spreadsheet me-3" style="font-size: 1.5rem; color: var(--accent-primary);"></i>
+                            <div class="flex-grow-1">
+                                <h6 class="mb-0" style="color: var(--text-primary);">{{ matriz.nombre_proyecto }}</h6>
+                                <small style="color: var(--text-secondary);">Creada el {{ matriz.fecha_elaboracion|date:"d/m/Y" }}</small>
+                            </div>
+                            <i class="bi bi-chevron-right" style="color: var(--text-muted);"></i>
+                        </div>
                     </a>
                 {% empty %}
-                    <li class="list-group-item">No hay matrices para esta empresa.</li>
+                    <div class="list-group-item text-center" style="padding: 3rem 1rem;">
+                        <i class="bi bi-inbox" style="font-size: 3rem; color: var(--text-muted); opacity: 0.3;"></i>
+                        <p style="color: var(--text-muted); margin-top: 1rem; margin-bottom: 0;">No hay matrices para esta empresa.</p>
+                    </div>
                 {% endfor %}
             </div>
         </div>
     </div>
 
-    <div class="col-md-6">
-        <div class="card">
-            <div class="card-header d-flex justify-content-between align-items-center">
-                <h4>Gestor Documental</h4>
-                <a href="{% url 'documento_create' empresa_pk=empresa.pk %}" class="btn btn-success btn-sm">+ Subir</a>
+    <div class="col-lg-6 mb-4">
+        <div class="card-modern h-100">
+            <div class="card-header-modern d-flex justify-content-between align-items-center">
+                <h4 class="mb-0"><i class="bi bi-folder-fill me-2"></i>Gestor Documental</h4>
+                <a href="{% url 'documento_create' empresa_pk=empresa.pk %}" class="btn-primary-modern">
+                    <i class="bi bi-cloud-upload me-1"></i>Subir
+                </a>
             </div>
-            <ul class="list-group list-group-flush">
+
+            <div class="list-group">
                 {% for doc in empresa.documentos.all %}
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        <a href="{{ doc.archivo.url }}" target="_blank">{{ doc.nombre }}</a>
-                        <a href="{% url 'documento_delete' doc.pk %}" class="btn btn-outline-danger btn-sm">x</a>
-                    </li>
+                    <div class="list-group-item">
+                        <div class="d-flex align-items-center justify-content-between">
+                            <div class="d-flex align-items-center flex-grow-1">
+                                <i class="bi bi-file-earmark-pdf me-3" style="font-size: 1.5rem; color: var(--danger);"></i>
+                                <div>
+                                    <a href="{{ doc.archivo.url }}" target="_blank" style="color: var(--text-primary); text-decoration: none; font-weight: 600;">
+                                        {{ doc.nombre }}
+                                    </a>
+                                    <div>
+                                        <small style="color: var(--text-secondary);">
+                                            <i class="bi bi-calendar3 me-1"></i>{{ doc.fecha_subida|date:"d/m/Y" }}
+                                        </small>
+                                    </div>
+                                </div>
+                            </div>
+                            <a href="{% url 'documento_delete' doc.pk %}" class="btn-ghost" style="color: var(--danger); padding: 0.5rem;">
+                                <i class="bi bi-trash"></i>
+                            </a>
+                        </div>
+                    </div>
                 {% empty %}
-                    <li class="list-group-item">No hay documentos para esta empresa.</li>
+                    <div class="list-group-item text-center" style="padding: 3rem 1rem;">
+                        <i class="bi bi-file-earmark-x" style="font-size: 3rem; color: var(--text-muted); opacity: 0.3;"></i>
+                        <p style="color: var(--text-muted); margin-top: 1rem; margin-bottom: 0;">No hay documentos para esta empresa.</p>
+                    </div>
                 {% endfor %}
-            </ul>
+            </div>
         </div>
     </div>
 </div>
 
 <div class="mt-4">
-    <a href="{% url 'empresa_list' %}" class="btn btn-outline-secondary">&larr; Volver a Mis Empresas</a>
+    <a href="{% url 'empresa_list' %}" class="btn-outline-modern">
+        <i class="bi bi-arrow-left me-2"></i>Volver a Mis Empresas
+    </a>
 </div>
 
 {% endblock %}

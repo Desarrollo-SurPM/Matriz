@@ -1,34 +1,62 @@
 {% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Iniciar Sesión - Prevencionista OS{% endblock %}
 
 {% block content %}
 <div class="row justify-content-center mt-5">
-    <div class="col-md-6">
-        <div class="card">
-            <div class="card-header">
-                <h3 class="text-center">Iniciar Sesión</h3>
+    <div class="col-md-5">
+        <div class="card-modern">
+            <div class="text-center mb-4">
+                <div class="d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px; background: var(--accent-gradient); border-radius: var(--radius-xl);">
+                    <i class="bi bi-shield-check" style="font-size: 2.5rem; color: white;"></i>
+                </div>
+                <h2 class="text-gradient mb-2" style="font-size: 2rem; font-weight: 700;">Iniciar Sesión</h2>
+                <p style="color: var(--text-secondary);">Accede a tu cuenta de Prevencionista OS</p>
             </div>
-            <div class="card-body">
-                {% if form.errors %}
-                    <div class="alert alert-danger">
-                        Tu nombre de usuario o contraseña son incorrectos. Por favor, inténtalo de nuevo.
-                    </div>
-                {% endif %}
 
-                <form method="post" action="{% url 'login' %}">
-                    {% csrf_token %}
-                    <div class="mb-3">
-                        <label for="id_username" class="form-label">Usuario:</label>
-                        <input type="text" name="username" autofocus autocapitalize="none" autocomplete="username" class="form-control" required id="id_username">
-                    </div>
-                    <div class="mb-3">
-                        <label for="id_password" class="form-label">Contraseña:</label>
-                        <input type="password" name="password" autocomplete="current-password" class="form-control" required id="id_password">
-                    </div>
-                    <div class="d-grid">
-                        <button type="submit" class="btn btn-primary">Ingresar</button>
-                    </div>
-                </form>
-            </div>
+            {% if form.errors %}
+                <div class="alert alert-danger" style="background: rgba(239, 68, 68, 0.1); border: 1px solid var(--danger); border-radius: var(--radius-md); color: var(--danger); padding: 1rem; margin-bottom: 1.5rem;">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                    Tu nombre de usuario o contraseña son incorrectos. Por favor, inténtalo de nuevo.
+                </div>
+            {% endif %}
+
+            <form method="post" action="{% url 'login' %}">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="id_username" class="form-label-modern">
+                        <i class="bi bi-person me-1"></i>Usuario
+                    </label>
+                    <input type="text" name="username" autofocus autocapitalize="none" autocomplete="username" class="form-control-modern" required id="id_username" placeholder="Ingresa tu usuario">
+                </div>
+
+                <div class="mb-4">
+                    <label for="id_password" class="form-label-modern">
+                        <i class="bi bi-lock me-1"></i>Contraseña
+                    </label>
+                    <input type="password" name="password" autocomplete="current-password" class="form-control-modern" required id="id_password" placeholder="Ingresa tu contraseña">
+                </div>
+
+                <div class="d-grid mb-3">
+                    <button type="submit" class="btn-primary-modern w-100">
+                        <i class="bi bi-box-arrow-in-right me-2"></i>
+                        Ingresar
+                    </button>
+                </div>
+
+                <div class="text-center">
+                    <a href="#" style="color: var(--accent-primary); text-decoration: none; font-size: 0.9rem;">
+                        ¿Olvidaste tu contraseña?
+                    </a>
+                </div>
+            </form>
+        </div>
+
+        <div class="text-center mt-4">
+            <a href="{% url 'landing' %}" style="color: var(--text-secondary); text-decoration: none;">
+                <i class="bi bi-arrow-left me-2"></i>Volver al inicio
+            </a>
         </div>
     </div>
 </div>
