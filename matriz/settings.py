@@ -24,6 +24,17 @@ ALLOWED_HOSTS += [
     '.railway.app',  # Para cualquier subdominio de railway.app
 ]
 
+# CSRF: dominios confiables para solicitudes desde Railway (usar esquema https)
+CSRF_TRUSTED_ORIGINS = config(
+    'CSRF_TRUSTED_ORIGINS',
+    default='https://*.railway.app,https://healthcheck.railway.app'
+).split(',')
+
+# Cookies seguras en producción
+CSRF_COOKIE_SECURE = not DEBUG
+SESSION_COOKIE_SECURE = not DEBUG
+SECURE_SSL_REDIRECT = not DEBUG
+
 
 # Application definition
 INSTALLED_APPS = [
