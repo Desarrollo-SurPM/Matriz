@@ -52,6 +52,9 @@ SECURE_SSL_REDIRECT = not DEBUG
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 USE_X_FORWARDED_HOST = True
 
+# Evitar redirecciones para healthcheck y conservar barra opcional
+SECURE_REDIRECT_EXEMPT = [r'^healthz/?$']
+
 
 # Application definition
 INSTALLED_APPS = [
