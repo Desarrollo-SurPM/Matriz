@@ -2,14 +2,18 @@
 
 import os
 from pathlib import Path
-from decouple import AutoConfig
+from decouple import AutoConfig, Config, RepositoryEnv
 import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Cargar variables de entorno desde .env en la raíz del proyecto
-config = AutoConfig(search_path=BASE_DIR)
+# Cargar variables de entorno desde .env en la raíz del proyecto, de forma explícita
+ENV_FILE = BASE_DIR / '.env'
+if ENV_FILE.exists():
+    config = Config(RepositoryEnv(str(ENV_FILE)))
+else:
+    config = AutoConfig(search_path=BASE_DIR)
 
 # Lee la SECRET_KEY desde las variables de entorno. ¡Mucho más seguro!
 SECRET_KEY = config('SECRET_KEY')
@@ -87,11 +91,17 @@ WSGI_APPLICATION = 'matriz.wsgi.application'
 
 # Database
 # Siempre usar PostgreSQL desde variable de entorno DATABASE_URL. No usar SQLite.
-if not config('DATABASE_URL', default=''):
+DATABASE_URL_VALUE = config('DATABASE_URL', default='')
+if not DATABASE_URL_VALUE:
     raise ValueError("DATABASE_URL no está definido en el entorno.")
 
+# Importante: usar parse() con el valor leído del .env para no depender de os.environ
+_db_config = dj_database_url.parse(DATABASE_URL_VALUE, conn_max_age=600, ssl_require=not DEBUG)
+if not _db_config:
+    raise ValueError("DATABASE_URL es inválido o no pudo parsearse.")
+
 DATABASES = {
-    'default': dj_database_url.config(env='DATABASE_URL', conn_max_age=600, ssl_require=not DEBUG)
+    'default': _db_config
 }
 
 
