@@ -2,11 +2,14 @@
 
 import os
 from pathlib import Path
-from decouple import config
+from decouple import AutoConfig
 import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+# Cargar variables de entorno desde .env en la raíz del proyecto
+config = AutoConfig(search_path=BASE_DIR)
 
 # Lee la SECRET_KEY desde las variables de entorno. ¡Mucho más seguro!
 SECRET_KEY = config('SECRET_KEY')
