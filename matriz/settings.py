@@ -31,6 +31,10 @@ ALLOWED_HOSTS += [
     '.railway.app',  # Para cualquier subdominio de railway.app
 ]
 
+# Permitir 0.0.0.0 en desarrollo (útil para previews/local bind)
+if DEBUG and '0.0.0.0' not in ALLOWED_HOSTS:
+    ALLOWED_HOSTS.append('0.0.0.0')
+
 # CSRF: dominios confiables para solicitudes desde Railway (usar esquema https)
 CSRF_TRUSTED_ORIGINS = config(
     'CSRF_TRUSTED_ORIGINS',
