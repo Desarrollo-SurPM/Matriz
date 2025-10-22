@@ -29,7 +29,8 @@ ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='127.0.0.1,localhost,healthcheck
 # Agregar hosts adicionales para Railway
 ALLOWED_HOSTS += [
     'healthcheck.railway.app',  # Para healthchecks de Railway
-    '.railway.app',  # Para cualquier subdominio de railway.app
+    '.railway.app',             # Subdominios antiguos de railway.app
+    '.up.railway.app',          # Subdominios nuevos de up.railway.app
 ]
 
 # Permitir 0.0.0.0 en desarrollo (útil para previews/local bind)
@@ -39,13 +40,17 @@ if DEBUG and '0.0.0.0' not in ALLOWED_HOSTS:
 # CSRF: dominios confiables para solicitudes desde Railway (usar esquema https)
 CSRF_TRUSTED_ORIGINS = config(
     'CSRF_TRUSTED_ORIGINS',
-    default='https://*.railway.app,https://healthcheck.railway.app'
+    default='https://*.railway.app,https://*.up.railway.app,https://healthcheck.railway.app'
 ).split(',')
 
 # Cookies seguras en producción
 CSRF_COOKIE_SECURE = not DEBUG
 SESSION_COOKIE_SECURE = not DEBUG
 SECURE_SSL_REDIRECT = not DEBUG
+
+# Respetar el proxy de Railway para detectar HTTPS correctamente
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+USE_X_FORWARDED_HOST = True
 
 
 # Application definition
