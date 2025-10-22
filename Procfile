@@ -1,2 +1,1 @@
-web: gunicorn matriz.wsgi --log-file -
-release: python manage.py migrate
+web: python manage.py migrate && python manage.py collectstatic --noinput && gunicorn matriz.wsgi --log-file -

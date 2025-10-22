@@ -16,7 +16,8 @@ else:
     config = AutoConfig(search_path=BASE_DIR)
 
 # Lee la SECRET_KEY desde las variables de entorno. ¡Mucho más seguro!
-SECRET_KEY = config('SECRET_KEY')
+# En entornos donde no esté definida (p.ej., durante el build), usa un valor temporal.
+SECRET_KEY = config('SECRET_KEY', default='insecure-secret-key-change-me')
 
 # DEBUG debe ser False en producción. Se controla con una variable de entorno.
 DEBUG = config('DEBUG', default=False, cast=bool)
@@ -78,7 +79,7 @@ ROOT_URLCONF = 'matriz.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')], # Esto parece estar mal en tu config original, lo corregimos
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -94,15 +95,19 @@ WSGI_APPLICATION = 'matriz.wsgi.application'
 
 
 # Database
-# Siempre usar PostgreSQL desde variable de entorno DATABASE_URL. No usar SQLite.
-DATABASE_URL_VALUE = config('DATABASE_URL', default='')
-if not DATABASE_URL_VALUE:
-    raise ValueError("DATABASE_URL no está definido en el entorno.")
-
-# Importante: usar parse() con el valor leído del .env para no depender de os.environ
-_db_config = dj_database_url.parse(DATABASE_URL_VALUE, conn_max_age=600, ssl_require=not DEBUG)
-if not _db_config:
-    raise ValueError("DATABASE_URL es inválido o no pudo parsearse.")
+# Usar PostgreSQL desde DATABASE_URL cuando esté definido. Si no, fallback a SQLite
+DATABASE_URL_VALUE = config('DATABASE_URL', default=None)
+if DATABASE_URL_VALUE:
+    _db_config = dj_database_url.parse(
+        DATABASE_URL_VALUE,
+        conn_max_age=600,
+        ssl_require=not DEBUG
+    )
+else:
+    _db_config = {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
 
 DATABASES = {
     'default': _db_config
