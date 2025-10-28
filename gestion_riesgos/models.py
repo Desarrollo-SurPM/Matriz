@@ -62,6 +62,9 @@ class Proceso(models.Model):
     matriz = models.ForeignKey(Matriz, on_delete=models.CASCADE, related_name="procesos")
     nombre = models.CharField(max_length=255, help_text="Ej: Proceso de Soldadura")
     
+    # --- CAMPO IPER (Paso 3) ---
+    subproceso = models.CharField("Subproceso", max_length=255, blank=True, help_text="Subproceso (Opcional)")
+
     class Meta:
         unique_together = ('matriz', 'nombre')
 
@@ -73,6 +76,11 @@ class Tarea(models.Model):
     puesto_trabajo = models.CharField(max_length=255, help_text="Ej: Soldador Calificado")
     descripcion = models.CharField(max_length=255, help_text="Ej: Cortar planchas de metal")
     es_rutinaria = models.BooleanField(default=True)
+    
+    # --- CAMPOS IPER (Pasos 4 y 5) ---
+    herramientas_equipos = models.TextField("Herramientas y Equipos", blank=True, help_text="Equipos y herramientas utilizados")
+    genero_hombres = models.PositiveIntegerField("N° Hombres", default=0, help_text="Número de hombres involucrados")
+    genero_mujeres = models.PositiveIntegerField("N° Mujeres", default=0, help_text="Número de mujeres involucradas")
     
     def __str__(self):
         return self.descripcion
@@ -88,12 +96,23 @@ class Riesgo(models.Model):
         BAJA = 1, 'Baja'
         MEDIA = 2, 'Media'
         ALTA = 4, 'Alta'
+    
+    # --- CAMPOS IPER (Paso 13) ---
+    class Gema(models.TextChoices):
+        GENTE = 'G', 'Gente'
+        EQUIPO = 'E', 'Equipo'
+        MATERIAL = 'M', 'Material'
+        AMBIENTE = 'A', 'Ambiente'
+        NO_APLICA = 'N/A', 'No Aplica'
 
     tarea = models.ForeignKey(Tarea, on_delete=models.CASCADE, related_name="riesgos")
     peligro = models.ForeignKey(Peligro, on_delete=models.PROTECT, related_name="riesgos_asociados")
     consecuencias = models.TextField(blank=True, help_text="Ej: Golpes, fracturas")
+    
+    # --- CAMPO IPER (Paso 13) ---
+    identificacion_gema = models.CharField("GEMA", max_length=10, choices=Gema.choices, default=Gema.NO_APLICA)
 
-    # --- EVALUACIÓN INHERENTE POR CATEGORÍA ---
+    # --- EVALUACIÓN INHERENTE POR CATEGORÍA (Paso 15) ---
     # Seguridad y Emergencias
     probabilidad_seguridad = models.PositiveIntegerField("Probabilidad S&E", choices=Probabilidad.choices, null=True, blank=True)
     consecuencia_seguridad = models.PositiveIntegerField("Consecuencia S&E", choices=Consecuencia.choices, null=True, blank=True)
@@ -110,10 +129,38 @@ class Riesgo(models.Model):
     probabilidad_musculoesqueleticos = models.PositiveIntegerField("Probabilidad M-E", choices=Probabilidad.choices, null=True, blank=True)
     consecuencia_musculoesqueleticos = models.PositiveIntegerField("Consecuencia M-E", choices=Consecuencia.choices, null=True, blank=True)
 
+    # --- CAMPOS IPER (Pasos 16-21): GESTIÓN DE MEDIDAS PROPUESTAS ---
+    requisito_legal = models.CharField("Requisito Legal", max_length=255, blank=True, help_text="Requisito legal asociado a la medida de control")
+    nueva_medida_control = models.TextField("Nueva Medida de Control", blank=True, help_text="Nueva medida de control o eliminación (Opcional)")
+    responsable_gestion = models.CharField("Responsable Gestión", max_length=255, blank=True, help_text="Persona o departamento responsable de gestionar")
+    fecha_ejecucion = models.DateField("Fecha Ejecución", null=True, blank=True)
+    responsable_seguimiento = models.CharField("Responsable Seguimiento", max_length=255, blank=True, help_text="Responsable del seguimiento MIPER")
+    fecha_seguimiento = models.DateField("Fecha Seguimiento", null=True, blank=True)
 
-    # --- EVALUACIÓN RESIDUAL (GENERAL) ---
+    # --- EVALUACIÓN RESIDUAL (Paso 22) ---
     probabilidad_residual = models.PositiveIntegerField(choices=Probabilidad.choices, null=True, blank=True)
     consecuencia_residual = models.PositiveIntegerField(choices=Consecuencia.choices, null=True, blank=True)
+
+    # --- CAMPOS IPER (Paso 23): POBLACIÓN ESPECIAL ---
+    discapacidad_fisica_h = models.PositiveIntegerField("Disc. Física Hombres", default=0, null=True, blank=True)
+    discapacidad_fisica_m = models.PositiveIntegerField("Disc. Física Mujeres", default=0, null=True, blank=True)
+    discapacidad_cognitiva_h = models.PositiveIntegerField("Disc. Cognitiva Hombres", default=0, null=True, blank=True)
+    discapacidad_cognitiva_m = models.PositiveIntegerField("Disc. Cognitiva Mujeres", default=0, null=True, blank=True)
+    discapacidad_sensorial_h = models.PositiveIntegerField("Disc. Sensorial Hombres", default=0, null=True, blank=True)
+    discapacidad_sensorial_m = models.PositiveIntegerField("Disc. Sensorial Mujeres", default=0, null=True, blank=True)
+    trabajadora_embarazada = models.PositiveIntegerField("Trab. Embarazada", default=0, null=True, blank=True)
+    trabajadora_lactancia = models.PositiveIntegerField("Trab. Lactancia", default=0, null=True, blank=True)
+    adultos_mayores_h = models.PositiveIntegerField("Adultos Mayores H", default=0, null=True, blank=True)
+    adultos_mayores_m = models.PositiveIntegerField("Adultos Mayores M", default=0, null=True, blank=True)
+    adolescentes_h = models.PositiveIntegerField("Adolescentes H", default=0, null=True, blank=True)
+    adolescentes_m = models.PositiveIntegerField("Adolescentes M", default=0, null=True, blank=True)
+
+    # --- CAMPOS IPER (Paso 24) ---
+    medidas_control_especiales = models.TextField("Medidas Control Especiales", blank=True, help_text="Medidas para grupos con discapacidades o condiciones especiales")
+
+    # --- CAMPOS IPER (Paso 25): EVALUACIÓN ESPECIAL ---
+    probabilidad_especial = models.PositiveIntegerField("Probabilidad Especial", choices=Probabilidad.choices, null=True, blank=True)
+    consecuencia_especial = models.PositiveIntegerField("Consecuencia Especial", choices=Consecuencia.choices, null=True, blank=True)
 
     # --- MÉTODOS PRIVADOS DE CÁLCULO ---
     def _calcular_vep(self, probabilidad, consecuencia):
@@ -123,10 +170,11 @@ class Riesgo(models.Model):
 
     def _clasificar_riesgo(self, vep):
         if vep is None: return "No evaluado"
-        if vep >= 9: return "Intolerable"
-        if vep >= 5: return "Importante"
-        if vep >= 3: return "Moderado"
-        return "Tolerable"
+        # Valores actualizados según la lógica P(1,2,4) * C(1,2,4) -> Max 16
+        if vep >= 9: return "Intolerable" # 4x4, 4x3(no existe), 3x4(no existe), 3x3(no existe) -> 16, 12, 9
+        if vep >= 5: return "Importante" # -> 8, 6
+        if vep >= 3: return "Moderado" # -> 4, 3
+        return "Tolerable" # -> 2, 1
 
     # --- PROPIEDADES PARA CÁLCULOS DE SEGURIDAD Y EMERGENCIAS ---
     @property
@@ -189,11 +237,21 @@ class Riesgo(models.Model):
     @property
     def clasificacion_riesgo_residual(self):
         return self._clasificar_riesgo(self.valor_vep_residual)
+    
+    # --- PROPIEDADES PARA EL RIESGO ESPECIAL (Paso 25/26) ---
+    @property
+    def valor_vep_especial(self):
+        return self._calcular_vep(self.probabilidad_especial, self.consecuencia_especial)
+
+    @property
+    def clasificacion_riesgo_especial(self):
+        return self._clasificar_riesgo(self.valor_vep_especial)
 
     def __str__(self):
         return str(self.peligro)
 
 class MedidaControl(models.Model):
+    """Medida de control existente (Paso 14)"""
     riesgo = models.ForeignKey(Riesgo, on_delete=models.CASCADE, related_name="medidas_control")
     descripcion = models.TextField()
     

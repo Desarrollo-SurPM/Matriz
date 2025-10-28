@@ -144,11 +144,34 @@ class MatrizCreateView(LoginRequiredMixin, CreateView):
 
 class MatrizDetailView(LoginRequiredMixin, DetailView):
     model = Matriz
-    template_name = 'matriz_detail.html'
+    template_name = 'matriz_detail.html' # Esta plantilla la vamos a reemplazar
     context_object_name = 'matriz'
+
     def get_queryset(self):
         return Matriz.objects.filter(empresa__prevencionista=self.request.user)
 
+    def get_context_data(self, **kwargs):
+        """
+        Prepara la vista de tabla plana.
+        """
+        context = super().get_context_data(**kwargs)
+        matriz = self.get_object()
+        
+        # Obtenemos todos los riesgos de esta matriz, ordenados por Proceso y Tarea
+        # Usamos select_related y prefetch_related para optimizar la consulta
+        context['riesgos'] = Riesgo.objects.filter(
+            tarea__proceso__matriz=matriz
+        ).select_related(
+            'tarea__proceso', 
+            'peligro'
+        ).prefetch_related(
+            'medidas_control'
+        ).order_by('tarea__proceso__nombre', 'tarea__descripcion', 'peligro__codigo')
+        
+        # Dejamos los procesos para los botones de "Añadir"
+        context['procesos'] = matriz.procesos.all().prefetch_related('tareas')
+        
+        return context
 class MatrizDeleteView(LoginRequiredMixin, DeleteView):
     model = Matriz
     template_name = 'gestion/confirm_delete.html'
@@ -231,43 +254,42 @@ class RiesgoCreateView(LoginRequiredMixin, CreateView):
     model = Riesgo
     form_class = RiesgoForm
     template_name = 'gestion/generic_form.html'
+    
     def form_valid(self, form):
+        """
+        Sobrescribimos form_valid para guardar la medida de control actual
+        como un objeto MedidaControl relacionado.
+        """
+        # 1. Asignar la tarea (como ya se hacía)
         tarea = get_object_or_404(Tarea, pk=self.kwargs['tarea_pk'], proceso__matriz__empresa__prevencionista=self.request.user)
         form.instance.tarea = tarea
-        return super().form_valid(form)
+        
+        # 2. (NUEVO) Obtener el dato del campo extra ANTES de guardar
+        # Usamos .get() por si el campo no estuviera presente
+        medida_actual_desc = form.cleaned_data.get('medida_control_actual')
+
+        # 3. Guardar el Riesgo principal (esto crea self.object)
+        response = super().form_valid(form)
+        
+        # 4. (NUEVO) Si el usuario escribió una medida, crear el objeto relacionado
+        if medida_actual_desc:
+            MedidaControl.objects.create(
+                riesgo=self.object,  # self.object es el Riesgo recién creado
+                descripcion=medida_actual_desc
+            )
+        
+        # 5. Retornar la respuesta (redirección)
+        return response
+    
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         tarea = get_object_or_404(Tarea, pk=self.kwargs['tarea_pk'])
         context['titulo'] = f"Identificar Riesgo para la Tarea: {tarea.descripcion}"
         context['boton_texto'] = "Guardar Riesgo"
         return context
+    
     def get_success_url(self):
         return reverse('matriz_detail', kwargs={'pk': self.object.tarea.proceso.matriz.pk})
-
-class RiesgoDetailView(LoginRequiredMixin, DetailView):
-    model = Riesgo
-    template_name = 'riesgo_detail.html'
-    context_object_name = 'riesgo'
-    def get_queryset(self):
-        return Riesgo.objects.filter(tarea__proceso__matriz__empresa__prevencionista=self.request.user)
-
-class RiesgoUpdateView(LoginRequiredMixin, UpdateView):
-    model = Riesgo
-    form_class = RiesgoForm
-    template_name = 'gestion/generic_form.html'
-    def get_queryset(self):
-        return Riesgo.objects.filter(tarea__proceso__matriz__empresa__prevencionista=self.request.user)
-    def get_success_url(self):
-        return reverse('riesgo_detail', kwargs={'pk': self.object.pk})
-
-class RiesgoDeleteView(LoginRequiredMixin, DeleteView):
-    model = Riesgo
-    template_name = 'gestion/confirm_delete.html'
-    def get_queryset(self):
-        return Riesgo.objects.filter(tarea__proceso__matriz__empresa__prevencionista=self.request.user)
-    def get_success_url(self):
-        # Redirige a la vista de detalle de la matriz después de eliminar un riesgo
-        return reverse_lazy('matriz_detail', kwargs={'pk': self.object.tarea.proceso.matriz.pk})
 
 class RiesgoDetailView(LoginRequiredMixin, UpdateView):
     model = Riesgo
@@ -279,15 +301,28 @@ class RiesgoDetailView(LoginRequiredMixin, UpdateView):
         return Riesgo.objects.filter(tarea__proceso__matriz__empresa__prevencionista=self.request.user)
 
     def get_context_data(self, **kwargs):
-        # Pasamos el formulario de medidas de control también
         context = super().get_context_data(**kwargs)
-        # Aquí iría el formulario para añadir Medidas de Control si lo tuvieras
-        # context['medida_form'] = MedidaControlForm() 
         return context
 
     def get_success_url(self):
-        return reverse('riesgo_detail', kwargs={'pk': self.object.pk})
+        return reverse('matriz_detail', kwargs={'pk': self.object.tarea.proceso.matriz.pk})
+class RiesgoUpdateView(LoginRequiredMixin, UpdateView):
+    model = Riesgo
+    form_class = RiesgoForm
+    template_name = 'gestion/generic_form.html'
+    def get_queryset(self):
+        return Riesgo.objects.filter(tarea__proceso__matriz__empresa__prevencionista=self.request.user)
+    def get_success_url(self):
+        return reverse('matriz_detail', kwargs={'pk': self.object.tarea.proceso.matriz.pk})
 
+class RiesgoDeleteView(LoginRequiredMixin, DeleteView):
+    model = Riesgo
+    template_name = 'gestion/confirm_delete.html'
+    def get_queryset(self):
+        return Riesgo.objects.filter(tarea__proceso__matriz__empresa__prevencionista=self.request.user)
+    def get_success_url(self):
+        # Redirige a la vista de detalle de la matriz después de eliminar un riesgo
+        return reverse('matriz_detail', kwargs={'pk': self.object.tarea.proceso.matriz.pk})
 
 class PeligroListView(LoginRequiredMixin, ListView):
     model = Peligro

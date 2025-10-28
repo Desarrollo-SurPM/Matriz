@@ -658,3 +658,39 @@ body::before {
     scrollbar-width: thin;
     scrollbar-color: var(--accent-primary) var(--bg-secondary);
 }
+.clasificacion-intolerable {
+    background-color: #dc3545 !important; /* Rojo */
+    color: white !important;
+}
+.clasificacion-importante {
+    background-color: #fd7e14 !important; /* Naranja */
+    color: white !important;
+}
+.clasificacion-moderado {
+    background-color: #ffc107 !important; /* Amarillo */
+    color: #333 !important;
+}
+.clasificacion-tolerable {
+    background-color: #198754 !important; /* Verde */
+    color: white !important;
+}
+.clasificacion-no-evaluado {
+    background-color: #f8f9fa !important; /* Gris claro */
+    color: #6c757d !important;
+}
+
+/* Aplicar a las celdas de la tabla (td) */
+td.clasificacion-intolerable,
+td.clasificacion-importante,
+td.clasificacion-moderado,
+td.clasificacion-tolerable,
+td.clasificacion-no-evaluado {
+    font-weight: bold;
+    text-align: center;
+    vertical-align: middle;
+}
+
+/* Aplicar a los badges de la leyenda */
+.badge.clasificacion-moderado {
+    color: #333 !important;
+}

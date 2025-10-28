@@ -1,106 +1,314 @@
 {% extends 'base.html' %}
-{% block title %}Detalle y Evaluación del Riesgo{% endblock %}
 
 {% block content %}
-<a href="{% url 'matriz_detail' riesgo.tarea.proceso.matriz.pk %}" class="btn btn-secondary mb-3">&larr; Volver a la Matriz</a>
-
-<div class="card mb-4">
-    <div class="card-header d-flex justify-content-between align-items-center">
-        <h4 class="mb-0">Detalle: {{ riesgo.peligro.riesgo_especifico }}</h4>
-        <a href="{% url 'riesgo_delete' riesgo.pk %}" class="btn btn-danger btn-sm">Eliminar Riesgo</a>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h3>Gestionar Riesgo: {{ riesgo.peligro.riesgo_especifico }}</h3>
+        <p class="text-muted">
+            Para Tarea: <strong>{{ riesgo.tarea.descripcion }}</strong><br>
+            En Proceso: <strong>{{ riesgo.tarea.proceso.nombre }}</strong><br>
+            Matriz: <a href="{% url 'matriz_detail' riesgo.tarea.proceso.matriz.pk %}">{{ riesgo.tarea.proceso.matriz.nombre_proyecto }}</a>
+        </p>
     </div>
-    <div class="card-body">
-        <p><strong>Proceso:</strong> {{ riesgo.tarea.proceso.nombre }}</p>
-        <p><strong>Tarea:</strong> {{ riesgo.tarea.descripcion }}</p>
+    <div>
+        <a href="{% url 'matriz_detail' riesgo.tarea.proceso.matriz.pk %}" class="btn btn-outline-secondary">&larr; Volver a la Matriz</a>
+        <a href="{% url 'riesgo_delete' riesgo.pk %}" class="btn btn-danger">Eliminar Riesgo</a>
     </div>
 </div>
 
 <form method="post">
     {% csrf_token %}
-    <div class="row">
-        <div class="col-lg-8">
-            <div class="card">
-                <div class="card-header">
-                    <ul class="nav nav-tabs card-header-tabs" id="evaluationTabs" role="tablist">
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link active" id="seguridad-tab" data-bs-toggle="tab" data-bs-target="#seguridad" type="button" role="tab">Seguridad</button>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="higienicos-tab" data-bs-toggle="tab" data-bs-target="#higienicos" type="button" role="tab">Higiene</button>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="psicosocial-tab" data-bs-toggle="tab" data-bs-target="#psicosocial" type="button" role="tab">Psicosocial</button>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="ergonomia-tab" data-bs-toggle="tab" data-bs-target="#ergonomia" type="button" role="tab">Músculo-Esq.</button>
-                        </li>
-                         <li class="nav-item" role="presentation">
-                            <button class="nav-link text-success" id="residual-tab" data-bs-toggle="tab" data-bs-target="#residual" type="button" role="tab"><strong>Residual</strong></button>
-                        </li>
-                    </ul>
-                </div>
-                <div class="card-body tab-content" id="evaluationTabsContent">
-                    <div class="tab-pane fade show active" id="seguridad" role="tabpanel">
-                        <h5>Riesgo Inherente: Seguridad y Emergencias</h5>
-                        {% include 'partials/evaluacion_radios.html' with prob_field=form.probabilidad_seguridad cons_field=form.consecuencia_seguridad %}
-                    </div>
-                    <div class="tab-pane fade" id="higienicos" role="tabpanel">
-                        <h5>Riesgo Inherente: Higiénicos</h5>
-                        {% include 'partials/evaluacion_radios.html' with prob_field=form.probabilidad_higienicos cons_field=form.consecuencia_higienicos %}
-                    </div>
-                    <div class="tab-pane fade" id="psicosocial" role="tabpanel">
-                        <h5>Riesgo Inherente: Psicosociales</h5>
-                        {% include 'partials/evaluacion_radios.html' with prob_field=form.probabilidad_psicosociales cons_field=form.consecuencia_psicosociales %}
-                    </div>
-                    <div class="tab-pane fade" id="ergonomia" role="tabpanel">
-                        <h5>Riesgo Inherente: Músculo-Esqueléticos</h5>
-                        {% include 'partials/evaluacion_radios.html' with prob_field=form.probabilidad_musculoesqueleticos cons_field=form.consecuencia_musculoesqueleticos %}
-                    </div>
-                    <div class="tab-pane fade" id="residual" role="tabpanel">
-                        <h5 class="text-success">Riesgo Residual (con controles)</h5>
-                        {% include 'partials/evaluacion_radios.html' with prob_field=form.probabilidad_residual cons_field=form.consecuencia_residual %}
-                    </div>
-                </div>
-            </div>
-        </div>
 
-        <div class="col-lg-4">
-            <div class="card">
-                <div class="card-header"><h5 class="mb-0">Resultados VEP</h5></div>
-                <ul class="list-group list-group-flush">
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        Seguridad: <span class="badge clasificacion-{{ riesgo.clasificacion_riesgo_seguridad }}">{{ riesgo.valor_vep_seguridad|default:"-" }}</span>
-                    </li>
-                     <li class="list-group-item d-flex justify-content-between align-items-center">
-                        Higiene: <span class="badge clasificacion-{{ riesgo.clasificacion_riesgo_higienicos }}">{{ riesgo.valor_vep_higienicos|default:"-" }}</span>
-                    </li>
-                     <li class="list-group-item d-flex justify-content-between align-items-center">
-                        Psicosocial: <span class="badge clasificacion-{{ riesgo.clasificacion_riesgo_psicosociales }}">{{ riesgo.valor_vep_psicosociales|default:"-" }}</span>
-                    </li>
-                     <li class="list-group-item d-flex justify-content-between align-items-center">
-                        Músculo-Esq.: <span class="badge clasificacion-{{ riesgo.clasificacion_riesgo_musculoesqueleticos }}">{{ riesgo.valor_vep_musculoesqueleticos|default:"-" }}</span>
-                    </li>
-                    <li class="list-group-item d-flex justify-content-between align-items-center bg-light">
-                        <strong>Inherente (Máx):</strong> <span class="badge fs-6 clasificacion-{{ riesgo.clasificacion_riesgo_inherente_maximo }}">{{ riesgo.valor_vep_inherente_maximo|default:"-" }}</span>
-                    </li>
-                    <li class="list-group-item d-flex justify-content-between align-items-center text-success">
-                        <strong>Residual:</strong> <span class="badge fs-6 clasificacion-{{ riesgo.clasificacion_riesgo_residual }}">{{ riesgo.valor_vep_residual|default:"-" }}</span>
-                    </li>
-                </ul>
-            </div>
-            <div class="d-grid mt-3">
-                 <button type="submit" class="btn btn-primary btn-lg">Guardar Evaluación</button>
+    {% if form.errors %}
+        <div class="alert alert-danger">
+            <strong>¡Error al guardar!</strong> Por favor, corrige los siguientes problemas:
+            <ul>
+                {% for field, errors in form.errors.items %}
+                    <li><strong>{{ field }}:</strong> {{ errors|join:", " }}</li>
+                {% endfor %}
+            </ul>
+            {{ form.non_field_errors }}
+        </div>
+    {% endif %}
+    <div class="card mb-3">
+        <div class="card-header">
+            <h4>1. Evaluación de Riesgo Inherente (Por Categoría)</h4>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                
+                <div class="col-md-6 col-lg-6 mb-3">
+                    <div class="border p-3 rounded h-100">
+                        <strong>Seguridad y Emergencias (S&E)</strong>
+                        <hr class="my-2">
+                        <label class="form-label d-block fw-bold">Probabilidad:</label>
+                        <div>
+                        {% for radio in form.probabilidad_seguridad %}
+                            <div class="form-check form-check-inline">
+                                {{ radio.tag }}
+                                <label class="form-check-label" for="{{ radio.id_for_label }}">{{ radio.choice_label }}</label>
+                            </div>
+                        {% endfor %}
+                        </div>
+                        <hr class="my-2">
+                        <label class="form-label d-block fw-bold">Consecuencia:</label>
+                        <div>
+                        {% for radio in form.consecuencia_seguridad %}
+                            <div class="form-check form-check-inline">
+                                {{ radio.tag }}
+                                <label class="form-check-label" for="{{ radio.id_for_label }}">{{ radio.choice_label }}</label>
+                            </div>
+                        {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-6 mb-3">
+                    <div class="border p-3 rounded h-100">
+                        <strong>Higiénicos</strong>
+                        <hr class="my-2">
+                        <label class="form-label d-block fw-bold">Probabilidad:</label>
+                        <div>
+                        {% for radio in form.probabilidad_higienicos %}
+                            <div class="form-check form-check-inline">
+                                {{ radio.tag }}
+                                <label class="form-check-label" for="{{ radio.id_for_label }}">{{ radio.choice_label }}</label>
+                            </div>
+                        {% endfor %}
+                        </div>
+                        <hr class="my-2">
+                        <label class="form-label d-block fw-bold">Consecuencia:</label>
+                        <div>
+                        {% for radio in form.consecuencia_higienicos %}
+                            <div class="form-check form-check-inline">
+                                {{ radio.tag }}
+                                <label class="form-check-label" for="{{ radio.id_for_label }}">{{ radio.choice_label }}</label>
+                            </div>
+                        {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-6 mb-3">
+                    <div class="border p-3 rounded h-100">
+                        <strong>Psicosociales</strong>
+                        <hr class="my-2">
+                        <label class="form-label d-block fw-bold">Probabilidad:</label>
+                        <div>
+                        {% for radio in form.probabilidad_psicosociales %}
+                            <div class="form-check form-check-inline">
+                                {{ radio.tag }}
+                                <label class="form-check-label" for="{{ radio.id_for_label }}">{{ radio.choice_label }}</label>
+                            </div>
+                        {% endfor %}
+                        </div>
+                        <hr class="my-2">
+                        <label class="form-label d-block fw-bold">Consecuencia:</label>
+                        <div>
+                        {% for radio in form.consecuencia_psicosociales %}
+                            <div class="form-check form-check-inline">
+                                {{ radio.tag }}
+                                <label class="form-check-label" for="{{ radio.id_for_label }}">{{ radio.choice_label }}</label>
+                            </div>
+                        {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-6 mb-3">
+                    <div class="border p-3 rounded h-100">
+                        <strong>Músculo-Esqueléticos (M-E)</strong>
+                        <hr class="my-2">
+                        <label class="form-label d-block fw-bold">Probabilidad:</label>
+                        <div>
+                        {% for radio in form.probabilidad_musculoesqueleticos %}
+                            <div class="form-check form-check-inline">
+                                {{ radio.tag }}
+                                <label class="form-check-label" for="{{ radio.id_for_label }}">{{ radio.choice_label }}</label>
+                            </div>
+                        {% endfor %}
+                        </div>
+                        <hr class="my-2">
+                        <label class="form-label d-block fw-bold">Consecuencia:</label>
+                        <div>
+                        {% for radio in form.consecuencia_musculoesqueleticos %}
+                            <div class="form-check form-check-inline">
+                                {{ radio.tag }}
+                                <label class="form-check-label" for="{{ radio.id_for_label }}">{{ radio.choice_label }}</label>
+                            </div>
+                        {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
+
+    <div class="card mb-3">
+        <div class="card-header">
+            <h4>2. Gestión de Medidas de Control Propuestas</h4>
+        </div>
+        <div class="card-body">
+            <div class="mb-3">
+                <label for="{{ form.requisito_legal.id_for_label }}" class="form-label">{{ form.requisito_legal.label }}</label>
+                {{ form.requisito_legal }}
+            </div>
+            <div class="mb-3">
+                <label for="{{ form.nueva_medida_control.id_for_label }}" class="form-label">{{ form.nueva_medida_control.label }}</label>
+                {{ form.nueva_medida_control }}
+            </div>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="{{ form.responsable_gestion.id_for_label }}" class="form-label">{{ form.responsable_gestion.label }}</label>
+                    {{ form.responsable_gestion }}
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="{{ form.fecha_ejecucion.id_for_label }}" class="form-label">{{ form.fecha_ejecucion.label }}</label>
+                    {{ form.fecha_ejecucion }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="{{ form.responsable_seguimiento.id_for_label }}" class="form-label">{{ form.responsable_seguimiento.label }}</label>
+                    {{ form.responsable_seguimiento }}
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="{{ form.fecha_seguimiento.id_for_label }}" class="form-label">{{ form.fecha_seguimiento.label }}</label>
+                    {{ form.fecha_seguimiento }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mb-3">
+        <div class="card-header">
+            <h4>3. Evaluación de Riesgo Residual</h4>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <strong>Riesgo Residual (General)</strong>
+                    <div class="border p-3 rounded">
+                        <label class="form-label d-block fw-bold">Probabilidad:</label>
+                        <div>
+                        {% for radio in form.probabilidad_residual %}
+                            <div class="form-check form-check-inline">
+                                {{ radio.tag }}
+                                <label class="form-check-label" for="{{ radio.id_for_label }}">{{ radio.choice_label }}</label>
+                            </div>
+                        {% endfor %}
+                        </div>
+                        <hr class="my-2">
+                        <label class="form-label d-block fw-bold">Consecuencia:</label>
+                        <div>
+                        {% for radio in form.consecuencia_residual %}
+                            <div class="form-check form-check-inline">
+                                {{ radio.tag }}
+                                <label class="form-check-label" for="{{ radio.id_for_label }}">{{ radio.choice_label }}</label>
+                            </div>
+                        {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mb-3">
+        <div class="card-header">
+            <div class="d-flex justify-content-between align-items-center">
+                <h4>4. Evaluación para Población Específica</h4>
+                <button class="btn btn-outline-info" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePoblacionEspecifica" aria-expanded="false" aria-controls="collapsePoblacionEspecifica">
+                    Mostrar / Ocultar (Opcional)
+                </button>
+            </div>
+        </div>
+        <div class="collapse" id="collapsePoblacionEspecifica">
+            <div class="card-body">
+                <p>Indique el N° de personas (Hombres/Mujeres) para cada grupo:</p>
+                 <div class="row">
+                    <div class="col-md-4">
+                        <label>Disc. Física:</label>
+                        <div class="input-group mb-2">
+                            {{ form.discapacidad_fisica_h }} <span class="input-group-text">H</span>
+                            {{ form.discapacidad_fisica_m }} <span class="input-group-text">M</span>
+                        </div>
+                        <label>Disc. Cognitiva:</label>
+                        <div class="input-group mb-2">
+                            {{ form.discapacidad_cognitiva_h }} <span class="input-group-text">H</span>
+                            {{ form.discapacidad_cognitiva_m }} <span class="input-group-text">M</span>
+                        </div>
+                        <label>Disc. Sensorial:</label>
+                        <div class="input-group mb-2">
+                            {{ form.discapacidad_sensorial_h }} <span class="input-group-text">H</span>
+                            {{ form.discapacidad_sensorial_m }} <span class="input-group-text">M</span>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <label>Adultos Mayores:</label>
+                        <div class="input-group mb-2">
+                            {{ form.adultos_mayores_h }} <span class="input-group-text">H</span>
+                            {{ form.adultos_mayores_m }} <span class="input-group-text">M</span>
+                        </div>
+                        <label>Adolescentes:</label>
+                        <div class="input-group mb-2">
+                            {{ form.adolescentes_h }} <span class="input-group-text">H</span>
+                            {{ form.adolescentes_m }} <span class="input-group-text">M</span>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <label>Trab. Embarazada:</label>
+                        <div class="input-group mb-2">
+                            {{ form.trabajadora_embarazada }}
+                        </div>
+                        <label>Trab. Lactancia:</label>
+                        <div class="input-group mb-2">
+                            {{ form.trabajadora_lactancia }}
+                        </div>
+                    </div>
+                </div>
+                
+                <hr>
+                <div class="mb-3">
+                    <label for="{{ form.medidas_control_especiales.id_for_label }}" class="form-label">{{ form.medidas_control_especiales.label }}</L>
+                    {{ form.medidas_control_especiales }}
+                </div>
+
+                <strong>Evaluación Especial (Si aplica)</strong>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="border p-3 rounded">
+                            <label class="form-label d-block fw-bold">Probabilidad:</label>
+                            <div>
+                            {% for radio in form.probabilidad_especial %}
+                                <div class="form-check form-check-inline">
+                                    {{ radio.tag }}
+                                    <label class="form-check-label" for="{{ radio.id_for_label }}">{{ radio.choice_label }}</label>
+                                </div>
+                            {% endfor %}
+                            </div>
+                            <hr class="my-2">
+                            <label class="form-label d-block fw-bold">Consecuencia:</label>
+                            <div>
+                            {% for radio in form.consecuencia_especial %}
+                                <div class="form-check form-check-inline">
+                                    {{ radio.tag }}
+                                    <label class="form-check-label" for="{{ radio.id_for_label }}">{{ radio.choice_label }}</label>
+                                </div>
+                            {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-end">
+        <button type="submit" class="btn btn-primary btn-lg">Guardar Evaluación</button>
+    </div>
+    
 </form>
 
-<style>
-    /* Estilos para que la clasificación sea visual */
-    .clasificacion-Intolerable { background-color: #dc3545 !important; color: white; }
-    .clasificacion-Importante { background-color: #fd7e14 !important; color: black; }
-    .clasificacion-Moderado { background-color: #ffc107 !important; color: black; }
-    .clasificacion-Tolerable { background-color: #198754 !important; color: white; }
-    .clasificacion-No.evaluado { background-color: #e9ecef !important; color: black; }
-</style>
 {% endblock %}

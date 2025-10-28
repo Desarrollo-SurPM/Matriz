@@ -1,79 +1,164 @@
 {% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Matriz IPER: {{ matriz.nombre_proyecto }}{% endblock %}
 
 {% block content %}
 <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
-        <h2>Matriz: {{ matriz.nombre_proyecto }}</h2>
-        <p class="text-muted">Cliente: <a href="{% url 'empresa_detail' matriz.empresa.pk %}">{{ matriz.empresa.razon_social }}</a></p>
+        <h1 class="text-gradient mb-0">{{ matriz.nombre_proyecto }}</h1>
+        <p class="mb-0 fs-5 text-muted">Empresa: {{ matriz.empresa.razon_social }}</p>
     </div>
-    <div>
-        <a href="{% url 'matriz_delete' matriz.pk %}" class="btn btn-danger">Eliminar Matriz</a>
+    <div class="dropdown">
+        <button class="btn-primary-modern dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="bi bi-plus-circle me-1"></i>Añadir
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+            <li><a class="dropdown-item" href="{% url 'proceso_create' matriz.pk %}">Añadir Proceso</a></li>
+            {% if procesos %}
+            <li><hr class="dropdown-divider"></li>
+            <li class="dropdown-header">Añadir Tarea a:</li>
+            {% for proceso in procesos %}
+                <li><a class="dropdown-item" href="{% url 'tarea_create' proceso.pk %}">{{ proceso.nombre }}</a></li>
+            {% endfor %}
+            <li><hr class="dropdown-divider"></li>
+            <li class="dropdown-header">Añadir Riesgo a Tarea:</li>
+            {% for proceso in procesos %}
+                {% for tarea in proceso.tareas.all %}
+                <li><a class="dropdown-item" href="{% url 'riesgo_create' tarea.pk %}">T: {{ tarea.descripcion }} (P: {{ proceso.nombre }})</a></li>
+                {% endfor %}
+            {% endfor %}
+            {% endif %}
+        </ul>
     </div>
 </div>
 
-<hr>
+<div class="card-modern shadow-sm">
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover align-middle" style="min-width: 2000px; font-size: 0.9rem;">
+            <thead class="table-dark sticky-top">
+                <tr>
+                    <th rowspan="2">Proceso</th>
+                    <th rowspan="2">Subproceso</th>
+                    <th rowspan="2">Puesto de Trabajo</th>
+                    <th rowspan="2">Tarea</th>
+                    <th rowspan="2">Peligro Específico (Cod.)</th>
+                    <th rowspan="2">Consecuencias</th>
+                    <th rowspan="2">GEMA</th>
+                    <th rowspan="2">Medidas Control (Existentes)</th>
+                    <th colspan="2" class="text-center bg-danger bg-opacity-75">Riesgo Inherente (Máx)</th>
+                    <th rowspan="2">Medida Control (Propuesta)</th>
+                    <th colspan="2" class="text-center bg-success bg-opacity-75">Riesgo Residual</th>
+                    <th rowspan="2" class="text-end">Acciones</th>
+                </tr>
+                <tr>
+                    <th class="text-center bg-danger bg-opacity-75">VEP</th>
+                    <th class="text-center bg-danger bg-opacity-75">Clasif.</th>
+                    <th class="text-center bg-success bg-opacity-75">VEP</th>
+                    <th class="text-center bg-success bg-opacity-75">Clasif.</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for riesgo in riesgos %}
+                <tr>
+                    <td>{{ riesgo.tarea.proceso.nombre }}</td>
+                    <td>{{ riesgo.tarea.proceso.subproceso|default:"-" }}</td>
+                    <td>{{ riesgo.tarea.puesto_trabajo }}</td>
+                    <td>{{ riesgo.tarea.descripcion }}</td>
+                    <td>{{ riesgo.peligro.riesgo_especifico }} ({{ riesgo.peligro.codigo }})</td>
+                    <td>{{ riesgo.consecuencias|default:"-" }}</td>
+                    <td class="text-center">{{ riesgo.get_identificacion_gema_display }}</td>
+                    
+                    <td>
+                        <ul class="list-unstyled mb-0">
+                        {% for medida in riesgo.medidas_control.all %}
+                            <li><small>- {{ medida.descripcion }}</small></li>
+                        {% empty %}
+                            <li class="text-muted"><small>Sin medidas.</small></li>
+                        {% endfor %}
+                        </ul>
+                    </td>
+                    
+                    <td class="text-center fw-bold">{{ riesgo.valor_vep_inherente_maximo|default:"-" }}</td>
+                    <td class="text-center">
+                        <span class="badge clasificacion-{{ riesgo.clasificacion_riesgo_inherente_maximo|slugify|default:'na' }}">
+                            {{ riesgo.clasificacion_riesgo_inherente_maximo }}
+                        </span>
+                    </td>
+                    
+                    <td><small>{{ riesgo.nueva_medida_control|default:"-" }}</small></td>
+                    
+                    <td class="text-center fw-bold">{{ riesgo.valor_vep_residual|default:"-" }}</td>
+                    <td class="text-center">
+                        <span class="badge clasificacion-{{ riesgo.clasificacion_riesgo_residual|slugify|default:'na' }}">
+                            {{ riesgo.clasificacion_riesgo_residual|default:"-" }}
+                        </span>
+                    </td>
+                    
+                    <td class="text-end text-nowrap">
+                        <a href="{% url 'riesgo_detail' riesgo.pk %}" class="btn btn-sm btn-info" title="Evaluar / Gestionar">
+                            <i class="bi bi-clipboard2-data-fill"></i> Gestionar
+                        </a>
+                        <a href="{% url 'riesgo_update' riesgo.pk %}" class="btn-ghost btn-sm" title="Editar Identificación">
+                            <i class="bi bi-pencil-fill"></i>
+                        </a>
+                        <a href="{% url 'riesgo_delete' riesgo.pk %}" class="btn-ghost-danger btn-sm" title="Eliminar Riesgo">
+                            <i class="bi bi-trash-fill"></i>
+                        </a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="14" class="text-center p-5">
+                        <h4 class="text-muted">No hay riesgos identificados en esta matriz.</h4>
+                        <p>Usa el menú "Añadir" para crear tu primer Proceso, Tarea y Riesgo.</p>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
 
-<div class="card">
-    <div class="card-header d-flex justify-content-between align-items-center">
-        <h4>Estructura de la Matriz</h4>
-        <a href="{% url 'proceso_create' matriz_pk=matriz.pk %}" class="btn btn-primary">Añadir Proceso</a>
-    </div>
-    <div class="card-body">
-        {% for proceso in matriz.procesos.all %}
-            <div class="accordion" id="accordionProceso{{ proceso.pk }}">
-                <div class="accordion-item mb-2">
-                    <h2 class="accordion-header" id="heading{{ proceso.pk }}">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ proceso.pk }}" aria-expanded="false" aria-controls="collapse{{ proceso.pk }}">
-                            <strong>Proceso:</strong> {{ proceso.nombre }}
-                        </button>
-                    </h2>
-                    <div id="collapse{{ proceso.pk }}" class="accordion-collapse collapse" aria-labelledby="heading{{ proceso.pk }}">
-                        <div class="accordion-body">
-                            <div class="d-flex justify-content-between align-items-center mb-2">
-                                <div>
-                                    <a href="{% url 'proceso_update' proceso.pk %}" class="btn btn-sm btn-secondary">Editar Proceso</a>
-                                    <a href="{% url 'proceso_delete' proceso.pk %}" class="btn btn-sm btn-outline-danger">Eliminar Proceso</a>
-                                </div>
-                                <a href="{% url 'tarea_create' proceso_pk=proceso.pk %}" class="btn btn-sm btn-success">Añadir Tarea</a>
-                            </div>
-                            <ul class="list-group">
-                                {% for tarea in proceso.tareas.all %}
-                                    <li class="list-group-item">
-                                        <div class="d-flex justify-content-between align-items-center">
-                                            <span>
-                                                <strong>Tarea:</strong> {{ tarea.descripcion }} (<em>Puesto: {{ tarea.puesto_trabajo }}</em>)
-                                            </span>
-                                            <div>
-                                                <a href="{% url 'tarea_update' tarea.pk %}" class="btn btn-sm btn-outline-secondary">Editar</a>
-                                                <a href="{% url 'tarea_delete' tarea.pk %}" class="btn btn-sm btn-outline-danger">Eliminar</a>
-                                            </div>
-                                        </div>
-                                        <hr class="my-2">
-                                        <a href="{% url 'riesgo_create' tarea_pk=tarea.pk %}" class="btn btn-sm btn-warning mb-2">Identificar Riesgo</a>
-                                        <ul class="list-group list-group-flush">
-                                            {% for riesgo in tarea.riesgos.all %}
-                                                <a href="{% url 'riesgo_detail' riesgo.pk %}" class="list-group-item list-group-item-action list-group-item-light py-1">
-                                                    - {{ riesgo.peligro.riesgo_especifico }}
-                                                </a>
-                                            {% empty %}
-                                                <li class="list-group-item list-group-item-light py-1"><em>No hay riesgos identificados para esta tarea.</em></li>
-                                            {% endfor %}
-                                        </ul>
-                                    </li>
-                                {% empty %}
-                                    <li class="list-group-item">No hay tareas para este proceso.</li>
-                                {% endfor %}
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        {% empty %}
-            <p class="text-center text-muted">Aún no has añadido procesos a esta matriz.</p>
-        {% endfor %}
-    </div>
-</div>
-<div class="mt-4">
-    <a href="{% url 'empresa_detail' matriz.empresa.pk %}" class="btn btn-outline-secondary">&larr; Volver a la Empresa</a>
-</div>
+<style>
+    .dropdown-menu {
+        max-height: 400px;
+        overflow-y: auto;
+    }
+    .dropdown-header {
+        font-weight: 700;
+        color: var(--accent-primary);
+    }
+    
+    .badge {
+        padding: 0.5em 0.75em;
+        font-size: 0.8rem;
+        font-weight: 700;
+        border-radius: var(--radius-sm);
+        letter-spacing: 0.5px;
+    }
+    
+    .clasificacion-na { 
+        background-color: #f8f9fa; 
+        color: #6c757d; 
+        border: 1px solid #dee2e6; 
+    }
+    .clasificacion-tolerable { 
+        background-color: #198754; 
+        color: white; 
+    }
+    .clasificacion-moderado { 
+        background-color: #fff3cd; 
+        color: #664d03; 
+        border: 1px solid #ffc107;
+    }
+    .clasificacion-importante { 
+        background-color: #ffc107; 
+        color: #000; 
+    }
+    .clasificacion-intolerable { 
+        background-color: #dc3545; 
+        color: white; 
+    }
+</style>
 {% endblock %}
