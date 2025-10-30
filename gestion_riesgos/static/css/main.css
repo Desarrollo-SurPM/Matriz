@@ -1,41 +1,62 @@
 /* ============================================
    SISTEMA DE DISEÑO - PREVENCIONISTA OS
-   Paleta Oscura Elegante
+   Temática de Abejas y Panales
    ============================================ */
 
 :root {
-    /* Colores Base */
-    --bg-primary: #0a0e27;
-    --bg-secondary: #151b3b;
-    --bg-card: #1a2142;
-    --bg-hover: #1f2750;
+    /* Colores Base - Tonos Miel y Panal */
+    --bg-primary: #fef8f0;
+    --bg-secondary: #fff9ed;
+    --bg-card: #ffffff;
+    --bg-hover: #fef4e6;
+    --honeycomb: #f5ddb3;
 
-    /* Acentos */
-    --accent-primary: #6366f1;
-    --accent-secondary: #8b5cf6;
-    --accent-gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+    /* Acentos - Amarillos Miel y Dorados */
+    --accent-primary: #f4a623;
+    --accent-secondary: #d4841e;
+    --accent-honey: #ffb84d;
+    --accent-gold: #e5a82b;
+    --accent-gradient: linear-gradient(135deg, #f4a623 0%, #ffb84d 50%, #e5a82b 100%);
+    --honeycomb-gradient: linear-gradient(120deg, #f5ddb3 0%, #f4a623 50%, #d4841e 100%);
+
+    /* Marrones Cálidos */
+    --brown-dark: #8b6f47;
+    --brown-medium: #a68a64;
+    --brown-light: #c4a572;
+
+    /* Toques de Verde Pastel (muy sutil) */
+    --green-pastel: #d4e8d4;
+    --green-mint: #e8f5e8;
+    --green-accent: #9ec99e;
+
+    /* Toques de Flores Pastel */
+    --flower-pink: #ffd9e8;
+    --flower-lavender: #e8d9ff;
 
     /* Texto */
-    --text-primary: #e2e8f0;
-    --text-secondary: #94a3b8;
-    --text-muted: #64748b;
+    --text-primary: #3d2f1f;
+    --text-secondary: #6b5a45;
+    --text-muted: #9b8b7a;
+    --text-honey: #c48518;
 
     /* Bordes */
-    --border-color: #2d3561;
-    --border-light: #3d4570;
+    --border-color: #f5ddb3;
+    --border-light: #ffe8c2;
+    --border-accent: #f4a623;
 
     /* Estados */
-    --success: #10b981;
-    --warning: #f59e0b;
-    --danger: #ef4444;
-    --info: #3b82f6;
+    --success: #9ec99e;
+    --warning: #f4a623;
+    --danger: #d4841e;
+    --info: #f5ddb3;
 
-    /* Sombras */
-    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
-    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
-    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
-    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.6);
-    --shadow-glow: 0 0 20px rgba(99, 102, 241, 0.3);
+    /* Sombras - Más suaves y cálidas */
+    --shadow-sm: 0 1px 2px 0 rgba(244, 166, 35, 0.08);
+    --shadow-md: 0 4px 6px -1px rgba(212, 132, 30, 0.12);
+    --shadow-lg: 0 10px 15px -3px rgba(244, 166, 35, 0.15);
+    --shadow-xl: 0 20px 25px -5px rgba(212, 132, 30, 0.18);
+    --shadow-glow: 0 0 20px rgba(244, 166, 35, 0.25);
+    --shadow-honeycomb: 0 4px 12px rgba(245, 221, 179, 0.3);
 
     /* Transiciones */
     --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
@@ -50,12 +71,13 @@
     --spacing-xl: 2rem;
     --spacing-2xl: 3rem;
 
-    /* Border Radius */
-    --radius-sm: 0.375rem;
-    --radius-md: 0.5rem;
-    --radius-lg: 0.75rem;
-    --radius-xl: 1rem;
-    --radius-2xl: 1.5rem;
+    /* Border Radius - Hexagonal hints */
+    --radius-sm: 0.25rem;
+    --radius-md: 0.375rem;
+    --radius-lg: 0.5rem;
+    --radius-xl: 0.75rem;
+    --radius-2xl: 1rem;
+    --radius-hex: 0.25rem;
 }
 
 /* ============================================
@@ -77,7 +99,7 @@ body {
     min-height: 100vh;
 }
 
-/* Fondo con gradiente animado */
+/* Fondo con patrón de panal hexagonal */
 body::before {
     content: '';
     position: fixed;
@@ -86,10 +108,27 @@ body::before {
     width: 100%;
     height: 100%;
     background:
-        radial-gradient(circle at 20% 50%, rgba(99, 102, 241, 0.08) 0%, transparent 50%),
-        radial-gradient(circle at 80% 80%, rgba(139, 92, 246, 0.08) 0%, transparent 50%);
+        radial-gradient(circle at 20% 50%, rgba(244, 166, 35, 0.05) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(245, 221, 179, 0.08) 0%, transparent 50%);
     z-index: -1;
     pointer-events: none;
+}
+
+/* Patrón hexagonal sutil en el fondo */
+body::after {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image:
+        repeating-linear-gradient(0deg, transparent, transparent 50px, rgba(245, 221, 179, 0.03) 50px, rgba(245, 221, 179, 0.03) 52px),
+        repeating-linear-gradient(60deg, transparent, transparent 50px, rgba(244, 166, 35, 0.02) 50px, rgba(244, 166, 35, 0.02) 52px),
+        repeating-linear-gradient(120deg, transparent, transparent 50px, rgba(245, 221, 179, 0.03) 50px, rgba(245, 221, 179, 0.03) 52px);
+    z-index: -1;
+    pointer-events: none;
+    opacity: 0.4;
 }
 
 /* ============================================
@@ -97,14 +136,14 @@ body::before {
    ============================================ */
 
 .navbar-modern {
-    background: rgba(21, 27, 59, 0.9);
+    background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(12px);
-    border-bottom: 1px solid var(--border-color);
+    border-bottom: 2px solid var(--border-color);
     padding: 0.75rem 0;
     position: sticky;
     top: 0;
     z-index: 1000;
-    box-shadow: var(--shadow-md);
+    box-shadow: var(--shadow-honeycomb);
 }
 
 .navbar-brand {
@@ -146,15 +185,16 @@ body::before {
     bottom: 0;
     left: 50%;
     width: 0;
-    height: 2px;
-    background: var(--accent-gradient);
+    height: 3px;
+    background: var(--honeycomb-gradient);
     transition: all var(--transition-base);
     transform: translateX(-50%);
+    border-radius: 2px 2px 0 0;
 }
 
 .nav-link:hover {
     color: var(--text-primary) !important;
-    background: rgba(99, 102, 241, 0.1);
+    background: rgba(244, 166, 35, 0.08);
 }
 
 .nav-link:hover::before {
@@ -163,7 +203,8 @@ body::before {
 
 .nav-link.active {
     color: var(--accent-primary) !important;
-    background: rgba(99, 102, 241, 0.15);
+    background: rgba(244, 166, 35, 0.12);
+    border-bottom: 2px solid var(--accent-primary);
 }
 
 /* ============================================
@@ -222,7 +263,7 @@ body::before {
 }
 
 .btn-ghost {
-    background: rgba(99, 102, 241, 0.1);
+    background: rgba(244, 166, 35, 0.1);
     border: 1px solid transparent;
     color: var(--accent-primary);
     padding: 0.5rem 1rem;
@@ -232,8 +273,9 @@ body::before {
 }
 
 .btn-ghost:hover {
-    background: rgba(99, 102, 241, 0.2);
+    background: rgba(244, 166, 35, 0.2);
     border-color: var(--accent-primary);
+    box-shadow: var(--shadow-sm);
 }
 
 /* ============================================
@@ -242,10 +284,10 @@ body::before {
 
 .card-modern {
     background: var(--bg-card);
-    border: 1px solid var(--border-color);
+    border: 2px solid var(--border-color);
     border-radius: var(--radius-xl);
     padding: var(--spacing-xl);
-    box-shadow: var(--shadow-md);
+    box-shadow: var(--shadow-honeycomb);
     transition: all var(--transition-base);
     position: relative;
     overflow: hidden;
@@ -257,19 +299,37 @@ body::before {
     top: 0;
     left: 0;
     right: 0;
-    height: 3px;
-    background: var(--accent-gradient);
+    height: 4px;
+    background: var(--honeycomb-gradient);
     opacity: 0;
     transition: opacity var(--transition-base);
 }
 
+.card-modern::after {
+    content: '';
+    position: absolute;
+    bottom: -50px;
+    right: -50px;
+    width: 150px;
+    height: 150px;
+    background: radial-gradient(circle, rgba(244, 166, 35, 0.05) 0%, transparent 70%);
+    border-radius: 50%;
+    transition: all var(--transition-slow);
+}
+
 .card-modern:hover {
     transform: translateY(-4px);
-    box-shadow: var(--shadow-lg);
-    border-color: var(--border-light);
+    box-shadow: var(--shadow-lg), var(--shadow-glow);
+    border-color: var(--accent-primary);
 }
 
 .card-modern:hover::before {
+    opacity: 1;
+}
+
+.card-modern:hover::after {
+    bottom: -30px;
+    right: -30px;
     opacity: 1;
 }
 
@@ -336,7 +396,7 @@ body::before {
     animation: fadeInUp 0.8s ease-out 0.4s backwards;
 }
 
-/* Partículas decorativas */
+/* Partículas decorativas - abejas y flores */
 .hero-particles {
     position: absolute;
     top: 0;
@@ -349,17 +409,31 @@ body::before {
 
 .particle {
     position: absolute;
-    width: 4px;
-    height: 4px;
-    background: var(--accent-primary);
+    width: 6px;
+    height: 6px;
+    background: var(--accent-honey);
     border-radius: 50%;
-    opacity: 0.3;
+    opacity: 0.4;
     animation: float 20s infinite ease-in-out;
+    box-shadow: 0 0 8px rgba(244, 166, 35, 0.4);
 }
 
-.particle:nth-child(2) { animation-delay: -5s; }
-.particle:nth-child(3) { animation-delay: -10s; }
-.particle:nth-child(4) { animation-delay: -15s; }
+.particle:nth-child(2) {
+    animation-delay: -5s;
+    background: var(--green-accent);
+    width: 8px;
+    height: 8px;
+    opacity: 0.2;
+}
+.particle:nth-child(3) {
+    animation-delay: -10s;
+    background: var(--flower-pink);
+    opacity: 0.3;
+}
+.particle:nth-child(4) {
+    animation-delay: -15s;
+    background: var(--accent-gold);
+}
 
 /* ============================================
    FEATURES SECTION
@@ -387,7 +461,7 @@ body::before {
 
 .feature-card {
     background: var(--bg-card);
-    border: 1px solid var(--border-color);
+    border: 2px solid var(--border-color);
     border-radius: var(--radius-xl);
     padding: var(--spacing-xl);
     text-align: center;
@@ -403,15 +477,16 @@ body::before {
     left: 0;
     right: 0;
     height: 4px;
-    background: var(--accent-gradient);
+    background: var(--honeycomb-gradient);
     transform: scaleX(0);
     transition: transform var(--transition-base);
 }
 
 .feature-card:hover {
     transform: translateY(-8px);
-    box-shadow: var(--shadow-xl);
+    box-shadow: var(--shadow-xl), var(--shadow-glow);
     border-color: var(--accent-primary);
+    background: linear-gradient(to bottom, rgba(255, 249, 237, 1) 0%, rgba(255, 255, 255, 1) 100%);
 }
 
 .feature-card:hover::before {
@@ -419,17 +494,23 @@ body::before {
 }
 
 .feature-icon {
-    width: 64px;
-    height: 64px;
+    width: 70px;
+    height: 70px;
     margin: 0 auto var(--spacing-lg);
-    background: var(--accent-gradient);
-    border-radius: var(--radius-lg);
+    background: var(--honeycomb-gradient);
+    border-radius: var(--radius-hex);
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 2rem;
     color: white;
-    box-shadow: var(--shadow-md);
+    box-shadow: var(--shadow-honeycomb);
+    clip-path: polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%);
+    transition: all var(--transition-base);
+}
+
+.feature-card:hover .feature-icon {
+    transform: scale(1.1) rotate(5deg);
 }
 
 .feature-title {
@@ -556,12 +637,13 @@ body::before {
 }
 
 .badge-modern {
-    background: rgba(99, 102, 241, 0.2);
+    background: rgba(244, 166, 35, 0.15);
     color: var(--accent-primary);
     padding: 0.25rem 0.75rem;
     border-radius: var(--radius-md);
     font-size: 0.85rem;
     font-weight: 600;
+    border: 1px solid rgba(244, 166, 35, 0.3);
 }
 
 .divider {
@@ -657,6 +739,102 @@ body::before {
 * {
     scrollbar-width: thin;
     scrollbar-color: var(--accent-primary) var(--bg-secondary);
+}
+
+/* ============================================
+   ELEMENTOS HEXAGONALES DECORATIVOS
+   ============================================ */
+
+.hexagon-decoration {
+    width: 60px;
+    height: 70px;
+    background: var(--honeycomb-gradient);
+    clip-path: polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%);
+    opacity: 0.1;
+    position: absolute;
+}
+
+.hexagon-pattern {
+    position: relative;
+}
+
+.hexagon-pattern::before,
+.hexagon-pattern::after {
+    content: '';
+    position: absolute;
+    width: 40px;
+    height: 46px;
+    background: var(--border-color);
+    clip-path: polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%);
+    opacity: 0.3;
+}
+
+.hexagon-pattern::before {
+    top: -20px;
+    right: -20px;
+}
+
+.hexagon-pattern::after {
+    bottom: -20px;
+    left: -20px;
+    opacity: 0.2;
+}
+
+/* Botón con efecto de panal */
+.btn-honeycomb {
+    background: var(--honeycomb-gradient);
+    border: 2px solid var(--accent-gold);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--radius-md);
+    font-weight: 600;
+    transition: all var(--transition-base);
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-honeycomb::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: width var(--transition-base), height var(--transition-base);
+}
+
+.btn-honeycomb:hover::before {
+    width: 300px;
+    height: 300px;
+}
+
+.btn-honeycomb:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: var(--shadow-glow), var(--shadow-lg);
+}
+
+/* Bordes con tema de panal */
+.border-honeycomb {
+    border: 2px solid var(--border-color);
+    border-image: linear-gradient(135deg, var(--accent-honey), var(--accent-gold), var(--honeycomb)) 1;
+}
+
+/* Fondo con sutiles flores */
+.floral-accent {
+    position: relative;
+}
+
+.floral-accent::after {
+    content: '✿';
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 1.5rem;
+    color: var(--flower-pink);
+    opacity: 0.3;
 }
 .clasificacion-intolerable {
     background-color: #dc3545 !important; /* Rojo */

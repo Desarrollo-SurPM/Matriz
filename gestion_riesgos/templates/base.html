@@ -86,10 +86,17 @@
         {% block content %}{% endblock %}
     </main>
 
-    <footer class="text-center mt-5 py-4" style="border-top: 1px solid var(--border-color);">
+    <footer class="text-center mt-5 py-4" style="border-top: 3px solid var(--border-color); background: linear-gradient(to bottom, transparent, rgba(245, 221, 179, 0.1)); position: relative;">
         <div class="container">
-            <p style="color: var(--text-muted); margin: 0;">
-                &copy; {% now "Y" %} Prevencionista OS - Todos los derechos reservados.
+            <div style="display: flex; justify-content: center; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                <span style="font-size: 1.5rem; opacity: 0.6;">🐝</span>
+                <p style="color: var(--text-secondary); margin: 0; font-weight: 500;">
+                    &copy; {% now "Y" %} Prevencionista OS
+                </p>
+                <span style="font-size: 1.2rem; opacity: 0.4;">🍯</span>
+            </div>
+            <p style="color: var(--text-muted); margin: 0; font-size: 0.85rem;">
+                Trabajando como abejas por tu seguridad
             </p>
         </div>
     </footer>
