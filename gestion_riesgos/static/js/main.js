@@ -1,5 +1,5 @@
 // ============================================
-// PREVENCIONISTA OS - JAVASCRIPT PRINCIPAL
+// Risk-Bee - JAVASCRIPT PRINCIPAL
 // ============================================
 
 document.addEventListener('DOMContentLoaded', function() {

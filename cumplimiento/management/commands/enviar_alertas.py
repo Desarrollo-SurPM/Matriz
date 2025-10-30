@@ -28,7 +28,7 @@ class Command(BaseCommand):
                     f"Te recordamos que la obligación '{tarea.nombre_obligacion}' para la empresa '{tarea.empresa.razon_social}' "
                     f"vence el {tarea.proxima_fecha_vencimiento.strftime('%d-%m-%Y')}.\n\n"
                     f"Por favor, asegúrate de completarla a tiempo.\n\n"
-                    f"Saludos,\nEl equipo de Prevencionista OS"
+                    f"Saludos,\nEl equipo de Risk-Bee"
                 )
                 
                 send_mail(
