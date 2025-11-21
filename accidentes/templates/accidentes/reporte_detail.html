@@ -15,6 +15,13 @@
                 <p><strong>Fecha del Evento:</strong> {{ reporte.fecha_accidente|date:"d-m-Y H:i" }}</p>
                 <p><strong>Lugar:</strong> {{ reporte.lugar_exacto }}</p>
                 <p><strong>Tipo:</strong> <span class="badge bg-info">{{ reporte.get_tipo_accidente_display }}</span></p>
+                {% if reporte.clasificacion_severidad %}
+                <p><strong>Severidad (Interna):</strong> {{ reporte.get_clasificacion_severidad_display }}</p>
+                {% endif %}
+                {% if reporte.danio_propiedad %}
+                <p><strong>Daño a la propiedad/equipo:</strong> Sí</p>
+                <p><strong>Detalle del daño:</strong> {{ reporte.detalle_danio_propiedad|default:"No especificado" }}</p>
+                {% endif %}
                 <hr>
                 <p><strong>Involucrados:</strong> {{ reporte.nombres_involucrados }}</p>
                 <p><strong>Descripción del Evento:</strong><br>{{ reporte.descripcion_evento|linebreaks }}</p>

@@ -6,12 +6,20 @@ from gestion_riesgos.models import Empresa
 
 class ReporteAccidente(models.Model):
     TIPO_ACCIDENTE_CHOICES = [
+        ('accidente_trabajo', 'Accidente del Trabajo'),
+        ('accidente_trayecto', 'Accidente de Trayecto'),
+        ('enfermedad_profesional', 'Enfermedad Profesional'),
+        ('accidente_sin_incapacidad', 'Accidente ocurrido a causa u ocasión del trabajo sin incapacidad'),
+        ('enfermedad_laboral_sin_incapacidad', 'Enfermedad laboral sin incapacidad temporal ni permanente'),
+        ('accidente_comun', 'Accidente común'),
+        ('enfermedad_comun', 'Enfermedad común'),
+    ]
+
+    CLASIFICACION_SEVERIDAD_CHOICES = [
         ('incidente', 'Incidente (Casi Accidente)'),
         ('leve', 'Leve (Sin Tiempo Perdido)'),
         ('grave', 'Grave (Con Tiempo Perdido)'),
         ('fatal', 'Fatal'),
-        ('dano_propiedad', 'Daño a la propiedad / equipo'),
-        ('casi_accidente', 'Casi accidente'),
     ]
 
     TURNO_CHOICES = [
@@ -53,8 +61,14 @@ class ReporteAccidente(models.Model):
     lugar_exacto = models.CharField(max_length=255, help_text="Ej: Taller de soldadura, Bodega 2")
     fecha_accidente = models.DateTimeField()
 
-    # 4. Tipo de Accidente
-    tipo_accidente = models.CharField(max_length=20, choices=TIPO_ACCIDENTE_CHOICES)
+    # 4. Tipo de Accidente (normativo)
+    tipo_accidente = models.CharField(max_length=64, choices=TIPO_ACCIDENTE_CHOICES)
+    # Clasificación interna de severidad (no normativa)
+    clasificacion_severidad = models.CharField(max_length=16, choices=CLASIFICACION_SEVERIDAD_CHOICES, blank=True, null=True, verbose_name='Clasificación de Severidad (Interna)', help_text='Uso interno, no corresponde a la norma')
+
+    # Dato adicional: daño a la propiedad/equipo
+    danio_propiedad = models.BooleanField(default=False, verbose_name='Daño a la propiedad/equipo', help_text='Dato adicional, no es un tipo de accidente')
+    detalle_danio_propiedad = models.TextField(blank=True, null=True)
 
     # 5. Lesión / Daño
     tipo_lesion = models.CharField(max_length=50, choices=TIPO_LESION_CHOICES, blank=True, null=True)

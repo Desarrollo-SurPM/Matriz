@@ -21,26 +21,32 @@ class ReporteFlashForm(forms.ModelForm):
             'lugar_exacto': forms.TextInput(attrs={'class': 'form-control'}),
             'fecha_accidente': forms.DateTimeInput(attrs={'class': 'form-control', 'type': 'datetime-local'}),
             'tipo_accidente': forms.Select(attrs={'class': 'form-control form-select'}),
+            'clasificacion_severidad': forms.Select(attrs={'class': 'form-control form-select'}),
             'tipo_lesion': forms.Select(attrs={'class': 'form-control form-select'}),
             'tratamiento_inicial': forms.Select(attrs={'class': 'form-control form-select'}),
             'causas_inmediatas': forms.Textarea(attrs={'class': 'form-control', 'rows': 2}), # <-- AJUSTE DE ALTURA
             'medidas_inmediatas': forms.Textarea(attrs={'class': 'form-control', 'rows': 2}), # <-- AJUSTE DE ALTURA
+            'danio_propiedad': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+            'detalle_danio_propiedad': forms.Textarea(attrs={'class': 'form-control', 'rows': 2}),
             'evidencia_fotografica': forms.FileInput(attrs={'class': 'form-control'}),
         }
 class ReporteAccidenteForm(forms.ModelForm):
     class Meta:
         model = ReporteAccidente
         fields = [
-            'empresa', 'fecha_accidente', 'lugar_exacto', 'tipo_accidente',
+            'empresa', 'fecha_accidente', 'lugar_exacto', 'tipo_accidente', 'clasificacion_severidad',
             'descripcion_evento', 
-            'evidencia_fotografica'
+            'danio_propiedad', 'detalle_danio_propiedad', 'evidencia_fotografica'
         ]
         widgets = {
             'empresa': forms.Select(attrs={'class': 'form-control'}),
             'fecha_accidente': forms.DateTimeInput(attrs={'class': 'form-control', 'type': 'datetime-local'}),
             'lugar_exacto': forms.TextInput(attrs={'class': 'form-control'}),
             'tipo_accidente': forms.Select(attrs={'class': 'form-control'}),
+            'clasificacion_severidad': forms.Select(attrs={'class': 'form-control'}),
             'descripcion_evento': forms.Textarea(attrs={'class': 'form-control', 'rows': 4}),
+            'danio_propiedad': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+            'detalle_danio_propiedad': forms.Textarea(attrs={'class': 'form-control', 'rows': 2}),
             'evidencia_fotografica': forms.FileInput(attrs={'class': 'form-control'}),
         }
 

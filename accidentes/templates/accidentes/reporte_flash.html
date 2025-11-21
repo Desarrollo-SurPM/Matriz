@@ -78,6 +78,11 @@
                      <h5 class="h6">4. Tipo de Accidente</h5>
                      <div class="mb-3">
                         {{ form.tipo_accidente }}
+                     </div>
+                     <div class="mb-3">
+                        <label for="{{ form.clasificacion_severidad.id_for_label }}" class="form-label"><b>Clasificación de Severidad (Uso interno)</b></label>
+                        {{ form.clasificacion_severidad }}
+                        <small class="text-muted d-block">Esta clasificación no pertenece a la norma; se usa internamente.</small>
                     </div>
                 </fieldset>
 
@@ -104,12 +109,20 @@
                                 <label for="{{ form.tipo_lesion.id_for_label }}" class="form-label"><b>Tipo de Lesión</b></label>
                                 {{ form.tipo_lesion }}
                             </div>
-                            <div class="mb-3">
-                                <label for="{{ form.tratamiento_inicial.id_for_label }}" class="form-label"><b>Tratamiento Inicial</b></label>
-                                {{ form.tratamiento_inicial }}
-                            </div>
-                        </div>
+                    <div class="mb-3">
+                        <label for="{{ form.tratamiento_inicial.id_for_label }}" class="form-label"><b>Tratamiento Inicial</b></label>
+                        {{ form.tratamiento_inicial }}
                     </div>
+                    <div class="form-check mb-2">
+                        {{ form.danio_propiedad }}
+                        <label class="form-check-label" for="{{ form.danio_propiedad.id_for_label }}">Daño a la propiedad/equipo (dato adicional)</label>
+                    </div>
+                    <div class="mb-3">
+                        <label for="{{ form.detalle_danio_propiedad.id_for_label }}" class="form-label"><b>Detalle del daño (opcional)</b></label>
+                        {{ form.detalle_danio_propiedad }}
+                    </div>
+                </div>
+            </div>
                 </fieldset>
 
                 <fieldset class="border p-3 mb-4 rounded">

@@ -23,17 +23,11 @@
             </thead>
             <tbody>
                 {% for reporte in reportes %}
-                <tr class="{% if reporte.tipo_accidente == 'fatal' or reporte.tipo_accidente == 'grave' %}table-danger{% elif reporte.tipo_accidente == 'leve' %}table-warning{% endif %}">
+                <tr class="{% if reporte.clasificacion_severidad == 'fatal' or reporte.clasificacion_severidad == 'grave' %}table-danger{% elif reporte.clasificacion_severidad == 'leve' %}table-warning{% endif %}">
                     <td>{{ reporte.fecha_accidente|date:"d-m-Y H:i" }}</td>
                     <td>{{ reporte.empresa.razon_social }}</td>
                     <td>
-                        <span class="badge 
-                            {% if reporte.tipo_accidente == 'fatal' or reporte.tipo_accidente == 'grave' %}bg-danger
-                            {% elif reporte.tipo_accidente == 'leve' %}bg-warning text-dark
-                            {% else %}bg-secondary
-                            {% endif %}">
-                            {{ reporte.get_tipo_accidente_display }}
-                        </span>
+                        <span class="badge bg-secondary">{{ reporte.get_tipo_accidente_display }}</span>
                     </td>
                     <td>{{ reporte.lugar_exacto }}</td>
                     <td>

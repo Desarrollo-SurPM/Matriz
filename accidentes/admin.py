@@ -4,7 +4,7 @@ from .models import ReporteAccidente, InvestigacionAccidente
 @admin.register(ReporteAccidente)
 class ReporteAccidenteAdmin(admin.ModelAdmin):
     list_display = ('__str__', 'lugar_exacto', 'reportado_por', 'fecha_reporte')
-    list_filter = ('tipo_accidente', 'empresa')
+    list_filter = ('tipo_accidente', 'clasificacion_severidad', 'empresa')
 
 @admin.register(InvestigacionAccidente)
 class InvestigacionAccidenteAdmin(admin.ModelAdmin):
