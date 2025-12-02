@@ -1,5 +1,3 @@
-# matriz/settings.py
-
 import os
 from pathlib import Path
 from decouple import AutoConfig, Config, RepositoryEnv
@@ -15,15 +13,13 @@ if ENV_FILE.exists():
 else:
     config = AutoConfig(search_path=BASE_DIR)
 
-# Lee la SECRET_KEY desde las variables de entorno. ¡Mucho más seguro!
-# En entornos donde no esté definida (p.ej., durante el build), usa un valor temporal.
+# Lee la SECRET_KEY desde las variables de entorno.
 SECRET_KEY = config('SECRET_KEY', default='insecure-secret-key-change-me')
 
-# DEBUG debe ser False en producción. Se controla con una variable de entorno.
+# DEBUG debe ser False en producción.
 DEBUG = config('DEBUG', default=False, cast=bool)
 
 # Configura los hosts permitidos desde una variable de entorno.
-# Ejemplo: ALLOWED_HOSTS="miapp.railway.app,www.miapp.com"
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='127.0.0.1,localhost,healthcheck.railway.app').split(',')
 
 # Agregar hosts adicionales para Railway
@@ -37,7 +33,7 @@ ALLOWED_HOSTS += [
 if DEBUG and '0.0.0.0' not in ALLOWED_HOSTS:
     ALLOWED_HOSTS.append('0.0.0.0')
 
-# CSRF: dominios confiables para solicitudes desde Railway (usar esquema https)
+# CSRF: dominios confiables para solicitudes desde Railway
 CSRF_TRUSTED_ORIGINS = config(
     'CSRF_TRUSTED_ORIGINS',
     default='https://*.railway.app,https://*.up.railway.app,https://healthcheck.railway.app'
@@ -63,17 +59,17 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'whitenoise.runserver_nostatic',  # Añade esto
+    'whitenoise.runserver_nostatic',  # WhiteNoise antes de staticfiles
     'django.contrib.staticfiles',
     'gestion_riesgos',
     'cumplimiento',
     'agenda',
-    'accidentes', # Mueve tu app aquí
+    'accidentes',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware', # Configuración de WhiteNoise
+    'whitenoise.middleware.WhiteNoiseMiddleware', # Middleware de WhiteNoise
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -105,11 +101,12 @@ WSGI_APPLICATION = 'matriz.wsgi.application'
 # Database
 # Usar PostgreSQL desde DATABASE_URL cuando esté definido. Si no, fallback a SQLite
 DATABASE_URL_VALUE = config('DATABASE_URL', default=None)
+
 if DATABASE_URL_VALUE:
     _db_config = dj_database_url.parse(
         DATABASE_URL_VALUE,
         conn_max_age=600,
-        ssl_require=not DEBUG
+        ssl_require=not DEBUG  # Requiere SSL si no estamos en DEBUG
     )
 else:
     _db_config = {
@@ -132,7 +129,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 
 # Internationalization
-LANGUAGE_CODE = 'es-cl' # Cambiado a español de Chile
+LANGUAGE_CODE = 'es-cl'
 TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
@@ -142,8 +139,10 @@ USE_TZ = True
 STATIC_URL = 'static/'
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
-# Configuración de WhiteNoise para servir archivos estáticos eficientemente
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+# Configuración de WhiteNoise (CORREGIDA PARA EVITAR ERRORES DE DESPLIEGUE)
+# Se usa CompressedStaticFilesStorage en lugar de ManifestStaticFilesStorage
+# para evitar fallos si faltan archivos referenciados.
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
