@@ -1,107 +1,159 @@
 {% extends 'base.html' %}
 
-{% block title %}{{ empresa.razon_social }} - Risk-Bee{% endblock %}
+{% block title %}{{ empresa.razon_social }} | Risk-Bee{% endblock %}
 
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <div>
-        <h1 class="text-gradient" style="font-size: 2.5rem; font-weight: 700; margin-bottom: 0.5rem;">
-            <i class="bi bi-building-fill me-2"></i>{{ empresa.razon_social }}
-        </h1>
-        <p style="color: var(--text-secondary); margin: 0;">
-            <i class="bi bi-credit-card me-2"></i>RUT: {{ empresa.rut }}
-        </p>
-    </div>
-    <div class="d-flex gap-2">
-        <a href="{% url 'empresa_update' empresa.pk %}" class="btn-outline-modern">
-            <i class="bi bi-pencil me-1"></i>Editar
-        </a>
-        <a href="{% url 'empresa_delete' empresa.pk %}" class="btn-ghost" style="color: var(--danger); border-color: var(--danger);">
-            <i class="bi bi-trash me-1"></i>Eliminar
-        </a>
-    </div>
-</div>
+<div class="container-fluid px-4 py-4">
 
-<div class="divider mb-4"></div>
+    <div class="card-modern border-0 shadow-sm mb-4 position-relative overflow-hidden">
+        <div class="position-absolute top-0 end-0 p-3 opacity-10">
+            <i class="bi bi-building" style="font-size: 8rem; color: var(--accent-primary);"></i>
+        </div>
 
-<div class="row">
-    <div class="col-lg-6 mb-4">
-        <div class="card-modern h-100">
-            <div class="card-header-modern d-flex justify-content-between align-items-center">
-                <h4 class="mb-0"><i class="bi bi-grid-3x3-gap-fill me-2"></i>Matrices de Riesgo</h4>
-                <a href="{% url 'matriz_create' empresa_pk=empresa.pk %}" class="btn-primary-modern">
-                    <i class="bi bi-plus-circle me-1"></i>Crear
-                </a>
-            </div>
+        <div class="card-body p-4 p-lg-5 position-relative">
+            <div class="d-flex flex-column flex-md-row align-items-center gap-4">
+                
+                <div class="bg-white p-3 rounded-circle shadow-sm d-flex align-items-center justify-content-center" style="width: 100px; height: 100px;">
+                    {% if empresa.logo %}
+                        <img src="{{ empresa.logo.url }}" alt="Logo" class="img-fluid rounded-circle">
+                    {% else %}
+                        <span class="fw-bold fs-1 text-secondary">{{ empresa.razon_social|first }}</span>
+                    {% endif %}
+                </div>
 
-            <div class="list-group">
-                {% for matriz in empresa.matrices.all %}
-                    <a href="{% url 'matriz_detail' matriz.pk %}" class="list-group-item list-group-item-action">
-                        <div class="d-flex align-items-center">
-                            <i class="bi bi-file-earmark-spreadsheet me-3" style="font-size: 1.5rem; color: var(--accent-primary);"></i>
-                            <div class="flex-grow-1">
-                                <h6 class="mb-0" style="color: var(--text-primary);">{{ matriz.nombre_proyecto }}</h6>
-                                <small style="color: var(--text-secondary);">Creada el {{ matriz.fecha_elaboracion|date:"d/m/Y" }}</small>
-                            </div>
-                            <i class="bi bi-chevron-right" style="color: var(--text-muted);"></i>
-                        </div>
-                    </a>
-                {% empty %}
-                    <div class="list-group-item text-center" style="padding: 3rem 1rem;">
-                        <i class="bi bi-inbox" style="font-size: 3rem; color: var(--text-muted); opacity: 0.3;"></i>
-                        <p style="color: var(--text-muted); margin-top: 1rem; margin-bottom: 0;">No hay matrices para esta empresa.</p>
+                <div class="text-center text-md-start flex-grow-1">
+                    <h6 class="text-uppercase text-muted fw-bold small mb-1">Ficha de Cliente</h6>
+                    <h1 class="fw-bold text-gradient mb-1">{{ empresa.razon_social }}</h1>
+                    <div class="d-flex flex-wrap justify-content-center justify-content-md-start gap-3 text-secondary">
+                        <span><i class="fas fa-id-card me-1"></i> {{ empresa.rut }}</span>
+                        <span><i class="fas fa-map-marker-alt me-1"></i> {{ empresa.direccion|default:"Dirección no registrada" }}</span>
+                        <span><i class="fas fa-envelope me-1"></i> {{ empresa.correo_contacto|default:"Sin correo" }}</span>
                     </div>
-                {% endfor %}
+                </div>
+
+                <div class="d-flex gap-2">
+                    <a href="{% url 'empresa_update' empresa.pk %}" class="btn btn-outline-modern bg-white">
+                        <i class="fas fa-edit"></i> Editar
+                    </a>
+                    <a href="{% url 'empresa_list' %}" class="btn btn-light border">
+                        <i class="fas fa-arrow-left"></i> Volver
+                    </a>
+                </div>
             </div>
         </div>
     </div>
 
-    <div class="col-lg-6 mb-4">
-        <div class="card-modern h-100">
-            <div class="card-header-modern d-flex justify-content-between align-items-center">
-                <h4 class="mb-0"><i class="bi bi-folder-fill me-2"></i>Gestor Documental</h4>
-                <a href="{% url 'documento_create' empresa_pk=empresa.pk %}" class="btn-primary-modern">
-                    <i class="bi bi-cloud-upload me-1"></i>Subir
-                </a>
-            </div>
+    <div class="row">
+        <div class="col-12">
+            <ul class="nav nav-tabs nav-tabs-modern mb-4 border-bottom-0 gap-2" id="myTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active px-4 py-2 fw-bold shadow-sm" id="matrices-tab" data-bs-toggle="tab" data-bs-target="#matrices" type="button" role="tab">
+                        <i class="fas fa-table me-2 text-success"></i>Matrices IPER
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link px-4 py-2 fw-bold shadow-sm bg-white" id="docs-tab" data-bs-toggle="tab" data-bs-target="#docs" type="button" role="tab">
+                        <i class="fas fa-folder-open me-2 text-warning"></i>Documentos
+                    </button>
+                </li>
+            </ul>
 
-            <div class="list-group">
-                {% for doc in empresa.documentos.all %}
-                    <div class="list-group-item">
-                        <div class="d-flex align-items-center justify-content-between">
-                            <div class="d-flex align-items-center flex-grow-1">
-                                <i class="bi bi-file-earmark-pdf me-3" style="font-size: 1.5rem; color: var(--danger);"></i>
-                                <div>
-                                    <a href="{{ doc.archivo.url }}" target="_blank" style="color: var(--text-primary); text-decoration: none; font-weight: 600;">
-                                        {{ doc.nombre }}
-                                    </a>
-                                    <div>
-                                        <small style="color: var(--text-secondary);">
-                                            <i class="bi bi-calendar3 me-1"></i>{{ doc.fecha_subida|date:"d/m/Y" }}
-                                        </small>
+            <div class="tab-content" id="myTabContent">
+                
+                <div class="tab-pane fade show active" id="matrices" role="tabpanel">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="fw-bold mb-0">Matrices de Riesgo Registradas</h5>
+                        <a href="{% url 'matriz_iper_create' empresa.pk %}" class="btn btn-primary-modern btn-sm">
+                            <i class="fas fa-plus-circle me-2"></i>Nueva Matriz IPER
+                        </a>
+                    </div>
+
+                    <div class="row g-4">
+                        {% for matriz in empresa.matriziper_set.all %}
+                        <div class="col-md-6 col-lg-4">
+                            <div class="card-modern h-100 hover-lift transition-base border">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between mb-3">
+                                        <div class="badge bg-success bg-opacity-10 text-success border border-success p-2 rounded">
+                                            <i class="fas fa-file-excel"></i> V. {{ matriz.version }}
+                                        </div>
+                                        <div class="dropdown">
+                                            <button class="btn btn-sm btn-light rounded-circle" data-bs-toggle="dropdown">
+                                                <i class="fas fa-ellipsis-v"></i>
+                                            </button>
+                                            <ul class="dropdown-menu dropdown-menu-end border-0 shadow">
+                                                <li>
+                                                    <a class="dropdown-item" href="{% url 'matriz_riesgos_view' matriz.pk %}">
+                                                        <i class="fas fa-edit me-2 text-warning"></i>Editar
+                                                    </a>
+                                                </li>
+                                                <li><hr class="dropdown-divider"></li>
+                                                <li>
+                                                    <a class="dropdown-item text-danger" href="#">
+                                                        <i class="fas fa-trash-alt me-2"></i>Eliminar
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    
+                                    <h5 class="fw-bold text-dark mb-1">{{ matriz.codigo_documento }}</h5>
+                                    <p class="text-muted small mb-3">Creada el: {{ matriz.fecha_creacion|date:"d M, Y" }}</p>
+                                    
+                                    <div class="d-grid">
+                                        <a href="{% url 'matriz_riesgos_view' matriz.pk %}" class="btn btn-outline-success btn-sm fw-bold">
+                                            <i class="fas fa-external-link-alt me-2"></i>Abrir Matriz
+                                        </a>
                                     </div>
                                 </div>
                             </div>
-                            <a href="{% url 'documento_delete' doc.pk %}" class="btn-ghost" style="color: var(--danger); padding: 0.5rem;">
-                                <i class="bi bi-trash"></i>
-                            </a>
                         </div>
+                        {% empty %}
+                        <div class="col-12">
+                            <div class="alert alert-light border border-dashed text-center py-5">
+                                <div class="mb-3 text-muted opacity-50">
+                                    <i class="fas fa-file-excel fa-3x"></i>
+                                </div>
+                                <h5 class="text-muted">No hay matrices creadas</h5>
+                                <p class="small mb-3">Crea la primera matriz IPER para este cliente.</p>
+                                <a href="{% url 'matriz_iper_create' empresa.pk %}" class="btn btn-primary-modern btn-sm">
+                                    Crear Ahora
+                                </a>
+                            </div>
+                        </div>
+                        {% endfor %}
                     </div>
-                {% empty %}
-                    <div class="list-group-item text-center" style="padding: 3rem 1rem;">
-                        <i class="bi bi-file-earmark-x" style="font-size: 3rem; color: var(--text-muted); opacity: 0.3;"></i>
-                        <p style="color: var(--text-muted); margin-top: 1rem; margin-bottom: 0;">No hay documentos para esta empresa.</p>
+                </div>
+
+                <div class="tab-pane fade" id="docs" role="tabpanel">
+                    <div class="card-modern border-0 p-5 text-center">
+                        <i class="fas fa-cloud-upload-alt fa-3x text-muted mb-3"></i>
+                        <h5>Gestión Documental</h5>
+                        <p class="text-muted">Aquí podrás subir contratos, reglamentos internos y otros archivos PDF.</p>
+                        <button class="btn btn-outline-modern disabled">Próximamente</button>
                     </div>
-                {% endfor %}
+                </div>
+
             </div>
         </div>
     </div>
 </div>
 
-<div class="mt-4">
-    <a href="{% url 'empresa_list' %}" class="btn-outline-modern">
-        <i class="bi bi-arrow-left me-2"></i>Volver a Mis Empresas
-    </a>
-</div>
-
+<style>
+    /* Estilos Adicionales Específicos para esta vista */
+    .nav-tabs-modern .nav-link {
+        border: none;
+        border-radius: 8px;
+        color: var(--text-secondary);
+        transition: all 0.3s ease;
+    }
+    .nav-tabs-modern .nav-link.active {
+        background-color: var(--accent-primary);
+        color: white !important;
+    }
+    .hover-lift:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+    }
+</style>
 {% endblock %}

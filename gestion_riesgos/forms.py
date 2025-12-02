@@ -1,7 +1,7 @@
 # gestion_riesgos/forms.py
 
 from django import forms
-from .models import Empresa, Matriz, Proceso, Tarea, Riesgo, Documento, Peligro
+from .models import Empresa, Matriz, Proceso, Tarea, Riesgo, Documento, Peligro, MatrizIPER
 
 radio_widget = forms.RadioSelect(attrs={'class': 'form-check-input'})
 class EmpresaForm(forms.ModelForm):
@@ -177,6 +177,25 @@ class RiesgoEvaluarForm(forms.ModelForm):
             'consecuencia_especial': radio_widget,
         }
 
+class MatrizIPERForm(forms.ModelForm):
+    class Meta:
+        model = MatrizIPER
+        exclude = ['fecha_creacion']
+        widgets = {
+            'empresa': forms.Select(attrs={'class': 'form-select form-control-modern'}),
+            'fecha_documento': forms.DateInput(attrs={'class': 'form-control-modern', 'type': 'date'}),
+            # Aplicar estilo moderno a todos los campos de texto
+            'departamento_sucursal': forms.TextInput(attrs={'class': 'form-control-modern'}),
+            'proyecto': forms.TextInput(attrs={'class': 'form-control-modern'}),
+            'codigo_documento': forms.TextInput(attrs={'class': 'form-control-modern'}),
+            'version': forms.TextInput(attrs={'class': 'form-control-modern'}),
+            'elaborado_por': forms.TextInput(attrs={'class': 'form-control-modern'}),
+            'cargo_elabora': forms.TextInput(attrs={'class': 'form-control-modern'}),
+            'revisado_por': forms.TextInput(attrs={'class': 'form-control-modern'}),
+            'cargo_revisa': forms.TextInput(attrs={'class': 'form-control-modern'}),
+            'aprobado_por': forms.TextInput(attrs={'class': 'form-control-modern'}),
+            'cargo_aprueba': forms.TextInput(attrs={'class': 'form-control-modern'}),
+        }
 
 class PeligroForm(forms.ModelForm):
     class Meta:

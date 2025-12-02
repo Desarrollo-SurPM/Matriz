@@ -1,61 +1,116 @@
 {% extends 'base.html' %}
 
-{% block title %}Mis Empresas - Risk-Bee{% endblock %}
+{% block title %}Mis Empresas | Risk-Bee{% endblock %}
 
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <div>
-        <h1 class="text-gradient" style="font-size: 2.5rem; font-weight: 700; margin-bottom: 0.5rem;">
-            <i class="bi bi-building me-2"></i>Mis Empresas Clientes
-        </h1>
-        <p style="color: var(--text-secondary); margin: 0;">Gestiona tus empresas y sus matrices de riesgo</p>
-    </div>
-    <a href="{% url 'empresa_create' %}" class="btn-primary-modern">
-        <i class="bi bi-plus-circle me-2"></i>Añadir Empresa
-    </a>
-</div>
+<div class="container-fluid px-4 py-5">
 
-<div class="row">
-    {% for empresa in empresas %}
-    <div class="col-md-6 col-lg-4 mb-4">
-        <div class="card-modern h-100">
-            <div class="d-flex align-items-start mb-3">
-                <div class="feature-icon me-3" style="width: 56px; height: 56px; font-size: 1.5rem;">
-                    <i class="bi bi-building-fill"></i>
-                </div>
-                <div class="flex-grow-1">
-                    <h5 class="mb-1" style="color: var(--text-primary); font-weight: 700;">
-                        {{ empresa.razon_social }}
-                    </h5>
-                    <p class="mb-0" style="color: var(--text-secondary); font-size: 0.9rem;">
-                        <i class="bi bi-credit-card me-1"></i>{{ empresa.rut }}
-                    </p>
-                </div>
-            </div>
-
-            <div class="divider my-3"></div>
-
-            <div class="d-flex gap-2">
-                <a href="{{ empresa.get_absolute_url }}" class="btn-primary-modern flex-grow-1">
-                    <i class="bi bi-gear me-1"></i>Gestionar
-                </a>
-                <a href="{% url 'matriz_create' empresa.pk %}" class="btn-outline-modern" data-tooltip="Crear Matriz">
-                    <i class="bi bi-plus-lg"></i>
-                </a>
-            </div>
+    <div class="row align-items-center mb-5 fade-in-up">
+        <div class="col-md-6">
+            <h1 class="display-6 fw-bold text-gradient mb-1">
+                <i class="fas fa-building me-2 text-warning"></i>Mis Clientes
+            </h1>
+            <p class="text-muted mb-0">Administra las empresas y sus matrices de riesgo.</p>
         </div>
-    </div>
-    {% empty %}
-    <div class="col-12">
-        <div class="card-modern text-center" style="padding: 4rem 2rem;">
-            <i class="bi bi-building-slash" style="font-size: 5rem; color: var(--text-muted); opacity: 0.3; margin-bottom: 1.5rem;"></i>
-            <h3 style="color: var(--text-primary); margin-bottom: 1rem;">No tienes empresas registradas</h3>
-            <p style="color: var(--text-secondary); margin-bottom: 2rem;">¡Comienza añadiendo tu primer cliente!</p>
-            <a href="{% url 'empresa_create' %}" class="btn-primary-modern">
-                <i class="bi bi-plus-circle me-2"></i>Añadir Primera Empresa
+        <div class="col-md-6 mt-3 mt-md-0 d-flex gap-3 justify-content-md-end">
+            <div class="input-group shadow-sm" style="max-width: 300px;">
+                <span class="input-group-text bg-white border-end-0"><i class="fas fa-search text-muted"></i></span>
+                <input type="text" class="form-control border-start-0 ps-0" placeholder="Buscar empresa...">
+            </div>
+            <a href="{% url 'empresa_create' %}" class="btn btn-primary-modern shadow-lg d-flex align-items-center">
+                <i class="fas fa-plus-circle me-2"></i> Nueva Empresa
             </a>
         </div>
     </div>
-    {% endfor %}
+
+    <div class="row g-4">
+        {% for empresa in empresas %}
+        <div class="col-12 col-md-6 col-xl-4 fade-in-up" style="animation-delay: 0.1s;">
+            <div class="card-modern h-100 hover-lift border-0 shadow-sm position-relative overflow-hidden">
+                
+                <div class="position-absolute top-0 start-0 bottom-0 bg-gradient-primary" style="width: 6px;"></div>
+
+                <div class="card-body p-4 ps-5">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <div class="d-flex align-items-center">
+                            <div class="bg-light p-3 rounded-circle me-3 shadow-sm d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                                {% if empresa.logo %}
+                                    <img src="{{ empresa.logo.url }}" alt="Logo" class="img-fluid rounded-circle">
+                                {% else %}
+                                    <i class="fas fa-city fa-lg text-secondary opacity-50"></i>
+                                {% endif %}
+                            </div>
+                            <div>
+                                <h5 class="fw-bold text-dark mb-0">{{ empresa.razon_social }}</h5>
+                                <small class="text-muted"><i class="fas fa-id-card me-1"></i> {{ empresa.rut }}</small>
+                            </div>
+                        </div>
+                        
+                        <div class="dropdown">
+                            <button class="btn btn-link text-muted p-0" type="button" data-bs-toggle="dropdown">
+                                <i class="fas fa-ellipsis-v"></i>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end border-0 shadow-lg">
+                                <li><a class="dropdown-item" href="{% url 'empresa_update' empresa.pk %}"><i class="fas fa-edit me-2 text-warning"></i> Editar</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item text-danger" href="#"><i class="fas fa-trash-alt me-2"></i> Eliminar</a></li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="d-flex align-items-center justify-content-between mt-4 pt-3 border-top border-light">
+                        <span class="badge bg-success bg-opacity-10 text-success border border-success px-3 py-2 rounded-pill">
+                            <i class="fas fa-check-circle me-1"></i> Activa
+                        </span>
+                        
+                        <div class="d-flex gap-2">
+                            <a href="{% url 'matriz_iper_create' empresa.pk %}" class="btn btn-light btn-sm text-primary border" data-bs-toggle="tooltip" title="Nueva Matriz IPER">
+                                <i class="fas fa-file-excel"></i>
+                            </a>
+                            
+                            <a href="{{ empresa.get_absolute_url }}" class="btn btn-outline-primary btn-sm fw-bold px-3">
+                                Gestionar <i class="fas fa-arrow-right ms-1"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center py-5">
+            <div class="opacity-50 mb-3">
+                <i class="fas fa-folder-open fa-4x text-muted"></i>
+            </div>
+            <h4 class="text-secondary fw-bold">No hay empresas registradas</h4>
+            <p class="text-muted">Comienza agregando tu primer cliente para gestionar sus riesgos.</p>
+            <a href="{% url 'empresa_create' %}" class="btn btn-primary-modern mt-3">
+                <i class="fas fa-plus me-2"></i> Agregar Primera Empresa
+            </a>
+        </div>
+        {% endfor %}
+    </div>
 </div>
+
+<style>
+    .bg-gradient-primary {
+        background: var(--accent-gradient);
+    }
+    .hover-lift {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .hover-lift:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 30px rgba(0,0,0,0.1) !important;
+    }
+</style>
+
+<script>
+    // Inicializar tooltips
+    document.addEventListener("DOMContentLoaded", function() {
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+          return new bootstrap.Tooltip(tooltipTriggerEl)
+        })
+    });
+</script>
 {% endblock %}

@@ -12,9 +12,12 @@ from django.views.generic import ListView, CreateView, UpdateView, DeleteView, D
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 from agenda.models import Visita, Recordatorio
-from .models import Empresa, Matriz, MedidaControl, Normativa, Proceso, Tarea, Riesgo, Documento, Peligro
-from .forms import EmpresaForm, MatrizForm, ProcesoForm, TareaForm, RiesgoForm, DocumentoForm, PeligroForm, RiesgoEvaluarForm
-
+from .models import Empresa, Matriz, MedidaControl, Normativa, Proceso, Tarea, Riesgo, Documento, Peligro, MatrizIPER, DetalleIPER
+from .forms import EmpresaForm, MatrizForm, ProcesoForm, TareaForm, RiesgoForm, DocumentoForm, PeligroForm, RiesgoEvaluarForm, MatrizIPERForm
+from django.shortcuts import render, get_object_or_404, redirect
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+import json
 # --- LANDING PAGE ---
 class LandingPageView(TemplateView):
     template_name = 'landing.html'
@@ -125,6 +128,72 @@ class EmpresaDeleteView(LoginRequiredMixin, DeleteView):
 
 # --- VISTAS DE MATRIZ ---
 
+def matriz_riesgos_view(request, matriz_id=None):
+    """
+    Vista principal que muestra el Encabezado (Form) + La Matriz (Tabla Editable).
+    """
+    if matriz_id:
+        matriz = get_object_or_404(MatrizIPER, pk=matriz_id)
+    else:
+        # Lógica temporal: obtener la última o crear una vacía para demo
+        matriz = MatrizIPER.objects.last()
+        if not matriz:
+            # Si no existe ninguna, podrías redirigir o manejar el error
+            pass
+
+    # Guardar cambios del encabezado si es POST
+    if request.method == 'POST' and 'save_header' in request.POST:
+        form = MatrizIPERForm(request.POST, request.FILES, instance=matriz)
+        if form.is_valid():
+            form.save()
+            return redirect('matriz_riesgos_view', matriz_id=matriz.id)
+    else:
+        form = MatrizIPERForm(instance=matriz)
+
+    # Obtener filas
+    filas = matriz.filas.all()
+
+    # --- CORRECCIÓN AQUÍ: Quitar la ruta larga, dejar solo el nombre del archivo ---
+    return render(request, 'matriz_riesgos.html', {
+        'matriz': matriz,
+        'form': form,
+        'filas': filas
+    })
+
+@csrf_exempt
+def update_detalle_iper(request):
+    """
+    API para actualizar celdas individuales del DetalleIPER.
+    """
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            row_id = data.get('id')
+            field = data.get('field')
+            value = data.get('value')
+
+            # Si el ID es 'new', creamos una fila nueva
+            if row_id == 'new':
+                matriz_id = data.get('matriz_id')
+                matriz = MatrizIPER.objects.get(pk=matriz_id)
+                detalle = DetalleIPER.objects.create(matriz=matriz)
+                # Actualizamos el campo que se editó al crear
+                if hasattr(detalle, field):
+                    setattr(detalle, field, value)
+                    detalle.save()
+                return JsonResponse({'status': 'created', 'id': detalle.id})
+            
+            # Actualizar fila existente
+            detalle = DetalleIPER.objects.get(pk=row_id)
+            if hasattr(detalle, field):
+                setattr(detalle, field, value)
+                detalle.save()
+                return JsonResponse({'status': 'ok'})
+            
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)})
+            
+    return JsonResponse({'status': 'error'}, status=400)
 class MatrizCreateView(LoginRequiredMixin, CreateView):
     model = Matriz
     form_class = MatrizForm
@@ -142,6 +211,19 @@ class MatrizCreateView(LoginRequiredMixin, CreateView):
     def get_success_url(self):
         return reverse('empresa_detail', kwargs={'pk': self.kwargs['empresa_pk']})
 
+def crear_nueva_matriz_iper(request, empresa_pk):
+    """
+    Crea una matriz vacía vinculada a la empresa y redirige a la vista de edición (Excel).
+    """
+    empresa = get_object_or_404(Empresa, pk=empresa_pk)
+    # Crear encabezado por defecto
+    nueva_matriz = MatrizIPER.objects.create(
+        empresa=empresa,
+        codigo_documento="IPER-001",
+        version="1.0"
+    )
+    # Redirigir a la vista de edición tipo Excel
+    return redirect('matriz_riesgos_view', matriz_id=nueva_matriz.id)
 class MatrizDetailView(LoginRequiredMixin, DetailView):
     model = Matriz
     template_name = 'matriz_detail.html' # Esta plantilla la vamos a reemplazar

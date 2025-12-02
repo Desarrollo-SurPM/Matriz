@@ -1,293 +1,384 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Reporte Flash de Accidente{% endblock %}
+{% block title %}Nuevo Reporte Flash | Risk-Bee{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Forzar ancho 100% en inputs para evitar desbordes en móviles */
+    .form-control-modern, 
+    .form-select, 
+    input, 
+    select, 
+    textarea {
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+    }
+    #human-model-container {
+        width: 100% !important;
+        touch-action: none;
+        outline: none; /* Quita borde azul al hacer click */
+    }
+</style>
+{% endblock %}
 
 {% block content %}
-<div class="container mt-4">
-    <div class="card shadow-sm">
-        <div class="card-header bg-danger text-white">
-            <h1 class="mb-0 h3">&#9888; REPORTE FLASH DE ACCIDENTE / INCIDENTE</h1>
-            <p class="mb-0 small">(Uso interno – Comunicación inmediata)</p>
+<div class="container py-4 py-md-5">
+    
+    <div class="text-center mb-5 fade-in-up">
+        <h1 class="display-5 fw-bold">
+            <span class="text-gradient"><i class="fas fa-bolt me-2 text-warning"></i>Reporte Flash</span>
+        </h1>
+        <p class="lead text-muted">Aviso inmediato de accidente (Base para DIAT).</p>
+    </div>
+
+    <form method="post" enctype="multipart/form-data" id="flashForm">
+        {% csrf_token %}
+
+        <div class="card-modern mb-5">
+            <div class="card-header-modern">
+                <h3><i class="fas fa-map-marker-alt me-2 text-honey"></i>1. Contexto del Evento</h3>
+            </div>
+            <div class="row g-3">
+                <div class="col-12 col-md-6">
+                    <label class="form-label-modern">Empresa</label>
+                    <div class="w-100">{{ form.empresa }}</div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <label class="form-label-modern">Área / Sección</label>
+                    <div class="w-100">{{ form.area_departamento }}</div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <label class="form-label-modern">Fecha y Hora</label>
+                    <div class="w-100">{{ form.fecha_accidente }}</div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <label class="form-label-modern">Lugar Exacto</label>
+                    <div class="w-100">{{ form.lugar_exacto }}</div>
+                </div>
+                <div class="col-12">
+                    <label class="form-label-modern">Supervisor Directo</label>
+                    <div class="w-100">{{ form.supervisor_directo }}</div>
+                </div>
+            </div>
         </div>
-        <div class="card-body">
-            <form method="post" enctype="multipart/form-data">
-                {% csrf_token %}
 
-                <fieldset class="border p-3 mb-4 rounded">
-                    <legend class="w-auto px-2 h5">1. Información General</legend>
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label for="{{ form.empresa.id_for_label }}" class="form-label"><b>Empresa / Contratista</b></label>
-                            {{ form.empresa }}
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="{{ form.area_departamento.id_for_label }}" class="form-label"><b>Área / Departamento</b></label>
-                            {{ form.area_departamento }}
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="{{ form.supervisor_responsable.id_for_label }}" class="form-label"><b>Supervisor Responsable</b></label>
-                            {{ form.supervisor_responsable }}
-                        </div>
-                    </div>
-                </fieldset>
+        <div class="card-modern mb-5">
+            <div class="card-header-modern">
+                <h3><i class="fas fa-user-injured me-2 text-honey"></i>2. Datos del Afectado</h3>
+            </div>
+            <div class="row g-3">
+                <div class="col-12 col-md-6">
+                    <label class="form-label-modern">Nombre Completo</label>
+                    <div class="w-100">{{ form.nombre_completo_accidentado }}</div>
+                </div>
+                <div class="col-12 col-md-3">
+                    <label class="form-label-modern">RUT</label>
+                    <div class="w-100">{{ form.rut_accidentado }}</div>
+                </div>
+                <div class="col-12 col-md-3">
+                    <label class="form-label-modern">Turno</label>
+                    <div class="w-100">{{ form.turno_accidentado }}</div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <label class="form-label-modern">Cargo</label>
+                    <div class="w-100">{{ form.cargo_accidentado }}</div>
+                </div>
+                <div class="col-12 col-md-3">
+                    <label class="form-label-modern">Antigüedad</label>
+                    <div class="w-100">{{ form.antiguedad_cargo }}</div>
+                </div>
+                <div class="col-12 col-md-3">
+                    <label class="form-label-modern">Horas Previas</label>
+                    <div class="w-100">{{ form.horas_trabajadas_antes }}</div>
+                </div>
+            </div>
+        </div>
 
-                <fieldset class="border p-3 mb-4 rounded">
-                    <legend class="w-auto px-2 h5">2. Datos del Accidentado</legend>
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label for="{{ form.nombre_completo_accidentado.id_for_label }}" class="form-label"><b>Nombre Completo</b></label>
-                            {{ form.nombre_completo_accidentado }}
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="{{ form.rut_accidentado.id_for_label }}" class="form-label"><b>RUT</b></label>
-                            {{ form.rut_accidentado }}
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="{{ form.cargo_accidentado.id_for_label }}" class="form-label"><b>Cargo / Función</b></label>
-                            {{ form.cargo_accidentado }}
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="{{ form.antiguedad_cargo_accidentado.id_for_label }}" class="form-label"><b>Antigüedad en el Cargo</b></label>
-                            {{ form.antiguedad_cargo_accidentado }}
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="{{ form.turno_accidentado.id_for_label }}" class="form-label"><b>Turno</b></label>
-                            {{ form.turno_accidentado }}
-                        </div>
-                    </div>
-                </fieldset>
+        <div class="card-modern mb-5">
+            <div class="card-header-modern">
+                <h3><i class="fas fa-notes-medical me-2 text-honey"></i>3. Descripción y Lesiones</h3>
+            </div>
+            
+            <div class="mb-4">
+                <label class="form-label-modern">Relato del Hecho (Objetivo)</label>
+                <div class="w-100">{{ form.descripcion_evento }}</div>
+            </div>
 
-                <fieldset class="border p-3 mb-4 rounded">
-                    <legend class="w-auto px-2 h5">3. Descripción del Accidente</legend>
-                    <div class="mb-3">
-                        <label for="{{ form.descripcion_evento.id_for_label }}" class="form-label"><b>Relato conciso y objetivo del hecho (qué, cómo, dónde, cuándo)</b></label>
-                        {{ form.descripcion_evento }}
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label for="{{ form.lugar_exacto.id_for_label }}" class="form-label"><b>Lugar Específico</b></label>
-                            {{ form.lugar_exacto }}
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="{{ form.fecha_accidente.id_for_label }}" class="form-label"><b>Fecha y Hora del Accidente</b></label>
-                            {{ form.fecha_accidente }}
-                        </div>
-                    </div>
-                     <hr class="my-4">
-                     <h5 class="h6">4. Tipo de Accidente</h5>
-                     <div class="mb-3">
-                        {{ form.tipo_accidente }}
-                     </div>
-                     <div class="mb-3">
-                        <label for="{{ form.clasificacion_severidad.id_for_label }}" class="form-label"><b>Clasificación de Severidad (Uso interno)</b></label>
-                        {{ form.clasificacion_severidad }}
-                        <small class="text-muted d-block">Esta clasificación no pertenece a la norma; se usa internamente.</small>
-                    </div>
-                </fieldset>
+            <div class="row g-3 mb-5">
+                <div class="col-12 col-md-6">
+                    <label class="form-label-modern">Tipo de Accidente</label>
+                    <div class="w-100">{{ form.tipo_accidente }}</div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <label class="form-label-modern">Severidad Inicial</label>
+                    <div class="w-100">{{ form.severidad_inicial }}</div>
+                </div>
+            </div>
 
-                <fieldset class="border p-3 mb-4 rounded">
-                    <legend class="w-auto px-2 h5">5. Lesión / Daño</legend>
-                    <div class="row align-items-center">
-                        <div class="col-md-7">
-                            <div class="d-flex justify-content-between align-items-center mb-2">
-                                <p class="form-label mb-0"><b>Parte del cuerpo afectada (Haga clic en el modelo):</b></p>
-                                <div class="form-check form-switch">
-                                    <input class="form-check-input" type="checkbox" id="multiSelectToggle">
-                                    <label class="form-check-label" for="multiSelectToggle">Marcar múltiples lesiones</label>
-                                </div>
+            <div class="row g-4">
+                <div class="col-12 col-lg-7">
+                    <label class="form-label-modern d-flex justify-content-between">
+                        <span>Zona Afectada (General):</span>
+                        <span class="badge bg-light text-dark fw-normal"><i class="fas fa-mouse-pointer me-1"></i> Click en el modelo</span>
+                    </label>
+                    
+                    <div id="human-model-container" 
+                         data-model-url="{% static 'gestion_riesgos/models/FinalBaseMesh.glb' %}"
+                         style="height: 500px; width: 100%; border-radius: var(--radius-xl); border: 2px solid var(--border-color); position: relative; overflow: hidden; background: #f4f7f6;">
+                        
+                        <div id="loader-3d" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: var(--accent-primary); text-align: center; z-index: 10;">
+                            <i class="fas fa-circle-notch fa-spin fa-3x mb-3"></i>
+                            <div class="fw-bold">Cargando...</div>
+                        </div>
+                    </div>
+                    
+                    {{ form.parte_cuerpo_afectada }} <div class="mt-3 p-3 bg-white rounded shadow-sm border">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <div>
+                                <small class="text-muted text-uppercase fw-bold" style="font-size: 0.7rem;">Zona Detectada</small>
+                                <div id="zona-texto" class="fw-bold text-dark fs-5">Ninguna</div>
                             </div>
-                            <div id="human-model-container" style="height: 500px; border-radius: 8px; cursor: pointer; border: 1px solid #ddd;"></div>
-                            <input type="hidden" name="parte_cuerpo_afectada" id="id_parte_cuerpo_afectada">
-                            <div class="alert alert-secondary mt-2">
-                                Partes seleccionadas: <strong id="parte-seleccionada-texto">Ninguna</strong>
-                                <button type="button" class="btn btn-sm btn-outline-danger float-end" id="clear-markers-btn">Limpiar</button>
-                            </div>
+                            <button type="button" class="btn btn-sm btn-outline-danger" id="limpiar-modelo">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
                         </div>
-                        <div class="col-md-5">
-                            <div class="mb-3">
-                                <label for="{{ form.tipo_lesion.id_for_label }}" class="form-label"><b>Tipo de Lesión</b></label>
-                                {{ form.tipo_lesion }}
-                            </div>
-                    <div class="mb-3">
-                        <label for="{{ form.tratamiento_inicial.id_for_label }}" class="form-label"><b>Tratamiento Inicial</b></label>
-                        {{ form.tratamiento_inicial }}
+                        
+                        <div class="mt-2">
+                            <label class="form-label-modern small">Detalle Específico (Opcional)</label>
+                            {{ form.detalle_parte_afectada }}
+                        </div>
                     </div>
-                    <div class="form-check mb-2">
-                        {{ form.danio_propiedad }}
-                        <label class="form-check-label" for="{{ form.danio_propiedad.id_for_label }}">Daño a la propiedad/equipo (dato adicional)</label>
-                    </div>
-                    <div class="mb-3">
-                        <label for="{{ form.detalle_danio_propiedad.id_for_label }}" class="form-label"><b>Detalle del daño (opcional)</b></label>
-                        {{ form.detalle_danio_propiedad }}
+                </div>
+
+                <div class="col-12 col-lg-5">
+                    <div class="p-4 bg-light rounded-3 border h-100">
+                        <h5 class="fw-bold mb-4 text-secondary"><i class="fas fa-info-circle me-2"></i>Detalles Clínicos</h5>
+                        <div class="mb-4">
+                            <label class="form-label-modern">Tipo de Lesión</label>
+                            <div class="w-100">{{ form.tipo_lesion }}</div>
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label-modern">Tratamiento Inicial</label>
+                            <div class="w-100">{{ form.tratamiento_inicial }}</div>
+                        </div>
+                        <hr class="text-muted my-4">
+                        <div class="form-check form-switch mb-3">
+                            {{ form.danio_propiedad }}
+                            <label class="form-check-label fw-bold" for="{{ form.danio_propiedad.id_for_label }}">¿Daño material?</label>
+                        </div>
+                        <div class="w-100">{{ form.detalle_danio_propiedad }}</div>
                     </div>
                 </div>
             </div>
-                </fieldset>
-
-                <fieldset class="border p-3 mb-4 rounded">
-                    <legend class="w-auto px-2 h5">6. Causas Inmediatas (Preliminares)</legend>
-                    <div class="mb-3">
-                        <label for="{{ form.causas_inmediatas.id_for_label }}" class="form-label"><b>Observaciones iniciales (Ej: Falta de orden, acto inseguro, etc.)</b></label>
-                        {{ form.causas_inmediatas }}
-                    </div>
-                </fieldset>
-                <fieldset class="border p-3 mb-4 rounded">
-                    <legend class="w-auto px-2 h5">7. Medidas Inmediatas Adoptadas</legend>
-                    <div class="mb-3">
-                         <label for="{{ form.medidas_inmediatas.id_for_label }}" class="form-label"><b>Acciones tomadas (Ej: Se brindó primeros auxilios, se aisló el área, etc.)</b></label>
-                        {{ form.medidas_inmediatas }}
-                    </div>
-                </fieldset>
-                <fieldset class="border p-3 mb-4 rounded">
-                     <legend class="w-auto px-2 h5">8. Registro Fotográfico</legend>
-                     <p class="text-muted">&#128248; Si es posible, adjunte 1 a 3 fotos.</p>
-                     {{ form.evidencia_fotografica }}
-                </fieldset>
-
-                <div class="d-grid gap-2">
-                    <button type="submit" class="btn btn-danger btn-lg">Enviar Reporte Flash</button>
-                    <a href="{% url 'reporte_accidente_list' %}" class="btn btn-secondary">Cancelar</a>
-                </div>
-            </form>
         </div>
-    </div>
+
+        <div class="card-modern mb-5">
+            <div class="card-header-modern">
+                <h3><i class="fas fa-camera me-2 text-honey"></i>4. Acciones y Evidencia</h3>
+            </div>
+            <div class="mb-4">
+                <label class="form-label-modern">Medidas Inmediatas</label>
+                <div class="w-100">{{ form.medidas_inmediatas }}</div>
+            </div>
+            <div class="mb-3">
+                <label class="form-label-modern">Evidencia Fotográfica</label>
+                <div class="w-100">{{ form.evidencia_fotografica }}</div>
+            </div>
+        </div>
+
+        <div class="d-grid gap-2 d-md-flex justify-content-md-end pb-5">
+            <a href="{% url 'reporte_accidente_list' %}" class="btn btn-outline-modern px-md-4">Cancelar</a>
+            <button type="submit" class="btn btn-primary-modern btn-lg px-md-5">
+                <i class="fas fa-paper-plane me-2"></i>Enviar Reporte
+            </button>
+        </div>
+    </form>
 </div>
 {% endblock %}
 
 {% block extra_js %}
 {{ block.super }}
-<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 
 <script>
 document.addEventListener("DOMContentLoaded", function() {
+
+    // =========================================================================
+    // ⚙️ VARIABLES DE CONFIGURACIÓN
+    // =========================================================================
+    const FACTOR_ALEJAMIENTO = 0.2; 
+    const TAMAÑO_MARCADOR = 0.03; 
+    const ZOOM_MAXIMO = 50; 
+
+    // === DICCIONARIO DE TRADUCCIÓN ===
+    const BODY_PARTS_MAP = {
+        'head': 'Cabeza', 'neck': 'Cuello', 'spine': 'Columna', 'hips': 'Cadera',
+        'shoulder': 'Hombro', 'arm': 'Brazo', 'forearm': 'Antebrazo', 'hand': 'Mano',
+        'leg': 'Pierna', 'thigh': 'Muslo', 'foot': 'Pie', 'toe': 'Dedos Pie',
+        'thumb': 'Pulgar', 'index': 'Índice', 'middle': 'Medio', 'ring': 'Anular', 'pinky': 'Meñique',
+        'left': 'Izquierdo/a', 'right': 'Derecho/a'
+    };
+
     const container = document.getElementById('human-model-container');
-    const parteSeleccionadaInput = document.getElementById('id_parte_cuerpo_afectada');
-    const parteSeleccionadaTexto = document.getElementById('parte-seleccionada-texto');
-    const multiSelectToggle = document.getElementById('multiSelectToggle');
-    const clearMarkersBtn = document.getElementById('clear-markers-btn');
+    const loaderDiv = document.getElementById('loader-3d');
+    const inputParte = document.getElementById('id_parte_cuerpo_afectada');
+    const inputDetalle = document.getElementById('id_detalle_parte_afectada');
+    const textoParte = document.getElementById('zona-texto');
+    const btnLimpiar = document.getElementById('limpiar-modelo');
+    
+    const modelUrl = container.getAttribute('data-model-url');
+    if (!container || !modelUrl) return;
 
+    // Escena
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0xffffff);
-    const camera = new THREE.PerspectiveCamera(50, container.clientWidth / container.clientHeight, 0.1, 1000);
-    
-    // **MEJORA 1: Cámara MUY alejada**
-    camera.position.set(0, 1, 25); // Valor final para una vista muy amplia
-
-    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    scene.background = new THREE.Color(0xf4f7f6);
+    const camera = new THREE.PerspectiveCamera(50, container.clientWidth / container.clientHeight, 0.1, 10000);
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setSize(container.clientWidth, container.clientHeight);
+    renderer.setPixelRatio(window.devicePixelRatio);
+    renderer.shadowMap.enabled = true;
     container.appendChild(renderer.domElement);
-
-    const ambientLight = new THREE.AmbientLight(0xffffff, 1.5);
-    scene.add(ambientLight);
-    const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
-    directionalLight.position.set(5, 10, 7.5);
-    scene.add(directionalLight);
-
     const controls = new THREE.OrbitControls(camera, renderer.domElement);
-    controls.enableDamping = true;
-    controls.target.set(0, 0.9, 0);
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
+    scene.add(ambientLight);
+    const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
+    dirLight.position.set(5, 10, 7);
+    scene.add(dirLight);
 
-    let modelLoaded = false;
     const loader = new THREE.GLTFLoader();
-    const modelPath = "{% static 'gestion_riesgos/models/FinalBaseMesh.glb' %}";
-    
-    loader.load(modelPath, function (gltf) {
+    let modelLoaded = false;
+    let markers = [];
+    let modelSize = 1;
+
+    loader.load(modelUrl, function (gltf) {
         const model = gltf.scene;
+        const baseMaterial = new THREE.MeshStandardMaterial({ color: 0xCFD8DC, roughness: 0.7 });
+
         model.traverse((child) => {
             if (child.isMesh) {
-                child.material = new THREE.MeshStandardMaterial({ color: 0x505050 });
+                child.material = baseMaterial;
+                child.castShadow = true;
+                if (!child.name) child.name = "Zona sin nombre";
             }
         });
+
         const box = new THREE.Box3().setFromObject(model);
+        const size = box.getSize(new THREE.Vector3());
         const center = box.getCenter(new THREE.Vector3());
-        model.position.sub(center); 
+        model.position.sub(center);
         scene.add(model);
+        
+        const maxDim = Math.max(size.x, size.y, size.z);
+        modelSize = maxDim;
+        const fov = camera.fov * (Math.PI / 180);
+        let cameraZ = Math.abs(maxDim / 2 * Math.tan(fov * 2)) * FACTOR_ALEJAMIENTO * 2.5; 
+        camera.position.set(0, size.y * 0.2, cameraZ);
+        controls.maxDistance = cameraZ * ZOOM_MAXIMO;
+        controls.minDistance = cameraZ * 0.1;
+        controls.update();
+
         modelLoaded = true;
-    }, undefined, function (error) {
-        console.error("Error al cargar el modelo:", error);
-        container.innerHTML = '<div class="alert alert-danger">Error al cargar el modelo 3D.</div>';
-    });
+        loaderDiv.style.display = 'none';
+    }, undefined, function(e){ console.error(e); loaderDiv.innerHTML='Error'; });
+
+
+    // === FUNCIÓN INTELIGENTE DE DETECCIÓN ===
+    function getFriendlyName(hit) {
+        let rawName = hit.object.name;
+        let friendlyName = rawName;
+        let found = false;
+        const lowerName = rawName.toLowerCase();
+
+        let side = "";
+        let part = "";
+
+        if (lowerName.includes('left') || lowerName.includes('_l_') || lowerName.endsWith('_l')) side = "Izquierdo/a";
+        if (lowerName.includes('right') || lowerName.includes('_r_') || lowerName.endsWith('_r')) side = "Derecho/a";
+
+        for (const [key, val] of Object.entries(BODY_PARTS_MAP)) {
+            if (key !== 'left' && key !== 'right' && lowerName.includes(key)) {
+                part = val;
+                found = true;
+                break; 
+            }
+        }
+
+        if (found) {
+            if (part.endsWith('a') || part.endsWith('as')) {
+                side = side.replace('o/a', 'a');
+            } else {
+                side = side.replace('o/a', 'o');
+            }
+            return `${part} ${side}`.trim();
+        }
+
+        if (lowerName.includes('node') || lowerName.includes('mesh')) {
+            return "Zona del Cuerpo (General)";
+        }
+        return rawName;
+    }
 
     const raycaster = new THREE.Raycaster();
     const mouse = new THREE.Vector2();
-    let clickMarkers = [];
-    let selectedParts = [];
 
-    function updateSelectedParts() {
-        const uniqueParts = [...new Set(selectedParts)]; // Eliminar duplicados
-        if (uniqueParts.length === 0) {
-            parteSeleccionadaTexto.textContent = 'Ninguna';
-        } else {
-            parteSeleccionadaTexto.textContent = uniqueParts.join(', ');
-        }
-        parteSeleccionadaInput.value = uniqueParts.join(',');
-    }
-
-    container.addEventListener('click', function (event) {
+    container.addEventListener('click', function(event) {
         if (!modelLoaded) return;
-        
         const rect = renderer.domElement.getBoundingClientRect();
         mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
         mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
 
         raycaster.setFromCamera(mouse, camera);
         const intersects = raycaster.intersectObjects(scene.children, true);
+        const validIntersects = intersects.filter(hit => hit.object.name !== 'marker');
 
-        if (intersects.length > 0) {
-            const intersection = intersects[0];
-            const clickedObject = intersection.object;
+        if (validIntersects.length > 0) {
+            const hit = validIntersects[0];
+            const finalName = getFriendlyName(hit);
 
-            if (clickedObject.name === 'click-marker') { return; }
+            markers.forEach(m => scene.remove(m));
+            markers = [];
+            const markerRadius = modelSize * TAMAÑO_MARCADOR; 
+            const geometry = new THREE.SphereGeometry(markerRadius, 32, 32); 
+            const material = new THREE.MeshPhongMaterial({ color: 0xD32F2F, shininess: 100 });
+            const marker = new THREE.Mesh(geometry, material);
+            marker.name = 'marker';
+            marker.position.copy(hit.point);
+            scene.add(marker);
+            markers.push(marker);
 
-            if (!multiSelectToggle.checked) {
-                clickMarkers.forEach(marker => scene.remove(marker));
-                clickMarkers = [];
-                selectedParts = [];
-            }
-
-            // **MEJORA 2: Marcador 4 veces más grande**
-            const markerGeometry = new THREE.TorusGeometry(0.8, 0.03, 16, 100); // Radio principal 0.8, grosor 0.03
-            const markerMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000, depthTest: false });
-            const newMarker = new THREE.Mesh(markerGeometry, markerMaterial);
-            newMarker.name = 'click-marker';
-
-            const normal = intersection.face.normal.clone();
-            const offset = normal.multiplyScalar(0.01);
-            newMarker.position.copy(intersection.point).add(offset);
-            newMarker.lookAt(new THREE.Vector3().addVectors(intersection.point, intersection.face.normal));
-            
-            scene.add(newMarker);
-            clickMarkers.push(newMarker);
-            
-            const partName = clickedObject.name || 'Parte no identificada';
-            selectedParts.push(partName);
-
-            updateSelectedParts();
+            inputParte.value = finalName;
+            textoParte.textContent = finalName;
+            textoParte.className = "fw-bold text-danger fs-5";
+            inputDetalle.focus();
         }
     });
 
-    clearMarkersBtn.addEventListener('click', function() {
-        clickMarkers.forEach(marker => scene.remove(marker));
-        clickMarkers = [];
-        selectedParts = [];
-        updateSelectedParts();
+    btnLimpiar.addEventListener('click', function() {
+        markers.forEach(m => scene.remove(m));
+        markers = [];
+        inputParte.value = '';
+        inputDetalle.value = ''; 
+        textoParte.textContent = 'Ninguna';
+        textoParte.className = "fw-bold text-dark fs-5";
     });
-
+    
     function animate() {
         requestAnimationFrame(animate);
         controls.update();
         renderer.render(scene, camera);
     }
     animate();
-
+    
     window.addEventListener('resize', () => {
+        if(!container) return;
         camera.aspect = container.clientWidth / container.clientHeight;
         camera.updateProjectionMatrix();
         renderer.setSize(container.clientWidth, container.clientHeight);
-    }, false);
+    });
 });
 </script>
 {% endblock %}

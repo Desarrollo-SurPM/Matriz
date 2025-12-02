@@ -299,3 +299,83 @@ class Normativa(models.Model):
 
     def __str__(self):
         return self.nombre
+    
+class MatrizIPER(models.Model):
+    """
+    Representa el documento completo (la hoja 'IPER').
+    Contiene los campos de la parte superior del Excel.
+    """
+    empresa = models.ForeignKey('Empresa', on_delete=models.CASCADE)
+    fecha_creacion = models.DateTimeField(auto_now_add=True)
+    
+    # Campos del Encabezado Excel
+    departamento_sucursal = models.CharField(max_length=255, verbose_name="Departamento o Sucursal", blank=True, null=True)
+    proyecto = models.CharField(max_length=255, blank=True, null=True)
+    codigo_documento = models.CharField(max_length=50, verbose_name="Código", blank=True, null=True)
+    version = models.CharField(max_length=20, verbose_name="Revisión/Versión", default="1.0")
+    fecha_documento = models.DateField(verbose_name="Fecha del Documento", blank=True, null=True)
+    
+    # Responsables y Firmas
+    elaborado_por = models.CharField(max_length=255, verbose_name="Elaborado por", blank=True, null=True)
+    cargo_elabora = models.CharField(max_length=255, default="Encargado Prevención de Riesgos", blank=True, null=True)
+    
+    revisado_por = models.CharField(max_length=255, verbose_name="Revisado por", blank=True, null=True)
+    cargo_revisa = models.CharField(max_length=255, default="Gerente de Servicios", blank=True, null=True)
+    
+    aprobado_por = models.CharField(max_length=255, verbose_name="Aprobado por", blank=True, null=True)
+    cargo_aprueba = models.CharField(max_length=255, blank=True, null=True)
+
+    # Logo específico para esta matriz (opcional, si difiere del de la empresa)
+    logo_cliente = models.ImageField(upload_to='logos_matrices/', blank=True, null=True, verbose_name="Logo Cliente")
+
+    def __str__(self):
+        return f"IPER {self.codigo_documento} - {self.empresa.razon_social}"
+
+# ==========================================
+# 2. FILAS DE LA MATRIZ (El "Excel")
+# ==========================================
+class DetalleIPER(models.Model):
+    """
+    Cada fila de la matriz IPER.
+    Replica exactamente las columnas del archivo CSV 'IPER'.
+    """
+    matriz = models.ForeignKey(MatrizIPER, on_delete=models.CASCADE, related_name='filas')
+    
+    # 1. Identificación
+    proceso = models.CharField(max_length=255, verbose_name="Proceso", blank=True, null=True)
+    genero = models.CharField(max_length=50, verbose_name="Género", blank=True, null=True, help_text="Hombre - Mujer - Ambos - Otro")
+    puesto_trabajo = models.CharField(max_length=255, verbose_name="Puesto de Trabajo", blank=True, null=True)
+    tarea = models.TextField(verbose_name="Tarea", blank=True, null=True)
+    tipo_rutina = models.CharField(max_length=50, verbose_name="Rutinaria/No Rutinaria", blank=True, null=True)
+    
+    # 2. Peligros y Riesgos
+    codigo_riesgo = models.CharField(max_length=50, verbose_name="Cod. Riesgo", blank=True, null=True)
+    peligro_factor = models.TextField(verbose_name="Peligro / Factor", blank=True, null=True)
+    riesgo = models.TextField(verbose_name="Riesgo", blank=True, null=True)
+    consecuencia = models.TextField(verbose_name="Consecuencias", blank=True, null=True)
+    gema = models.CharField(max_length=100, verbose_name="GEMA", blank=True, null=True, help_text="Gente, Equipo, Material, Ambiente")
+    
+    # 3. Evaluación Inicial (Pura)
+    medida_control_actual = models.TextField(verbose_name="Medida Control Actual", blank=True, null=True)
+    eval_probabilidad = models.IntegerField(verbose_name="P", blank=True, null=True, default=0)
+    eval_severidad = models.IntegerField(verbose_name="S", blank=True, null=True, default=0)
+    eval_valor = models.IntegerField(verbose_name="Valor Riesgo", blank=True, null=True, default=0)
+    eval_clasificacion = models.CharField(max_length=50, verbose_name="Clasificación", blank=True, null=True)
+    
+    # 4. Gestión
+    requisito_legal = models.TextField(verbose_name="Requisito Legal", blank=True, null=True)
+    responsable_ejecucion = models.CharField(max_length=255, verbose_name="Resp. Ejecución", blank=True, null=True)
+    responsable_seguimiento = models.CharField(max_length=255, verbose_name="Resp. Seguimiento", blank=True, null=True)
+    
+    # 5. Riesgo Residual (Post-Control)
+    residual_probabilidad = models.IntegerField(verbose_name="P (Res)", blank=True, null=True, default=0)
+    residual_severidad = models.IntegerField(verbose_name="S (Res)", blank=True, null=True, default=0)
+    residual_valor = models.IntegerField(verbose_name="Valor (Res)", blank=True, null=True, default=0)
+    residual_clasificacion = models.CharField(max_length=50, verbose_name="Clasificación (Res)", blank=True, null=True)
+    
+    # 6. Otros
+    condicion_especial = models.TextField(verbose_name="Condición Especial", blank=True, null=True, help_text="Si no cuenta con trabajadores...")
+    reevaluacion = models.TextField(verbose_name="Reevaluación Especial", blank=True, null=True)
+
+    class Meta:
+        ordering = ['id'] # Para mantener el orden de creación

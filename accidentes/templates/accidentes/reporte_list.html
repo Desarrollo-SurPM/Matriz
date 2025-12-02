@@ -1,46 +1,179 @@
 {% extends 'base.html' %}
-{% block title %}Reporte de Accidentes e Incidentes{% endblock %}
+
+{% block title %}Gestión de Accidentes | Risk-Bee{% endblock %}
 
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h1>Registro de Accidentes / Incidentes</h1>
-    <a href="{% url 'reporte_accidente_create' %}" class="btn btn-danger">
-        <i class="bi bi-exclamation-triangle-fill"></i> Reportar Nuevo Evento
-    </a>
-</div>
+<div class="container-fluid px-4 py-4">
 
-<div class="card">
-    <div class="card-body">
-        <table class="table table-hover align-middle">
-            <thead class="table-dark">
-                <tr>
-                    <th>Fecha del Evento</th>
-                    <th>Empresa</th>
-                    <th>Tipo</th>
-                    <th>Lugar</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for reporte in reportes %}
-                <tr class="{% if reporte.clasificacion_severidad == 'fatal' or reporte.clasificacion_severidad == 'grave' %}table-danger{% elif reporte.clasificacion_severidad == 'leve' %}table-warning{% endif %}">
-                    <td>{{ reporte.fecha_accidente|date:"d-m-Y H:i" }}</td>
-                    <td>{{ reporte.empresa.razon_social }}</td>
-                    <td>
-                        <span class="badge bg-secondary">{{ reporte.get_tipo_accidente_display }}</span>
-                    </td>
-                    <td>{{ reporte.lugar_exacto }}</td>
-                    <td>
-    <a href="{% url 'reporte_accidente_detail' reporte.pk %}" class="btn btn-sm btn-primary">Ver / Investigar</a>
-</td>
-                </tr>
-                {% empty %}
-                <tr>
-                    <td colspan="5" class="text-center">No se han registrado accidentes o incidentes.</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+    <div class="d-flex justify-content-between align-items-center mb-4 fade-in-up">
+        <div>
+            <h1 class="h3 fw-bold text-gradient"><i class="fas fa-car-crash me-2"></i>Gestión de Incidentes</h1>
+            <p class="text-muted small mb-0">Seguimiento del ciclo completo: Reporte &rarr; Investigación &rarr; Cierre.</p>
+        </div>
+        <a href="{% url 'reporte_accidente_create' %}" class="btn btn-primary-modern shadow-lg">
+            <i class="fas fa-plus-circle me-2"></i>Nuevo Reporte Flash
+        </a>
+    </div>
+
+    <div class="row g-4 mb-5 fade-in-up" style="animation-delay: 0.1s;">
+        <div class="col-md-3">
+            <div class="card-modern bg-white h-100 border-start border-4 border-primary">
+                <div class="card-body d-flex align-items-center">
+                    <div class="rounded-circle bg-primary bg-opacity-10 p-3 me-3">
+                        <i class="fas fa-folder-open fa-2x text-primary"></i>
+                    </div>
+                    <div>
+                        <h6 class="text-muted text-uppercase small fw-bold mb-0">Total Casos</h6>
+                        <h2 class="mb-0 fw-bold text-dark">{{ total_casos }}</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card-modern bg-white h-100 border-start border-4 border-danger">
+                <div class="card-body d-flex align-items-center">
+                    <div class="rounded-circle bg-danger bg-opacity-10 p-3 me-3">
+                        <i class="fas fa-bolt fa-2x text-danger"></i>
+                    </div>
+                    <div>
+                        <h6 class="text-muted text-uppercase small fw-bold mb-0">Solo Flash</h6>
+                        <h2 class="mb-0 fw-bold text-danger">{{ pendientes_flash }}</h2>
+                        <small class="text-danger" style="font-size: 0.7rem;">Requieren Investigación</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card-modern bg-white h-100 border-start border-4 border-warning">
+                <div class="card-body d-flex align-items-center">
+                    <div class="rounded-circle bg-warning bg-opacity-10 p-3 me-3">
+                        <i class="fas fa-search fa-2x text-warning"></i>
+                    </div>
+                    <div>
+                        <h6 class="text-muted text-uppercase small fw-bold mb-0">Investigando</h6>
+                        <h2 class="mb-0 fw-bold text-warning">{{ en_investigacion }}</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card-modern bg-white h-100 border-start border-4 border-success">
+                <div class="card-body d-flex align-items-center">
+                    <div class="rounded-circle bg-success bg-opacity-10 p-3 me-3">
+                        <i class="fas fa-check-circle fa-2x text-success"></i>
+                    </div>
+                    <div>
+                        <h6 class="text-muted text-uppercase small fw-bold mb-0">Cerrados</h6>
+                        <h2 class="mb-0 fw-bold text-success">{{ cerrados }}</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card-modern shadow-sm fade-in-up" style="animation-delay: 0.2s;">
+        <div class="card-header-modern d-flex justify-content-between align-items-center">
+            <h5 class="mb-0 fw-bold"><i class="fas fa-list-alt me-2 text-honey"></i>Listado de Casos</h5>
+            
+            <div class="input-group w-auto">
+                <span class="input-group-text bg-transparent border-end-0"><i class="fas fa-search text-muted"></i></span>
+                <input type="text" class="form-control border-start-0 ps-0" placeholder="Buscar por nombre o RUT...">
+            </div>
+        </div>
+        
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="bg-light text-secondary small text-uppercase">
+                    <tr>
+                        <th class="ps-4">ID / Fecha</th>
+                        <th>Afectado</th>
+                        <th>Evento / Tipo</th>
+                        <th class="text-center">Estado del Proceso</th>
+                        <th class="text-end pe-4">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for reporte in reportes %}
+                    <tr>
+                        <td class="ps-4">
+                            <div class="fw-bold text-dark">#{{ reporte.id }}</div>
+                            <small class="text-muted">{{ reporte.fecha_accidente|date:"d M Y, H:i" }}</small>
+                        </td>
+
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <div class="avatar-circle bg-secondary bg-opacity-10 text-secondary me-2 rounded-circle d-flex justify-content-center align-items-center" style="width: 35px; height: 35px;">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                                <div>
+                                    <div class="fw-bold">{{ reporte.nombre_completo_accidentado }}</div>
+                                    <small class="text-muted">{{ reporte.cargo_accidentado }}</small>
+                                </div>
+                            </div>
+                        </td>
+
+                        <td>
+                            <span class="badge bg-light text-dark border mb-1">{{ reporte.get_tipo_accidente_display }}</span>
+                            <div class="small text-truncate" style="max-width: 250px;">{{ reporte.descripcion_evento }}</div>
+                        </td>
+
+                        <td class="text-center" style="width: 25%;">
+                            {% if reporte.estado == 'reportado' %}
+                                <div class="badge bg-danger mb-1 w-100">Flash Pendiente</div>
+                                <div class="progress" style="height: 6px;">
+                                    <div class="progress-bar bg-danger" style="width: 33%"></div>
+                                </div>
+                                <small class="text-muted" style="font-size: 0.7rem;">Falta Investigar</small>
+                            
+                            {% elif reporte.estado == 'en_investigacion' %}
+                                <div class="badge bg-warning text-dark mb-1 w-100">En Investigación</div>
+                                <div class="progress" style="height: 6px;">
+                                    <div class="progress-bar bg-warning" style="width: 66%"></div>
+                                </div>
+                                <small class="text-muted" style="font-size: 0.7rem;">Análisis en curso</small>
+
+                            {% elif reporte.estado == 'cerrado' %}
+                                <div class="badge bg-success mb-1 w-100">Cerrado</div>
+                                <div class="progress" style="height: 6px;">
+                                    <div class="progress-bar bg-success" style="width: 100%"></div>
+                                </div>
+                                <small class="text-success fw-bold" style="font-size: 0.7rem;">Completado</small>
+                            {% endif %}
+                        </td>
+
+                        <td class="text-end pe-4">
+                            <div class="d-flex justify-content-end gap-2">
+                                <a href="{% url 'reporte_accidente_update' reporte.pk %}" class="btn btn-sm btn-outline-secondary" data-bs-toggle="tooltip" title="Ver/Editar Flash">
+                                    <i class="fas fa-bolt"></i>
+                                </a>
+
+                                <a href="{% url 'reporte_accidente_detail' reporte.pk %}" class="btn btn-sm btn-primary-modern text-white px-3" data-bs-toggle="tooltip" title="Gestionar Investigación">
+                                    {% if reporte.estado == 'reportado' %}
+                                        <i class="fas fa-search me-1"></i> Investigar
+                                    {% else %}
+                                        <i class="fas fa-eye me-1"></i> Ver Caso
+                                    {% endif %}
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="text-center py-5">
+                            <div class="text-muted opacity-50">
+                                <i class="fas fa-clipboard-check fa-4x mb-3"></i>
+                                <h4>No hay incidentes registrados</h4>
+                                <p>¡Excelente! Mantener el cero accidentes es la meta.</p>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 {% endblock %}

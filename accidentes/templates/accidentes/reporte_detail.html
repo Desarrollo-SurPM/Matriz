@@ -1,56 +1,266 @@
 {% extends 'base.html' %}
-{% block title %}Detalle del Reporte{% endblock %}
+{% load static %}
+
+{% block title %}Investigación #{{ reporte.id }} | Risk-Bee{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Estilo para los 5 Porqués (Efecto Cascada) */
+    .why-step {
+        position: relative;
+        padding-left: 20px;
+        border-left: 3px solid var(--border-color);
+        margin-bottom: 15px;
+        transition: all 0.3s;
+    }
+    .why-step:hover { border-left-color: var(--accent-primary); }
+    
+    /* Input invisible para que parezca texto integrado */
+    .form-control-plaintext:focus {
+        background: #fff;
+        border: 1px solid var(--accent-primary);
+        padding: 5px 10px;
+        border-radius: 5px;
+        outline: none;
+    }
+    
+    /* Badges de estado */
+    .status-badge {
+        font-size: 0.8rem;
+        padding: 0.5em 1em;
+        border-radius: 50px;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+</style>
+{% endblock %}
 
 {% block content %}
-<a href="{% url 'reporte_accidente_list' %}" class="btn btn-secondary mb-3">&larr; Volver a la Lista</a>
-
-<div class="row">
-    <div class="col-md-5">
-        <div class="card shadow-sm mb-4">
-            <div class="card-header">
-                <h4>Detalles del Evento</h4>
-            </div>
-            <div class="card-body">
-                <p><strong>Empresa:</strong> {{ reporte.empresa.razon_social }}</p>
-                <p><strong>Fecha del Evento:</strong> {{ reporte.fecha_accidente|date:"d-m-Y H:i" }}</p>
-                <p><strong>Lugar:</strong> {{ reporte.lugar_exacto }}</p>
-                <p><strong>Tipo:</strong> <span class="badge bg-info">{{ reporte.get_tipo_accidente_display }}</span></p>
-                {% if reporte.clasificacion_severidad %}
-                <p><strong>Severidad (Interna):</strong> {{ reporte.get_clasificacion_severidad_display }}</p>
-                {% endif %}
-                {% if reporte.danio_propiedad %}
-                <p><strong>Daño a la propiedad/equipo:</strong> Sí</p>
-                <p><strong>Detalle del daño:</strong> {{ reporte.detalle_danio_propiedad|default:"No especificado" }}</p>
-                {% endif %}
-                <hr>
-                <p><strong>Involucrados:</strong> {{ reporte.nombres_involucrados }}</p>
-                <p><strong>Descripción del Evento:</strong><br>{{ reporte.descripcion_evento|linebreaks }}</p>
-                <p><strong>Lesiones Sufridas:</strong><br>{{ reporte.lesiones_sufridas|default:"No se reportaron." }}</p>
-                
-                {% if reporte.evidencia_fotografica %}
-                    <hr>
-                    <p><strong>Evidencia Fotográfica:</strong></p>
-                    <img src="{{ reporte.evidencia_fotografica.url }}" class="img-fluid rounded" alt="Evidencia del accidente">
-                {% endif %}
-            </div>
-            <div class="card-footer text-muted">
-                Reportado por: {{ reporte.reportado_por.username }} el {{ reporte.fecha_reporte|date:"d-m-Y" }}
-            </div>
+<div class="container-fluid px-4 py-5">
+    
+    <div class="d-flex justify-content-between align-items-center mb-5 fade-in-up">
+        <div>
+            <h1 class="h3 fw-bold text-gradient">Expediente de Investigación #{{ reporte.id }}</h1>
+            <p class="text-muted mb-0">
+                <i class="fas fa-calendar-alt me-1"></i> {{ reporte.fecha_accidente|date:"d M Y, H:i" }} &nbsp;|&nbsp; 
+                <i class="fas fa-map-marker-alt me-1"></i> {{ reporte.empresa.razon_social }} - {{ reporte.lugar_exacto }}
+            </p>
+        </div>
+        <div class="d-flex gap-2">
+            <span class="status-badge bg-{{ reporte.estado }} bg-opacity-10 text-{{ reporte.estado }} border border-{{ reporte.estado }}">
+                {{ reporte.get_estado_display }}
+            </span>
+            <a href="{% url 'reporte_accidente_list' %}" class="btn btn-outline-modern btn-sm">
+                <i class="fas fa-arrow-left"></i> Volver
+            </a>
         </div>
     </div>
 
-    <div class="col-md-7">
-        <div class="card shadow-sm">
-            <div class="card-header">
-                <h4>Investigación del Accidente</h4>
+    <div class="row g-4">
+        
+        <div class="col-lg-4">
+            <div class="card-modern bg-white shadow-sm sticky-top" style="top: 100px; z-index: 1;">
+                <div class="card-header-modern pb-3">
+                    <h5 class="fw-bold mb-0"><i class="fas fa-bolt text-warning me-2"></i>Datos del Evento</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-4 p-3 bg-light rounded-3">
+                        <div class="bg-primary text-white rounded-circle d-flex justify-content-center align-items-center me-3" style="width: 45px; height: 45px;">
+                            <i class="fas fa-user-injured fa-lg"></i>
+                        </div>
+                        <div>
+                            <h6 class="fw-bold mb-0">{{ reporte.nombre_completo_accidentado }}</h6>
+                            <small class="text-muted">{{ reporte.cargo_accidentado }}</small>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="small text-uppercase fw-bold text-muted">Relato del Hecho</label>
+                        <p class="small bg-light p-2 rounded border">{{ reporte.descripcion_evento }}</p>
+                    </div>
+
+                    <div class="row g-2 mb-3">
+                        <div class="col-6">
+                            <label class="small text-uppercase fw-bold text-muted">Tipo</label>
+                            <div class="badge bg-secondary w-100 py-2">{{ reporte.get_tipo_accidente_display }}</div>
+                        </div>
+                        <div class="col-6">
+                            <label class="small text-uppercase fw-bold text-muted">Severidad</label>
+                            <div class="badge bg-danger w-100 py-2">{{ reporte.get_severidad_inicial_display }}</div>
+                        </div>
+                    </div>
+
+                    {% if reporte.parte_cuerpo_afectada %}
+                    <div class="mb-3">
+                        <label class="small text-uppercase fw-bold text-muted">Zona Afectada</label>
+                        <div class="d-flex align-items-center text-danger fw-bold">
+                            <i class="fas fa-bullseye me-2"></i> {{ reporte.parte_cuerpo_afectada }}
+                            {% if reporte.detalle_parte_afectada %}
+                                <span class="text-dark fw-normal ms-1">({{ reporte.detalle_parte_afectada }})</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    {% if reporte.evidencia_fotografica %}
+                    <div class="mt-4">
+                        <label class="small text-uppercase fw-bold text-muted mb-2">Evidencia Flash</label>
+                        <img src="{{ reporte.evidencia_fotografica.url }}" class="img-fluid rounded shadow-sm" alt="Evidencia">
+                    </div>
+                    {% endif %}
+                </div>
             </div>
-            <div class="card-body">
-                <form method="post">
-                    {% csrf_token %}
-                    {{ form.as_p }}
-                    <button type="submit" class="btn btn-primary w-100">Guardar Investigación</button>
-                </form>
-            </div>
+        </div>
+
+        <div class="col-lg-8">
+            <form method="post" class="needs-validation">
+                {% csrf_token %}
+
+                <div class="card-modern mb-4 fade-in-up" style="animation-delay: 0.1s;">
+                    <div class="card-header-modern">
+                        <h5 class="fw-bold"><i class="fas fa-users-cog text-primary me-2"></i>1. Equipo Investigador</h5>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-md-8">
+                            <label class="form-label-modern">Participantes (Comité Paritario, Supervisores)</label>
+                            {{ form.equipo_investigador }}
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label-modern">Fecha Inicio</label>
+                            {{ form.fecha_inicio_investigacion }}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-modern mb-4 fade-in-up" style="animation-delay: 0.2s;">
+                    <div class="card-header-modern">
+                        <h5 class="fw-bold"><i class="fas fa-project-diagram text-info me-2"></i>2. Análisis de Causalidad (GEMA)</h5>
+                    </div>
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <div class="p-3 bg-danger bg-opacity-10 rounded h-100">
+                                <label class="form-label-modern text-danger fw-bold"><i class="fas fa-user-times me-1"></i> Factores Personales</label>
+                                {{ form.factores_personales }}
+                                <small class="text-muted">No sabe, no puede, no quiere.</small>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="p-3 bg-danger bg-opacity-10 rounded h-100">
+                                <label class="form-label-modern text-danger fw-bold"><i class="fas fa-industry me-1"></i> Factores del Trabajo</label>
+                                {{ form.factores_trabajo }}
+                                <small class="text-muted">Liderazgo, ingeniería, mantenimiento.</small>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="p-3 bg-warning bg-opacity-10 rounded h-100">
+                                <label class="form-label-modern text-dark fw-bold"><i class="fas fa-exclamation me-1"></i> Actos Subestándares</label>
+                                {{ form.actos_subestandares }}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="p-3 bg-warning bg-opacity-10 rounded h-100">
+                                <label class="form-label-modern text-dark fw-bold"><i class="fas fa-exclamation-triangle me-1"></i> Condiciones Subestándares</label>
+                                {{ form.condiciones_subestandares }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-modern mb-4 fade-in-up" style="animation-delay: 0.3s;">
+                    <div class="card-header-modern">
+                        <h5 class="fw-bold"><i class="fas fa-question-circle text-success me-2"></i>3. Metodología 5 Porqués</h5>
+                        <p class="small text-muted mb-0">Profundice hasta encontrar la causa raíz del evento.</p>
+                    </div>
+                    <div class="ps-3 pe-3 pt-3 pb-2 bg-light rounded border">
+                        <div class="why-step">
+                            <label class="small text-uppercase fw-bold text-secondary mb-1">1. ¿Por qué ocurrió el evento?</label>
+                            {{ form.porque_1 }}
+                        </div>
+                        <div class="why-step ms-4">
+                            <label class="small text-uppercase fw-bold text-secondary mb-1">2. ¿Por qué ocurrió lo anterior?</label>
+                            {{ form.porque_2 }}
+                        </div>
+                        <div class="why-step ms-5">
+                            <label class="small text-uppercase fw-bold text-secondary mb-1">3. ¿Y por qué eso?</label>
+                            {{ form.porque_3 }}
+                        </div>
+                        <div class="why-step" style="margin-left: 4rem;">
+                            <label class="small text-uppercase fw-bold text-secondary mb-1">4. ¿Por qué?</label>
+                            {{ form.porque_4 }}
+                        </div>
+                        <div class="why-step border-start-0 ps-0 mt-4" style="margin-left: 5rem;">
+                            <div class="p-3 bg-white rounded border border-success shadow-sm">
+                                <label class="fw-bold text-success mb-2"><i class="fas fa-check-circle me-1"></i> 5. CAUSA RAÍZ DETECTADA</label>
+                                {{ form.porque_5 }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-modern mb-4 fade-in-up" style="animation-delay: 0.4s;">
+                    <div class="card-header-modern">
+                        <h5 class="fw-bold"><i class="fas fa-clipboard-check text-primary me-2"></i>4. Plan de Acción</h5>
+                    </div>
+                    <div class="row g-4">
+                        <div class="col-12">
+                            <div class="border rounded p-3 position-relative">
+                                <span class="badge bg-success position-absolute top-0 start-0 m-3">BARRERAS DURAS (Efectivas)</span>
+                                <div class="mt-4 row g-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label-modern small">Eliminar / Sustituir</label>
+                                        {{ form.medida_eliminar }}
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label-modern small">Ingeniería / Rediseño</label>
+                                        {{ form.medida_ingenieria }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="border rounded p-3 position-relative bg-light">
+                                <span class="badge bg-secondary position-absolute top-0 start-0 m-3">BARRERAS BLANDAS (Conductuales)</span>
+                                <div class="mt-4 row g-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label-modern small">Administrativos / Señalización</label>
+                                        {{ form.medida_administrativa }}
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label-modern small">EPP (Última Barrera)</label>
+                                        {{ form.medida_epp }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-modern mb-5 fade-in-up border-primary border-2" style="animation-delay: 0.5s;">
+                    <div class="card-body bg-primary bg-opacity-10 d-flex align-items-center justify-content-between flex-wrap gap-3">
+                        <div class="flex-grow-1">
+                            <label class="form-label-modern fw-bold">Responsable de Implementación</label>
+                            {{ form.responsable_implementacion }}
+                        </div>
+                        <div>
+                            <label class="form-label-modern fw-bold">Fecha Límite</label>
+                            {{ form.fecha_plazo }}
+                        </div>
+                        <div class="form-check form-switch pt-4">
+                            {{ form.completada }}
+                            <label class="form-check-label fw-bold text-success" for="{{ form.completada.id_for_label }}">
+                                MARCAR COMO FINALIZADO
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end pb-5">
+                    <button type="submit" class="btn btn-primary-modern btn-lg px-5">
+                        <i class="fas fa-save me-2"></i>Guardar Investigación
+                    </button>
+                </div>
+
+            </form>
         </div>
     </div>
 </div>
