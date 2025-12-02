@@ -6,60 +6,51 @@ import dj_database_url
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Cargar variables de entorno desde .env en la raíz del proyecto, de forma explícita
+# 1. Carga de variables de entorno (.env local o variables de Railway)
 ENV_FILE = BASE_DIR / '.env'
 if ENV_FILE.exists():
     config = Config(RepositoryEnv(str(ENV_FILE)))
 else:
     config = AutoConfig(search_path=BASE_DIR)
 
-# Lee la SECRET_KEY desde las variables de entorno.
+# 2. Seguridad
+# En local leerá 'tu_clave_secreta_local...' del .env, en prod usará la variable de Railway
 SECRET_KEY = config('SECRET_KEY', default='insecure-secret-key-change-me')
 
-# DEBUG debe ser False en producción.
+# DEBUG será True si está en tu .env local, False por defecto en producción
 DEBUG = config('DEBUG', default=False, cast=bool)
 
-# Configura los hosts permitidos desde una variable de entorno.
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='127.0.0.1,localhost,healthcheck.railway.app').split(',')
-
-# Agregar hosts adicionales para Railway
 ALLOWED_HOSTS += [
-    'healthcheck.railway.app',  # Para healthchecks de Railway
-    '.railway.app',             # Subdominios antiguos de railway.app
-    '.up.railway.app',          # Subdominios nuevos de up.railway.app
+    'healthcheck.railway.app',
+    '.railway.app',
+    '.up.railway.app',
 ]
 
-# Permitir 0.0.0.0 en desarrollo (útil para previews/local bind)
 if DEBUG and '0.0.0.0' not in ALLOWED_HOSTS:
     ALLOWED_HOSTS.append('0.0.0.0')
 
-# CSRF: dominios confiables para solicitudes desde Railway
 CSRF_TRUSTED_ORIGINS = config(
     'CSRF_TRUSTED_ORIGINS',
     default='https://*.railway.app,https://*.up.railway.app,https://healthcheck.railway.app'
 ).split(',')
 
-# Cookies seguras en producción
+# 3. Configuración HTTPS/Seguridad (Se activa solo si DEBUG=False)
 CSRF_COOKIE_SECURE = not DEBUG
 SESSION_COOKIE_SECURE = not DEBUG
 SECURE_SSL_REDIRECT = not DEBUG
-
-# Respetar el proxy de Railway para detectar HTTPS correctamente
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 USE_X_FORWARDED_HOST = True
-
-# Evitar redirecciones para healthcheck y conservar barra opcional
 SECURE_REDIRECT_EXEMPT = [r'^healthz/?$']
 
-
-# Application definition
+# 4. Aplicaciones
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'whitenoise.runserver_nostatic',  # WhiteNoise antes de staticfiles
+    'whitenoise.runserver_nostatic', 
     'django.contrib.staticfiles',
     'gestion_riesgos',
     'cumplimiento',
@@ -69,7 +60,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware', # Middleware de WhiteNoise
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -97,16 +88,16 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'matriz.wsgi.application'
 
-
-# Database
-# Usar PostgreSQL desde DATABASE_URL cuando esté definido. Si no, fallback a SQLite
+# 5. Base de Datos (Conexión Universal)
 DATABASE_URL_VALUE = config('DATABASE_URL', default=None)
 
 if DATABASE_URL_VALUE:
     _db_config = dj_database_url.parse(
         DATABASE_URL_VALUE,
         conn_max_age=600,
-        ssl_require=not DEBUG  # Requiere SSL si no estamos en DEBUG
+        # TRUCO: Permitimos SSL siempre si estamos conectando a Railway, 
+        # incluso en local, para evitar rechazos de conexión.
+        ssl_require=True 
     )
 else:
     _db_config = {
@@ -118,8 +109,7 @@ DATABASES = {
     'default': _db_config
 }
 
-
-# Password validation
+# 6. Validadores de Password
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
     {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
@@ -127,27 +117,20 @@ AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
-
-# Internationalization
+# 7. Internacionalización
 LANGUAGE_CODE = 'es-cl'
 TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
 
-
-# Static files (CSS, JavaScript, Images)
+# 8. Archivos Estáticos
 STATIC_URL = 'static/'
 STATIC_ROOT = BASE_DIR / "staticfiles"
-
-# Configuración de WhiteNoise (CORREGIDA PARA EVITAR ERRORES DE DESPLIEGUE)
-# Se usa CompressedStaticFilesStorage en lugar de ManifestStaticFilesStorage
-# para evitar fallos si faltan archivos referenciados.
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
-# Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_REDIRECT_URL = '/dashboard/'
