@@ -20,7 +20,7 @@ else:
 SECRET_KEY = config('SECRET_KEY', default='insecure-secret-key-change-me')
 
 # DEBUG debe ser False en producción. Se controla con una variable de entorno.
-DEBUG = config('DEBUG', default=True, cast=bool)
+DEBUG = config('DEBUG', default=False, cast=bool)
 
 # Configura los hosts permitidos desde una variable de entorno.
 # Ejemplo: ALLOWED_HOSTS="miapp.railway.app,www.miapp.com"
