@@ -5,14 +5,14 @@
 {% block extra_css %}
 <style>
     /* === 1. ESTILOS GENERALES Y ENCABEZADO === */
-    
+
     .header-paper {
         background: #fff;
         border: 1px solid #e0e0e0;
         border-radius: 8px;
         padding: 25px;
         margin-bottom: 25px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
     }
 
     .form-label-sm {
@@ -32,6 +32,7 @@
         padding: 8px 12px;
         transition: all 0.2s;
     }
+
     .form-control-paper:focus {
         background-color: #fff;
         border-color: var(--accent-primary);
@@ -46,6 +47,7 @@
         height: 100%;
         text-align: center;
     }
+
     .signature-title {
         font-size: 0.7rem;
         font-weight: 800;
@@ -58,23 +60,27 @@
     }
 
     /* === 2. ESTILOS DE LA MATRIZ (TABLA) === */
-    
+
     .matriz-wrapper {
-        overflow: auto; /* Scroll en ambas direcciones */
-        height: 70vh;   /* Altura fija de la ventana de la tabla */
+        overflow: auto;
+        /* Scroll en ambas direcciones */
+        height: 70vh;
+        /* Altura fija de la ventana de la tabla */
         border: 1px solid #ced4da;
         background: #fff;
         border-radius: 6px;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
         position: relative;
     }
 
     .table-iper {
-        border-collapse: separate; 
+        border-collapse: separate;
         border-spacing: 0;
         font-family: 'Inter', system-ui, sans-serif;
-        font-size: 13px; /* Letra más legible */
-        min-width: max-content; /* Fuerza el ancho total */
+        font-size: 13px;
+        /* Letra más legible */
+        min-width: max-content;
+        /* Fuerza el ancho total */
     }
 
     /* Cabeceras Sticky (Fijas) */
@@ -82,12 +88,12 @@
         position: sticky;
         top: 0;
         z-index: 100;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
     }
 
     .table-iper th {
-        border-right: 1px solid rgba(0,0,0,0.1);
-        border-bottom: 1px solid rgba(0,0,0,0.2);
+        border-right: 1px solid rgba(0, 0, 0, 0.1);
+        border-bottom: 1px solid rgba(0, 0, 0, 0.2);
         padding: 12px 8px;
         text-align: center;
         vertical-align: middle;
@@ -96,15 +102,41 @@
         font-size: 11px;
         letter-spacing: 0.3px;
         color: #212529;
+        word-wrap: break-word;
+        white-space: normal;
     }
 
     /* Colores de Secciones (Pasteles más profesionales) */
-    .th-blue   { background-color: #e3f2fd; } /* Procesos */
-    .th-orange { background-color: #fff3e0; } /* Peligros */
-    .th-green  { background-color: #e8f5e9; } /* Evaluación */
-    .th-yellow { background-color: #fffde7; } /* Gestión */
-    .th-purple { background-color: #f3e5f5; } /* Residual */
-    .th-gray   { background-color: #f8f9fa; } /* General */
+    .th-blue {
+        background-color: #e3f2fd;
+    }
+
+    /* Procesos */
+    .th-orange {
+        background-color: #fff3e0;
+    }
+
+    /* Peligros */
+    .th-green {
+        background-color: #e8f5e9;
+    }
+
+    /* Evaluación */
+    .th-yellow {
+        background-color: #fffde7;
+    }
+
+    /* Gestión */
+    .th-purple {
+        background-color: #f3e5f5;
+    }
+
+    /* Residual */
+    .th-gray {
+        background-color: #f8f9fa;
+    }
+
+    /* General */
 
     /* Celdas del Cuerpo */
     .table-iper td {
@@ -113,26 +145,30 @@
         padding: 0;
         vertical-align: top;
         background: #fff;
-        min-height: 50px; /* Altura mínima para que no se vea aplastado */
+        min-height: 50px;
+        /* Altura mínima para que no se vea aplastado */
     }
 
     /* Inputs Invisibles pero Espaciosos */
     .cell-input {
         width: 100%;
         height: 100%;
-        min-height: 50px; /* Altura cómoda */
+        min-height: 50px;
+        /* Altura cómoda */
         border: none;
-        padding: 10px; /* Espacio interior para que el texto no toque bordes */
+        padding: 10px;
+        /* Espacio interior para que el texto no toque bordes */
         font-family: inherit;
         font-size: inherit;
         background: transparent;
         outline: none;
-        resize: vertical; /* Permite estirar si es necesario */
+        resize: vertical;
+        /* Permite estirar si es necesario */
         display: block;
         line-height: 1.4;
         color: #333;
     }
-    
+
     .cell-input:focus {
         background-color: #fff;
         box-shadow: inset 0 0 0 2px var(--accent-primary);
@@ -162,15 +198,40 @@
     }
 
     /* Semáforo de Riesgos (Colores Vivos) */
-    .riesgo-trivial    { background-color: #a5d6a7 !important; color: #1b5e20; }
-    .riesgo-tolerable  { background-color: #66bb6a !important; color: #fff; }
-    .riesgo-moderado   { background-color: #fff176 !important; color: #333; }
-    .riesgo-importante { background-color: #ffa726 !important; color: #fff; }
-    .riesgo-intolerable{ background-color: #ef5350 !important; color: #fff; }
+    .riesgo-trivial {
+        background-color: #a5d6a7 !important;
+        color: #1b5e20;
+    }
+
+    .riesgo-tolerable {
+        background-color: #66bb6a !important;
+        color: #fff;
+    }
+
+    .riesgo-moderado {
+        background-color: #fff176 !important;
+        color: #333;
+    }
+
+    .riesgo-importante {
+        background-color: #ffa726 !important;
+        color: #fff;
+    }
+
+    .riesgo-intolerable {
+        background-color: #ef5350 !important;
+        color: #fff;
+    }
 
     /* Columnas Ocultas (Inclusión) */
-    .col-inclusion { display: none; background-color: #fce4ec; }
-    .col-inclusion.show { display: table-cell; }
+    .col-inclusion {
+        display: none;
+        background-color: #fce4ec;
+    }
+
+    .col-inclusion.show {
+        display: table-cell;
+    }
 
     /* Toast Flotante */
     #save-status {
@@ -184,7 +245,7 @@
         font-size: 13px;
         font-weight: 500;
         display: none;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
         z-index: 2000;
         align-items: center;
         gap: 8px;
@@ -198,17 +259,19 @@
     <div class="header-paper fade-in-up">
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
-            
-            <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-4 pb-3 border-bottom">
+
+            <div
+                class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-4 pb-3 border-bottom">
                 <div class="d-flex align-items-center gap-3 mb-3 mb-md-0">
                     {% if matriz.empresa.logo %}
-                        <img src="{{ matriz.empresa.logo.url }}" alt="Logo" style="height: 50px; width: auto;">
+                    <img src="{{ matriz.empresa.logo.url }}" alt="Logo" style="height: 50px; width: auto;">
                     {% else %}
-                        <div class="bg-light rounded p-2 text-muted fw-bold border"><i class="fas fa-image"></i> LOGO</div>
+                    <div class="bg-light rounded p-2 text-muted fw-bold border"><i class="fas fa-image"></i> LOGO</div>
                     {% endif %}
                     <div>
                         <h4 class="mb-0 fw-bold text-dark">MATRIZ IPER</h4>
-                        <small class="text-muted">Identificación de Peligros y Evaluación de Riesgos (Guía ISP 3 / DS 44)</small>
+                        <small class="text-muted">Identificación de Peligros y Evaluación de Riesgos (Guía ISP 3 / DS
+                            44)</small>
                     </div>
                 </div>
                 <div class="d-flex gap-2">
@@ -224,16 +287,18 @@
             <div class="row g-3 mb-4">
                 <div class="col-md-4">
                     <label class="form-label-sm">Empresa</label>
-                    <input type="text" class="form-control form-control-paper" value="{{ matriz.empresa.razon_social }}" readonly>
+                    <input type="text" class="form-control form-control-paper" value="{{ matriz.empresa.razon_social }}"
+                        readonly>
                 </div>
                 <div class="col-md-4">
                     <label class="form-label-sm">Departamento / Área</label>
-                    {{ form.departamento_sucursal }} </div>
+                    {{ form.departamento_sucursal }}
+                </div>
                 <div class="col-md-4">
                     <label class="form-label-sm">Proyecto / Contrato</label>
                     {{ form.proyecto }}
                 </div>
-                
+
                 <div class="col-md-3">
                     <label class="form-label-sm">Fecha Documento</label>
                     {{ form.fecha_documento }}
@@ -253,8 +318,10 @@
                     <div class="signature-box">
                         <span class="signature-title">Elaborado Por</span>
                         <div class="mb-2">
-                            <input type="text" name="elaborado_por" value="{{ form.elaborado_por.value|default:'' }}" class="form-control form-control-sm mb-1 text-center" placeholder="Nombre Completo">
-                            <input type="text" name="cargo_elabora" value="{{ form.cargo_elabora.value|default:'' }}" class="form-control form-control-sm text-center text-muted" placeholder="Cargo">
+                            <input type="text" name="elaborado_por" value="{{ form.elaborado_por.value|default:'' }}"
+                                class="form-control form-control-sm mb-1 text-center" placeholder="Nombre Completo">
+                            <input type="text" name="cargo_elabora" value="{{ form.cargo_elabora.value|default:'' }}"
+                                class="form-control form-control-sm text-center text-muted" placeholder="Cargo">
                         </div>
                     </div>
                 </div>
@@ -262,8 +329,10 @@
                     <div class="signature-box">
                         <span class="signature-title">Revisado Por</span>
                         <div class="mb-2">
-                            <input type="text" name="revisado_por" value="{{ form.revisado_por.value|default:'' }}" class="form-control form-control-sm mb-1 text-center" placeholder="Nombre Completo">
-                            <input type="text" name="cargo_revisa" value="{{ form.cargo_revisa.value|default:'' }}" class="form-control form-control-sm text-center text-muted" placeholder="Cargo">
+                            <input type="text" name="revisado_por" value="{{ form.revisado_por.value|default:'' }}"
+                                class="form-control form-control-sm mb-1 text-center" placeholder="Nombre Completo">
+                            <input type="text" name="cargo_revisa" value="{{ form.cargo_revisa.value|default:'' }}"
+                                class="form-control form-control-sm text-center text-muted" placeholder="Cargo">
                         </div>
                     </div>
                 </div>
@@ -271,8 +340,10 @@
                     <div class="signature-box">
                         <span class="signature-title">Aprobado Por</span>
                         <div class="mb-2">
-                            <input type="text" name="aprobado_por" value="{{ form.aprobado_por.value|default:'' }}" class="form-control form-control-sm mb-1 text-center" placeholder="Nombre Completo">
-                            <input type="text" name="cargo_aprueba" value="{{ form.cargo_aprueba.value|default:'' }}" class="form-control form-control-sm text-center text-muted" placeholder="Cargo">
+                            <input type="text" name="aprobado_por" value="{{ form.aprobado_por.value|default:'' }}"
+                                class="form-control form-control-sm mb-1 text-center" placeholder="Nombre Completo">
+                            <input type="text" name="cargo_aprueba" value="{{ form.cargo_aprueba.value|default:'' }}"
+                                class="form-control form-control-sm text-center text-muted" placeholder="Cargo">
                         </div>
                     </div>
                 </div>
@@ -282,7 +353,8 @@
 
     <div class="d-flex justify-content-between align-items-center mb-2 px-1">
         <div>
-            <button class="btn btn-sm btn-outline-secondary rounded-pill px-3" onclick="toggleInclusion()" id="btn-inclusion">
+            <button class="btn btn-sm btn-outline-secondary rounded-pill px-3" onclick="toggleInclusion()"
+                id="btn-inclusion">
                 <i class="fas fa-wheelchair me-2"></i>Mostrar/Ocultar Inclusión (Ley 21.015)
             </button>
         </div>
@@ -302,48 +374,50 @@
                     <th colspan="4" class="th-green">4. EVALUACIÓN (PURA)</th>
                     <th colspan="3" class="th-yellow">5. GESTIÓN</th>
                     <th colspan="4" class="th-purple">6. EVALUACIÓN (RESIDUAL)</th>
-                    <th rowspan="2" class="th-gray col-inclusion" style="width: 250px;">CONDICIÓN ESPECIAL<br>(INCLUSIÓN)</th>
+                    <th rowspan="2" class="th-gray col-inclusion" style="width: 250px;">CONDICIÓN
+                        ESPECIAL<br>(INCLUSIÓN)</th>
                     <th rowspan="2" class="th-gray" style="width: 200px;">OBSERVACIONES</th>
                     <th rowspan="2" class="th-gray" style="width: 40px;"></th>
                 </tr>
-                
+
                 <tr>
                     <th class="th-blue" style="min-width: 180px;">Proceso</th>
                     <th class="th-blue" style="min-width: 100px;">Género</th>
                     <th class="th-blue" style="min-width: 180px;">Puesto Trabajo</th>
                     <th class="th-blue" style="min-width: 220px;">Tarea</th>
                     <th class="th-blue" style="min-width: 110px;">Rutina</th>
-                    
+
                     <th class="th-orange" style="min-width: 70px;">Cod.</th>
                     <th class="th-orange" style="min-width: 220px;">Peligro / Factor</th>
                     <th class="th-orange" style="min-width: 220px;">Riesgo</th>
                     <th class="th-orange" style="min-width: 220px;">Consecuencia</th>
                     <th class="th-orange" style="min-width: 100px;">GEMA</th>
-                    
+
                     <th class="th-orange" style="min-width: 280px;">Medida Control Actual</th>
-                    
+
                     <th class="th-green" style="min-width: 60px;">P</th>
+                    <th class="th-green" style="min-width: 130px;">Clasificación</th>
                     <th class="th-green" style="min-width: 60px;">S</th>
                     <th class="th-green" style="min-width: 60px;">VR</th>
-                    <th class="th-green" style="min-width: 110px;">Clasificación</th>
-                    
+
                     <th class="th-yellow" style="min-width: 220px;">Requisito Legal</th>
                     <th class="th-yellow" style="min-width: 150px;">Resp. Ejecución</th>
                     <th class="th-yellow" style="min-width: 150px;">Resp. Seguimiento</th>
-                    
+
                     <th class="th-purple" style="min-width: 60px;">P(R)</th>
+                    <th class="th-purple" style="min-width: 130px;">Clasif.(R)</th>
                     <th class="th-purple" style="min-width: 60px;">S(R)</th>
                     <th class="th-purple" style="min-width: 60px;">VR(R)</th>
-                    <th class="th-purple" style="min-width: 110px;">Clasif.(R)</th>
                 </tr>
             </thead>
-            
+
             <tbody id="matriz-body">
                 {% for fila in filas %}
                 <tr data-id="{{ fila.id }}">
                     <td class="text-center bg-light text-muted fw-bold">{{ forloop.counter }}</td>
-                    
-                    <td><textarea class="cell-input" onchange="save(this, 'proceso')">{{ fila.proceso|default:'' }}</textarea></td>
+
+                    <td><textarea class="cell-input"
+                            onchange="save(this, 'proceso')">{{ fila.proceso|default:'' }}</textarea></td>
                     <td>
                         <select class="cell-input" onchange="save(this, 'genero')">
                             <option value="">...</option>
@@ -353,21 +427,30 @@
                             <option value="Otro" {% if fila.genero == 'Otro' %}selected{% endif %}>Otro</option>
                         </select>
                     </td>
-                    <td><textarea class="cell-input" onchange="save(this, 'puesto_trabajo')">{{ fila.puesto_trabajo|default:'' }}</textarea></td>
-                    <td><textarea class="cell-input" onchange="save(this, 'tarea')">{{ fila.tarea|default:'' }}</textarea></td>
+                    <td><textarea class="cell-input"
+                            onchange="save(this, 'puesto_trabajo')">{{ fila.puesto_trabajo|default:'' }}</textarea></td>
+                    <td><textarea class="cell-input"
+                            onchange="save(this, 'tarea')">{{ fila.tarea|default:'' }}</textarea></td>
                     <td>
                         <select class="cell-input" onchange="save(this, 'tipo_rutina')">
                             <option value="">...</option>
-                            <option value="Rutinaria" {% if fila.tipo_rutina == 'Rutinaria' %}selected{% endif %}>Rutinaria</option>
-                            <option value="No Rutinaria" {% if fila.tipo_rutina == 'No Rutinaria' %}selected{% endif %}>No Rutinaria</option>
-                            <option value="Emergencia" {% if fila.tipo_rutina == 'Emergencia' %}selected{% endif %}>Emergencia</option>
+                            <option value="Rutinaria" {% if fila.tipo_rutina == 'Rutinaria' %}selected{% endif %}>
+                                Rutinaria</option>
+                            <option value="No Rutinaria" {% if fila.tipo_rutina == 'No Rutinaria' %}selected{% endif %}>No
+                                Rutinaria</option>
+                            <option value="Emergencia" {% if fila.tipo_rutina == 'Emergencia' %}selected{% endif %}>
+                                Emergencia</option>
                         </select>
                     </td>
-                    
-                    <td><input type="text" class="cell-input text-center" onchange="save(this, 'codigo_riesgo')" value="{{ fila.codigo_riesgo|default:'' }}"></td>
-                    <td><textarea class="cell-input" onchange="save(this, 'peligro_factor')">{{ fila.peligro_factor|default:'' }}</textarea></td>
-                    <td><textarea class="cell-input" onchange="save(this, 'riesgo')">{{ fila.riesgo|default:'' }}</textarea></td>
-                    <td><textarea class="cell-input" onchange="save(this, 'consecuencia')">{{ fila.consecuencia|default:'' }}</textarea></td>
+
+                    <td><input type="text" class="cell-input text-center" onchange="save(this, 'codigo_riesgo')"
+                            value="{{ fila.codigo_riesgo|default:'' }}"></td>
+                    <td><textarea class="cell-input"
+                            onchange="save(this, 'peligro_factor')">{{ fila.peligro_factor|default:'' }}</textarea></td>
+                    <td><textarea class="cell-input"
+                            onchange="save(this, 'riesgo')">{{ fila.riesgo|default:'' }}</textarea></td>
+                    <td><textarea class="cell-input"
+                            onchange="save(this, 'consecuencia')">{{ fila.consecuencia|default:'' }}</textarea></td>
                     <td>
                         <select class="cell-input text-center" onchange="save(this, 'gema')">
                             <option value="">...</option>
@@ -377,18 +460,24 @@
                             <option value="Ambiente" {% if fila.gema == 'Ambiente' %}selected{% endif %}>A</option>
                         </select>
                     </td>
-                    
-                    <td><textarea class="cell-input" onchange="save(this, 'medida_control_actual')">{{ fila.medida_control_actual|default:'' }}</textarea></td>
-                    
+
+                    <td><textarea class="cell-input"
+                            onchange="save(this, 'medida_control_actual')">{{ fila.medida_control_actual|default:'' }}</textarea>
+                    </td>
+
                     <td>
-                        <select class="cell-input text-center fw-bold" id="p-{{ fila.id }}" onchange="calcRisk('{{ fila.id }}', 'pura'); save(this, 'eval_probabilidad')">
+                        <select class="cell-input text-center fw-bold" id="p-{{ fila.id }}"
+                            onchange="calcRisk('{{ fila.id }}', 'pura'); save(this, 'eval_probabilidad')">
                             <option value="1" {% if fila.eval_probabilidad == 1 %}selected{% endif %}>1</option>
                             <option value="2" {% if fila.eval_probabilidad == 2 %}selected{% endif %}>2</option>
                             <option value="4" {% if fila.eval_probabilidad == 4 %}selected{% endif %}>4</option>
                         </select>
                     </td>
+                    <td class="cell-calc"><span id="class-{{ fila.id }}"
+                            class="badge rounded-pill fw-normal text-dark">{{ fila.eval_clasificacion }}</span></td>
                     <td>
-                        <select class="cell-input text-center fw-bold" id="s-{{ fila.id }}" onchange="calcRisk('{{ fila.id }}', 'pura'); save(this, 'eval_severidad')">
+                        <select class="cell-input text-center fw-bold" id="s-{{ fila.id }}"
+                            onchange="calcRisk('{{ fila.id }}', 'pura'); save(this, 'eval_severidad')">
                             <option value="1" {% if fila.eval_severidad == 1 %}selected{% endif %}>1</option>
                             <option value="2" {% if fila.eval_severidad == 2 %}selected{% endif %}>2</option>
                             <option value="4" {% if fila.eval_severidad == 4 %}selected{% endif %}>4</option>
@@ -396,21 +485,29 @@
                         </select>
                     </td>
                     <td class="cell-calc"><span id="vr-{{ fila.id }}">{{ fila.eval_valor }}</span></td>
-                    <td class="cell-calc"><span id="class-{{ fila.id }}" class="badge rounded-pill fw-normal text-dark">{{ fila.eval_clasificacion }}</span></td>
-                    
-                    <td><textarea class="cell-input" onchange="save(this, 'requisito_legal')" placeholder="Ej: DS 594...">{{ fila.requisito_legal|default:'' }}</textarea></td>
-                    <td><textarea class="cell-input" onchange="save(this, 'responsable_ejecucion')">{{ fila.responsable_ejecucion|default:'' }}</textarea></td>
-                    <td><textarea class="cell-input" onchange="save(this, 'responsable_seguimiento')">{{ fila.responsable_seguimiento|default:'' }}</textarea></td>
-                    
+
+                    <td><textarea class="cell-input" onchange="save(this, 'requisito_legal')"
+                            placeholder="Ej: DS 594...">{{ fila.requisito_legal|default:'' }}</textarea></td>
+                    <td><textarea class="cell-input"
+                            onchange="save(this, 'responsable_ejecucion')">{{ fila.responsable_ejecucion|default:'' }}</textarea>
+                    </td>
+                    <td><textarea class="cell-input"
+                            onchange="save(this, 'responsable_seguimiento')">{{ fila.responsable_seguimiento|default:'' }}</textarea>
+                    </td>
+
                     <td>
-                        <select class="cell-input text-center fw-bold" id="pr-{{ fila.id }}" onchange="calcRisk('{{ fila.id }}', 'residual'); save(this, 'residual_probabilidad')">
+                        <select class="cell-input text-center fw-bold" id="pr-{{ fila.id }}"
+                            onchange="calcRisk('{{ fila.id }}', 'residual'); save(this, 'residual_probabilidad')">
                             <option value="1" {% if fila.residual_probabilidad == 1 %}selected{% endif %}>1</option>
                             <option value="2" {% if fila.residual_probabilidad == 2 %}selected{% endif %}>2</option>
                             <option value="4" {% if fila.residual_probabilidad == 4 %}selected{% endif %}>4</option>
                         </select>
                     </td>
+                    <td class="cell-calc"><span id="classr-{{ fila.id }}"
+                            class="badge rounded-pill fw-normal text-dark">{{ fila.residual_clasificacion }}</span></td>
                     <td>
-                        <select class="cell-input text-center fw-bold" id="sr-{{ fila.id }}" onchange="calcRisk('{{ fila.id }}', 'residual'); save(this, 'residual_severidad')">
+                        <select class="cell-input text-center fw-bold" id="sr-{{ fila.id }}"
+                            onchange="calcRisk('{{ fila.id }}', 'residual'); save(this, 'residual_severidad')">
                             <option value="1" {% if fila.residual_severidad == 1 %}selected{% endif %}>1</option>
                             <option value="2" {% if fila.residual_severidad == 2 %}selected{% endif %}>2</option>
                             <option value="4" {% if fila.residual_severidad == 4 %}selected{% endif %}>4</option>
@@ -418,29 +515,30 @@
                         </select>
                     </td>
                     <td class="cell-calc"><span id="vrr-{{ fila.id }}">{{ fila.residual_valor }}</span></td>
-                    <td class="cell-calc"><span id="classr-{{ fila.id }}" class="badge rounded-pill fw-normal text-dark">{{ fila.residual_clasificacion }}</span></td>
-                    
+
                     <td class="col-inclusion">
-                        <textarea class="cell-input" onchange="save(this, 'condicion_especial')" placeholder="Describir ajustes...">{{ fila.condicion_especial|default:'' }}</textarea>
+                        <textarea class="cell-input" onchange="save(this, 'condicion_especial')"
+                            placeholder="Describir ajustes...">{{ fila.condicion_especial|default:'' }}</textarea>
                     </td>
-                    
-                    <td><textarea class="cell-input" onchange="save(this, 'reevaluacion')">{{ fila.reevaluacion|default:'' }}</textarea></td>
-                    
+
+                    <td><textarea class="cell-input"
+                            onchange="save(this, 'reevaluacion')">{{ fila.reevaluacion|default:'' }}</textarea></td>
+
                     <td class="text-center align-middle">
-                        <button class="btn btn-sm text-danger" title="Eliminar Fila" onclick="alert('Función de eliminar pendiente de implementar en backend')">
+                        <button class="btn btn-sm text-danger" title="Eliminar Fila"
+                            onclick="alert('Función de eliminar pendiente de implementar en backend')">
                             <i class="fas fa-trash-alt"></i>
                         </button>
                     </td>
                 </tr>
                 {% endfor %}
-                
+
                 <tr class="bg-light border-top">
                     <td class="text-center fw-bold text-success align-middle" style="font-size: 1.2rem;">+</td>
                     <td colspan="23">
-                        <input type="text" class="cell-input fst-italic text-muted px-3" 
-                               placeholder="Haz clic aquí para agregar una nueva fila..." 
-                               onfocus="createRow()" 
-                               style="height: 40px; cursor: pointer;">
+                        <input type="text" class="cell-input fst-italic text-muted px-3"
+                            placeholder="Haz clic aquí para agregar una nueva fila..." onfocus="createRow()"
+                            style="height: 40px; cursor: pointer;">
                     </td>
                 </tr>
             </tbody>
@@ -461,9 +559,9 @@
     function toggleInclusion() {
         const cols = document.querySelectorAll('.col-inclusion');
         const btn = document.getElementById('btn-inclusion');
-        
+
         cols.forEach(col => col.classList.toggle('show'));
-        
+
         if (cols[0].classList.contains('show')) {
             btn.classList.add('active', 'bg-secondary', 'text-white');
         } else {
@@ -513,11 +611,10 @@
 
         // Actualizar Texto y Colores
         classSpan.innerText = clasificacion;
-        
+
         // Limpiar clases previas en la celda y aplicar la nueva
-        vrCell.className = `cell-calc ${claseColor}`;
         classCell.className = `cell-calc ${claseColor}`;
-        
+
         // El badge interno puede quedar transparente o heredar
         classSpan.className = "badge rounded-pill fw-normal text-white"; // Texto blanco por defecto
         if (claseColor === "riesgo-moderado") classSpan.classList.add("text-dark"); // Excepción oscuro
@@ -540,7 +637,7 @@
         const rowId = explicitId ? explicitId : input.closest('tr').dataset.id;
         const value = input.value !== undefined ? input.value : input.innerText;
 
-        if(!silent) {
+        if (!silent) {
             statusBox.style.display = 'flex';
             statusBox.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando...';
             statusBox.style.background = '#2d3436';
@@ -559,23 +656,23 @@
                 value: value
             })
         })
-        .then(res => res.json())
-        .then(data => {
-            if (data.status === 'ok' || data.status === 'created') {
-                if(!silent) {
-                    statusBox.innerHTML = '<i class="fas fa-check"></i> Guardado';
-                    statusBox.style.background = '#00b894';
-                    setTimeout(() => statusBox.style.display = 'none', 1000);
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'ok' || data.status === 'created') {
+                    if (!silent) {
+                        statusBox.innerHTML = '<i class="fas fa-check"></i> Guardado';
+                        statusBox.style.background = '#00b894';
+                        setTimeout(() => statusBox.style.display = 'none', 1000);
+                    }
+                } else {
+                    statusBox.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Error';
+                    statusBox.style.background = '#d63031';
                 }
-            } else {
-                statusBox.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Error';
-                statusBox.style.background = '#d63031';
-            }
-        })
-        .catch(err => {
-            console.error(err);
-            statusBox.innerHTML = 'Error Red';
-        });
+            })
+            .catch(err => {
+                console.error(err);
+                statusBox.innerHTML = 'Error Red';
+            });
     }
 
     // --- 4. CREAR NUEVA FILA ---
@@ -602,11 +699,11 @@
     }
 
     // --- 6. INICIALIZACIÓN ---
-    document.addEventListener("DOMContentLoaded", function() {
+    document.addEventListener("DOMContentLoaded", function () {
         // Calcular colores iniciales para todas las filas
         {% for fila in filas %}
-            calcRisk('{{ fila.id }}', 'pura');
-            calcRisk('{{ fila.id }}', 'residual');
+        calcRisk('{{ fila.id }}', 'pura');
+        calcRisk('{{ fila.id }}', 'residual');
         {% endfor %}
     });
 </script>

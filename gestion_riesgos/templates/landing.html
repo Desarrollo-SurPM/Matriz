@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,8 +11,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    <link rel="stylesheet" href="{% static 'css/main.css' %}?v={{ now }}">
 </head>
+
 <body>
     <!-- Navbar Moderno -->
     <nav class="navbar navbar-expand-lg navbar-modern">
@@ -38,13 +40,13 @@
                     </li>
                     <li class="nav-item ms-3">
                         {% if user.is_authenticated %}
-                            <a href="{% url 'dashboard' %}" class="btn-primary-modern">
-                                <i class="bi bi-speedometer2 me-2"></i>Dashboard
-                            </a>
+                        <a href="{% url 'dashboard' %}" class="btn-primary-modern">
+                            <i class="bi bi-speedometer2 me-2"></i>Dashboard
+                        </a>
                         {% else %}
-                            <button id="loginBtn" class="btn-primary-modern">
-                                <i class="bi bi-box-arrow-in-right me-2"></i>Iniciar Sesión
-                            </button>
+                        <button id="loginBtn" class="btn-primary-modern">
+                            <i class="bi bi-box-arrow-in-right me-2"></i>Iniciar Sesión
+                        </button>
                         {% endif %}
                     </li>
                 </ul>
@@ -64,7 +66,8 @@
                 Identifica peligros, evalúa riesgos y protege tu empresa con una plataforma integral.
                 <br>Organiza tu equipo y mejora la seguridad laboral con herramientas profesionales.
             </p>
-            <div style="display: flex; justify-content: center; gap: 1rem; margin: 2rem 0; flex-wrap: wrap; font-size: 0.95rem; color: var(--text-secondary);">
+            <div
+                style="display: flex; justify-content: center; gap: 1rem; margin: 2rem 0; flex-wrap: wrap; font-size: 0.95rem; color: var(--text-secondary);">
                 <div style="display: flex; align-items: center; gap: 0.5rem;">
                     <i class="bi bi-people-fill" style="font-size: 1.3rem; color: var(--accent-primary);"></i>
                     <span>Trabajo en Equipo</span>
@@ -80,59 +83,66 @@
             </div>
             <div class="hero-buttons">
                 {% if user.is_authenticated %}
-                    <a href="{% url 'dashboard' %}" class="btn-primary-modern">
-                        <i class="bi bi-speedometer2 me-2"></i>
-                        Ir al Dashboard
-                    </a>
-                    <a href="{% url 'empresa_list' %}" class="btn-outline-modern">
-                        <i class="bi bi-building me-2"></i>
-                        Mis Empresas
-                    </a>
+                <a href="{% url 'dashboard' %}" class="btn-primary-modern">
+                    <i class="bi bi-speedometer2 me-2"></i>
+                    Ir al Dashboard
+                </a>
+                <a href="{% url 'empresa_list' %}" class="btn-outline-modern">
+                    <i class="bi bi-building me-2"></i>
+                    Mis Empresas
+                </a>
                 {% else %}
-                    <button id="loginBtn2" class="btn-primary-modern">
-                        <i class="bi bi-box-arrow-in-right me-2"></i>
-                        Comenzar Ahora
-                    </button>
-                    <a href="#features" class="btn-outline-modern">
-                        <i class="bi bi-info-circle me-2"></i>
-                        Conocer Más
-                    </a>
+                <button id="loginBtn2" class="btn-primary-modern">
+                    <i class="bi bi-box-arrow-in-right me-2"></i>
+                    Comenzar Ahora
+                </button>
+                <a href="#features" class="btn-outline-modern">
+                    <i class="bi bi-info-circle me-2"></i>
+                    Conocer Más
+                </a>
                 {% endif %}
             </div>
         </div>
     </section>
 
     <!-- Sección Beneficios Clave -->
-    <section style="padding: 4rem 2rem; background: linear-gradient(135deg, rgba(200, 230, 201, 0.15) 0%, rgba(232, 245, 233, 0.2) 100%); position: relative; overflow: hidden;">
+    <section
+        style="padding: 4rem 2rem; background: linear-gradient(135deg, rgba(200, 230, 201, 0.15) 0%, rgba(232, 245, 233, 0.2) 100%); position: relative; overflow: hidden;">
         <div class="container">
             <div style="text-align: center; margin-bottom: 3rem;">
                 <h2 style="font-size: 2.5rem; font-weight: 700; color: var(--text-primary); margin-bottom: 1rem;">
                     Gestión Inteligente y Colaborativa
                 </h2>
                 <p style="font-size: 1.2rem; color: var(--text-secondary); max-width: 800px; margin: 0 auto;">
-                    Organiza tu equipo, estructura tus procesos y protege tu empresa con herramientas diseñadas para la eficiencia.
+                    Organiza tu equipo, estructura tus procesos y protege tu empresa con herramientas diseñadas para la
+                    eficiencia.
                 </p>
             </div>
 
             <div class="row g-4" style="max-width: 1000px; margin: 0 auto;">
                 <div class="col-md-4">
-                    <div style="text-align: center; padding: 2rem; background: rgba(255, 255, 255, 0.9); border-radius: var(--radius-xl); border: 2px solid var(--border-color); height: 100%;">
+                    <div
+                        style="text-align: center; padding: 2rem; background: rgba(255, 255, 255, 0.9); border-radius: var(--radius-xl); border: 2px solid var(--border-color); height: 100%;">
                         <div style="font-size: 3rem; margin-bottom: 1rem; color: var(--accent-primary);">
                             <i class="bi bi-people-fill"></i>
                         </div>
-                        <h4 style="color: var(--accent-primary); font-weight: 700; margin-bottom: 1rem;">Colaboración Efectiva</h4>
+                        <h4 style="color: var(--accent-primary); font-weight: 700; margin-bottom: 1rem;">Colaboración
+                            Efectiva</h4>
                         <p style="color: var(--text-secondary); line-height: 1.6;">
-                            Tu equipo trabaja unido. Cada miembro tiene su rol y todos colaboran para mantener la seguridad.
+                            Tu equipo trabaja unido. Cada miembro tiene su rol y todos colaboran para mantener la
+                            seguridad.
                         </p>
                     </div>
                 </div>
 
                 <div class="col-md-4">
-                    <div style="text-align: center; padding: 2rem; background: rgba(255, 255, 255, 0.9); border-radius: var(--radius-xl); border: 2px solid var(--border-color); height: 100%;">
+                    <div
+                        style="text-align: center; padding: 2rem; background: rgba(255, 255, 255, 0.9); border-radius: var(--radius-xl); border: 2px solid var(--border-color); height: 100%;">
                         <div style="font-size: 3rem; margin-bottom: 1rem; color: var(--accent-primary);">
                             <i class="bi bi-diagram-3-fill"></i>
                         </div>
-                        <h4 style="color: var(--accent-primary); font-weight: 700; margin-bottom: 1rem;">Organización Estructurada</h4>
+                        <h4 style="color: var(--accent-primary); font-weight: 700; margin-bottom: 1rem;">Organización
+                            Estructurada</h4>
                         <p style="color: var(--text-secondary); line-height: 1.6;">
                             Organiza tus procesos y riesgos de manera clara y eficiente para máxima productividad.
                         </p>
@@ -140,11 +150,13 @@
                 </div>
 
                 <div class="col-md-4">
-                    <div style="text-align: center; padding: 2rem; background: rgba(255, 255, 255, 0.9); border-radius: var(--radius-xl); border: 2px solid var(--border-color); height: 100%;">
+                    <div
+                        style="text-align: center; padding: 2rem; background: rgba(255, 255, 255, 0.9); border-radius: var(--radius-xl); border: 2px solid var(--border-color); height: 100%;">
                         <div style="font-size: 3rem; margin-bottom: 1rem; color: var(--accent-primary);">
                             <i class="bi bi-shield-check-fill"></i>
                         </div>
-                        <h4 style="color: var(--accent-primary); font-weight: 700; margin-bottom: 1rem;">Protección Integral</h4>
+                        <h4 style="color: var(--accent-primary); font-weight: 700; margin-bottom: 1rem;">Protección
+                            Integral</h4>
                         <p style="color: var(--text-secondary); line-height: 1.6;">
                             Identifica y mitiga riesgos laborales de forma sistemática y profesional.
                         </p>
@@ -152,10 +164,12 @@
                 </div>
             </div>
 
-            <div style="text-align: center; margin-top: 3rem; padding: 2rem; background: rgba(107, 142, 115, 0.1); border-radius: var(--radius-xl); border-left: 4px solid var(--accent-primary);">
+            <div
+                style="text-align: center; margin-top: 3rem; padding: 2rem; background: rgba(107, 142, 115, 0.1); border-radius: var(--radius-xl); border-left: 4px solid var(--accent-primary);">
                 <p style="font-size: 1.1rem; color: var(--text-primary); margin: 0; font-style: italic;">
                     <strong>"La seguridad es responsabilidad de todos."</strong><br>
-                    <span style="color: var(--text-secondary);">Cuida a tu equipo con una gestión de riesgos eficiente y profesional.</span>
+                    <span style="color: var(--text-secondary);">Cuida a tu equipo con una gestión de riesgos eficiente y
+                        profesional.</span>
                 </p>
             </div>
         </div>
@@ -239,7 +253,8 @@
     </section>
 
     <!-- Benefits Section -->
-    <section id="benefits" class="features-section" style="background: linear-gradient(to bottom, rgba(232, 245, 233, 0.3), rgba(248, 250, 249, 0.5)); position: relative;">
+    <section id="benefits" class="features-section"
+        style="background: linear-gradient(to bottom, rgba(232, 245, 233, 0.3), rgba(248, 250, 249, 0.5)); position: relative;">
         <div class="container">
             <h2 class="section-title">
                 ¿Por qué Risk-Bee?
@@ -315,24 +330,29 @@
     <!-- CTA Section -->
     <section class="features-section" style="position: relative; overflow: hidden;">
         <div class="container">
-            <div class="card-modern text-center" style="background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-secondary) 100%); border: 3px solid var(--accent-primary); max-width: 800px; margin: 0 auto; position: relative; overflow: visible;">
-                <h2 class="mb-4" style="color: white; font-size: 2.5rem; font-weight: 700; text-shadow: 2px 2px 4px rgba(0,0,0,0.2);">
+            <div class="card-modern text-center"
+                style="background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-secondary) 100%); border: 3px solid var(--accent-primary); max-width: 800px; margin: 0 auto; position: relative; overflow: visible;">
+                <h2 class="mb-4"
+                    style="color: white; font-size: 2.5rem; font-weight: 700; text-shadow: 2px 2px 4px rgba(0,0,0,0.2);">
                     ¿Listo para Mejorar tu Gestión de Riesgos?
                 </h2>
-                <p class="mb-4" style="color: rgba(255,255,255,0.95); font-size: 1.2rem; text-shadow: 1px 1px 2px rgba(0,0,0,0.1);">
+                <p class="mb-4"
+                    style="color: rgba(255,255,255,0.95); font-size: 1.2rem; text-shadow: 1px 1px 2px rgba(0,0,0,0.1);">
                     Transforma tu empresa en un lugar más seguro y productivo
                     <br>con herramientas profesionales de gestión de riesgos.
                 </p>
                 {% if not user.is_authenticated %}
-                    <button id="loginBtn3" class="btn-honeycomb" style="background: white; color: var(--accent-primary); border-color: white;">
-                        <i class="bi bi-box-arrow-in-right me-2"></i>
-                        Comenzar Ahora
-                    </button>
+                <button id="loginBtn3" class="btn-honeycomb"
+                    style="background: white; color: var(--accent-primary); border-color: white;">
+                    <i class="bi bi-box-arrow-in-right me-2"></i>
+                    Comenzar Ahora
+                </button>
                 {% else %}
-                    <a href="{% url 'dashboard' %}" class="btn-honeycomb" style="background: white; color: var(--accent-primary); border-color: white;">
-                        <i class="bi bi-speedometer2 me-2"></i>
-                        Ir al Dashboard
-                    </a>
+                <a href="{% url 'dashboard' %}" class="btn-honeycomb"
+                    style="background: white; color: var(--accent-primary); border-color: white;">
+                    <i class="bi bi-speedometer2 me-2"></i>
+                    Ir al Dashboard
+                </a>
                 {% endif %}
                 <p style="margin-top: 1.5rem; color: rgba(255,255,255,0.8); font-size: 0.9rem;">
                     Únete a los profesionales que confían en Risk-Bee
@@ -342,7 +362,8 @@
     </section>
 
     <!-- Footer -->
-    <footer class="text-center py-5" style="border-top: 3px solid var(--border-color); background: linear-gradient(to bottom, transparent, rgba(232, 245, 233, 0.2)); position: relative;">
+    <footer class="text-center py-5"
+        style="border-top: 3px solid var(--border-color); background: linear-gradient(to bottom, transparent, rgba(232, 245, 233, 0.2)); position: relative;">
         <div class="container">
             <div class="mb-4">
                 <h3 class="text-gradient mb-3" style="font-size: 1.5rem; font-weight: 700;">
@@ -353,7 +374,8 @@
                 </p>
             </div>
             <div class="divider"></div>
-            <div style="display: flex; justify-content: center; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+            <div
+                style="display: flex; justify-content: center; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
                 <p style="color: var(--text-secondary); margin: 0; font-weight: 500;">
                     &copy; {% now "Y" %} Risk-Bee
                 </p>
@@ -412,20 +434,20 @@
     <script src="{% static 'js/main.js' %}"></script>
     <script>
         // Inicializar botones de login adicionales
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const loginBtn2 = document.getElementById('loginBtn2');
             const loginBtn3 = document.getElementById('loginBtn3');
             const loginModal = document.getElementById('loginModal');
 
             if (loginBtn2 && loginModal) {
-                loginBtn2.addEventListener('click', function() {
+                loginBtn2.addEventListener('click', function () {
                     loginModal.classList.add('active');
                     document.body.style.overflow = 'hidden';
                 });
             }
 
             if (loginBtn3 && loginModal) {
-                loginBtn3.addEventListener('click', function() {
+                loginBtn3.addEventListener('click', function () {
                     loginModal.classList.add('active');
                     document.body.style.overflow = 'hidden';
                 });
@@ -433,4 +455,5 @@
         });
     </script>
 </body>
+
 </html>
