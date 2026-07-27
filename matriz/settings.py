@@ -18,7 +18,8 @@ else:
 SECRET_KEY = config('SECRET_KEY', default='insecure-secret-key-change-me')
 
 # DEBUG será True si está en tu .env local, False por defecto en producción
-DEBUG = config('DEBUG', default=False, cast=bool)
+_debug_value = str(config('DEBUG', default='true')).strip().lower()
+DEBUG = _debug_value in {'1', 'true', 't', 'yes', 'y', 'on', 'debug', 'development'}
 
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='127.0.0.1,localhost,healthcheck.railway.app').split(',')
 ALLOWED_HOSTS += [
@@ -56,7 +57,13 @@ INSTALLED_APPS = [
     'cumplimiento',
     'agenda',
     'accidentes',
+    'crispy_forms',
+    'crispy_tailwind',
 ]
+
+CRISPY_ALLOWED_TEMPLATE_PACKS = "tailwind"
+CRISPY_TEMPLATE_PACK = "tailwind"
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -89,7 +96,8 @@ TEMPLATES = [
 WSGI_APPLICATION = 'matriz.wsgi.application'
 
 # 5. Base de Datos (Conexión Universal)
-DATABASE_URL_VALUE = config('DATABASE_URL', default=None)
+USE_SQLITE = os.environ.get('USE_SQLITE', '').strip().lower() in {'1', 'true', 'yes', 'on'}
+DATABASE_URL_VALUE = None if USE_SQLITE else os.environ.get('DATABASE_URL') or config('DATABASE_URL', default=None)
 
 if DATABASE_URL_VALUE:
     _db_config = dj_database_url.parse(
@@ -102,7 +110,7 @@ if DATABASE_URL_VALUE:
 else:
     _db_config = {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': Path(os.environ.get('SQLITE_PATH', BASE_DIR / 'db.sqlite3')),
     }
 
 DATABASES = {
@@ -119,7 +127,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # 7. Internacionalización
 LANGUAGE_CODE = 'es-cl'
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/Santiago'
 USE_I18N = True
 USE_TZ = True
 
@@ -135,3 +143,23 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_REDIRECT_URL = '/dashboard/'
 LOGOUT_REDIRECT_URL = '/'
+
+# ==========================================
+# CONFIGURACIÓN DE CORREO (SMTP SSL)
+# ==========================================
+
+# PARA DESARROLLO (Imprime en consola, no envía real)
+#EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'mail.desarrollosur.cl'
+EMAIL_PORT = 465
+EMAIL_USE_SSL = True  # Usamos SSL como indica tu configuración segura
+EMAIL_USE_TLS = False # Desactivamos TLS explícito porque usamos SSL directo
+
+EMAIL_HOST_USER = config('EMAIL_HOST_USER', default='prueba@desarrollosur.cl')
+# IMPORTANTE: Reemplaza esto con la contraseña real de la cuenta
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', default='')
+
+DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL', default=f'Sistema Gestión <{EMAIL_HOST_USER}>')
+SERVER_EMAIL = config('SERVER_EMAIL', default=EMAIL_HOST_USER)

@@ -1,51 +1,29 @@
 {% extends 'base.html' %}
-{% block title %}Calendario de Cumplimiento Legal{% endblock %}
-
+{% block title %}Calendario legal · RiskBee{% endblock %}
+{% block page_context %}Calendario legal{% endblock %}
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h1>Calendario de Cumplimiento Legal</h1>
-    <a href="{% url 'tarea_legal_create' %}" class="btn btn-primary">+ Añadir Obligación</a>
-</div>
-
-<div class="card">
-    <div class="card-body">
-        <table class="table table-hover">
-            <thead class="table-dark">
-                <tr>
-                    <th>Próximo Vencimiento</th>
-                    <th>Obligación</th>
-                    <th>Empresa</th>
-                    <th>Frecuencia</th>
-                    <th>Estado</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for tarea in tareas %}
-                <tr>
-                    <td>{{ tarea.proxima_fecha_vencimiento|date:"d-m-Y" }}</td>
-                    <td>{{ tarea.nombre_obligacion }}</td>
-                    <td>{{ tarea.empresa.razon_social }}</td>
-                    <td>{{ tarea.get_frecuencia_display }}</td>
-                    <td>
-                        {% if tarea.completada %}
-                            <span class="badge bg-success">Completada</span>
-                        {% else %}
-                            <span class="badge bg-warning text-dark">Pendiente</span>
-                        {% endif %}
-                    </td>
-                    <td>
-                        <a href="{% url 'tarea_legal_update' tarea.pk %}" class="btn btn-sm btn-info">Editar</a>
-                        <a href="{% url 'tarea_legal_delete' tarea.pk %}" class="btn btn-sm btn-danger">Eliminar</a>
-                    </td>
-                </tr>
-                {% empty %}
-                <tr>
-                    <td colspan="6" class="text-center">No hay obligaciones legales pendientes.</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
+<div class="page-shell">
+    <header class="page-header">
+        <div><span class="eyebrow">Compromisos y evidencia</span><h1 class="page-title">Cumplimiento con fecha y responsable</h1><p class="page-lead">Transforma cada obligación en un hito gestionable y conserva su estado por empresa.</p></div>
+        <div class="page-actions"><a class="btn btn-quiet" href="{% url 'protocolos_minsal' %}"><i class="fa-solid fa-stethoscope"></i> Protocolos MINSAL</a><a class="btn btn-brand" href="{% url 'tarea_legal_create' %}"><i class="fa-solid fa-plus"></i> Nueva obligación</a></div>
+    </header>
+    <section class="kpi-grid mb-4">
+        <article class="metric-card danger"><div class="metric-top"><span class="metric-label">Vencidas</span><span class="metric-icon"><i class="fa-solid fa-triangle-exclamation"></i></span></div><div class="metric-value">{{ vencidas }}</div><div class="metric-note">requieren regularización</div></article>
+        <article class="metric-card warning"><div class="metric-top"><span class="metric-label">Pendientes</span><span class="metric-icon"><i class="fa-regular fa-clock"></i></span></div><div class="metric-value">{{ pendientes }}</div><div class="metric-note">hitos todavía abiertos</div></article>
+        <article class="metric-card"><div class="metric-top"><span class="metric-label">Completadas</span><span class="metric-icon"><i class="fa-solid fa-check"></i></span></div><div class="metric-value">{{ completadas }}</div><div class="metric-note">con cierre registrado</div></article>
+        <article class="metric-card blue"><div class="metric-top"><span class="metric-label">Empresas</span><span class="metric-icon"><i class="fa-regular fa-building"></i></span></div><div class="metric-value">{{ empresas|length }}</div><div class="metric-note">carteras monitoreadas</div></article>
+    </section>
+    <section class="surface">
+        <div class="surface-header"><div><h2>Obligaciones</h2><span class="surface-subtitle">Ordenadas por próximo vencimiento</span></div></div>
+        <div class="table-responsive"><table class="table table-hover"><thead><tr><th>Vencimiento</th><th>Obligación</th><th>Empresa</th><th>Frecuencia</th><th>Responsable</th><th>Estado</th><th class="text-end">Acciones</th></tr></thead><tbody>
+        {% for tarea in tareas %}<tr>
+            <td><strong class="{% if tarea.esta_vencida %}text-danger{% endif %}">{{ tarea.proxima_fecha_vencimiento|date:"d M Y" }}</strong>{% if tarea.esta_vencida %}<small class="d-block text-danger">Fuera de plazo</small>{% endif %}</td>
+            <td><strong class="small">{{ tarea.nombre_obligacion }}</strong><small class="d-block text-muted">{{ tarea.normativa|default:"Sin normativa asociada" }}</small></td>
+            <td>{{ tarea.empresa.razon_social }}</td><td>{{ tarea.get_frecuencia_display }}</td><td>{{ tarea.responsable|default:"Sin asignar" }}</td>
+            <td>{% if tarea.completada %}<span class="app-badge badge-success">Completada</span>{% elif tarea.esta_vencida %}<span class="app-badge badge-danger">Vencida</span>{% else %}<span class="app-badge badge-warning">Pendiente</span>{% endif %}</td>
+            <td class="text-end"><div class="d-inline-flex gap-2"><a class="icon-button" href="{% url 'tarea_legal_update' tarea.pk %}" title="Editar"><i class="fa-solid fa-pen"></i></a><a class="icon-button text-danger" href="{% url 'tarea_legal_delete' tarea.pk %}" title="Eliminar"><i class="fa-regular fa-trash-can"></i></a></div></td>
+        </tr>{% empty %}<tr><td colspan="7"><div class="empty-state"><i class="fa-regular fa-calendar-check"></i><strong>Sin obligaciones registradas</strong><p>Crea un hito con responsable, frecuencia y fuente normativa.</p></div></td></tr>{% endfor %}
+        </tbody></table></div>
+    </section>
 </div>
 {% endblock %}

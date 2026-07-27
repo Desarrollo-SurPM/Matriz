@@ -4,6 +4,7 @@ from . import views
 urlpatterns = [
     # --- Dashboard y Landing ---
     path('', views.LandingPageView.as_view(), name='landing'),
+    path('ayuda/', views.CentroAyudaView.as_view(), name='centro_ayuda'),
     path('dashboard/', views.DashboardView.as_view(), name='dashboard'),
     path('api/chart-data/', views.dashboard_chart_data, name='dashboard_chart_data'),
 
@@ -23,6 +24,7 @@ urlpatterns = [
     
     # 3. API para guardar celdas (AJAX)
     path('api/update-iper/', views.update_detalle_iper, name='update_detalle_iper'),
+    path('api/delete-iper/<int:fila_id>/', views.delete_detalle_iper, name='delete_detalle_iper'),
 
     # --- Configuración (Peligros y Normativas) ---
     path('peligros/', views.PeligroListView.as_view(), name='peligro_list'),

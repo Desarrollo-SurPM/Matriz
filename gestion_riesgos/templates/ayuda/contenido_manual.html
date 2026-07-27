@@ -1,0 +1,251 @@
+{% load static %}
+<article class="help-page" id="manual-riskbee">
+    <section class="help-hero" id="inicio">
+        <div class="help-hero-content">
+            <span class="help-kicker"><svg class="rb-icon"><use href="{% static 'icons/ui.svg' %}#bulb"></use></svg> Manual de usuario · Edición 1.0</span>
+            <h1>Aprende RiskBee desde la primera acción.</h1>
+            <p>Una guía práctica para registrar, priorizar y demostrar la gestión preventiva sin perder el contexto técnico ni la trazabilidad.</p>
+            <div class="help-screen-actions">
+                {% if user.is_authenticated %}<a class="btn btn-light btn-lg" href="{% url 'dashboard' %}"><svg class="rb-icon"><use href="{% static 'icons/ui.svg' %}#grid"></use></svg> Ir al panel</a>{% endif %}
+                <a class="btn btn-outline-light btn-lg" href="{% static 'docs/Manual_de_Usuario_RiskBee.pdf' %}" target="_blank" rel="noopener"><svg class="rb-icon"><use href="{% static 'icons/ui.svg' %}#clipboard"></use></svg> Abrir manual PDF</a>
+                <a class="btn btn-outline-light btn-lg" href="{% static 'docs/Manual_de_Usuario_RiskBee.pdf' %}" download><svg class="rb-icon"><use href="{% static 'icons/ui.svg' %}#arrow-right"></use></svg> Descargar</a>
+            </div>
+        </div>
+        <div class="help-hero-summary" aria-label="Contenido del manual">
+            <div><strong>01</strong><span>Inicio y panel ejecutivo</span></div>
+            <div><strong>02</strong><span>Accidentes paso a paso</span></div>
+            <div><strong>03</strong><span>Clientes y prioridades</span></div>
+            <div><strong>04</strong><span>IPER, MINSAL y cumplimiento</span></div>
+        </div>
+        <div class="manual-print-meta">
+            <span>RiskBee · Prevención en control</span>
+            <span>Manual de usuario · Julio 2026</span>
+        </div>
+    </section>
+
+    <nav class="help-index help-screen-only" aria-label="Índice del manual">
+        <span>Ir a</span>
+        <a href="#primeros-pasos">Primeros pasos</a>
+        <a href="#accidentes">Accidentes</a>
+        <a href="#clientes">Clientes</a>
+        <a href="#iper">Matriz IPER</a>
+        <a href="#minsal">MINSAL</a>
+        <a href="#cumplimiento">Cumplimiento</a>
+        <a href="#preguntas">Preguntas frecuentes</a>
+    </nav>
+
+    <section class="help-section" id="primeros-pasos">
+        <header class="help-section-header">
+            <span class="help-section-number">01</span>
+            <div><span class="eyebrow">Comenzar bien</span><h2>Tu primera jornada en RiskBee</h2><p>Configura la cartera una vez y utiliza el panel para orientar el trabajo cotidiano.</p></div>
+        </header>
+
+        <div class="help-callout info">
+            <span><svg class="rb-icon"><use href="{% static 'icons/ui.svg' %}#bulb"></use></svg></span>
+            <div><strong>Idea central</strong><p>RiskBee organiza decisiones y evidencias. No reemplaza el criterio del prevencionista, la atención de emergencia, la denuncia oficial ni la validación del organismo administrador.</p></div>
+        </div>
+
+        <div class="help-step-grid four">
+            <article><span>1</span><svg class="rb-icon"><use href="{% static 'icons/ui.svg' %}#building"></use></svg><h3>Crea la empresa</h3><p>Ingresa razón social, RUT, actividad, contactos y antecedentes que permitan identificar al cliente.</p></article>
+            <article><span>2</span><svg class="rb-icon"><use href="{% static 'icons/ui.svg' %}#table"></use></svg><h3>Abre su IPER</h3><p>Registra procesos, tareas, peligros, personas expuestas, evaluación y controles.</p></article>
+            <article><span>3</span><svg class="rb-icon"><use href="{% static 'icons/ui.svg' %}#health"></use></svg><h3>Evalúa protocolos</h3><p>Determina aplicabilidad MINSAL por empresa y conserva la justificación y el plan.</p></article>
+            <article><span>4</span><svg class="rb-icon"><use href="{% static 'icons/ui.svg' %}#target"></use></svg><h3>Revisa prioridades</h3><p>El panel muestra accidentes, vencimientos, gestiones y el siguiente paso recomendado.</p></article>
+        </div>
+
+        <div class="help-two-columns">
+            <article class="help-card">
+                <div class="help-card-title"><span><svg class="rb-icon"><use href="{% static 'icons/ui.svg' %}#grid"></use></svg></span><h3>Cómo leer el panel ejecutivo</h3></div>
+                <ul class="help-check-list">
+                    <li><svg class="rb-icon"><use href="{% static 'icons/ui.svg' %}#check"></use></svg><span><strong>Señales superiores:</strong> resumen de investigaciones, obligaciones y protocolos que requieren atención.</span></li>
+                    <li><svg class="rb-icon"><use href="{% static 'icons/ui.svg' %}#check"></use></svg><span><strong>Indicadores:</strong> tamaño de cartera y volumen de pendientes; son una fotografía, no una evaluación de desempeño.</span></li>
+                    <li><svg class="rb-icon"><use href="{% static 'icons/ui.svg' %}#check"></use></svg><span><strong>Prioridades:</strong> ordenan empresas según datos registrados y explican cada motivo.</span></li>
+                    <li><svg class="rb-icon"><use href="{% static 'icons/ui.svg' %}#check"></use></svg><span><strong>Acciones rápidas:</strong> permiten registrar un evento, agendar, evaluar MINSAL o abrir una matriz.</span></li>
+                </ul>
+            </article>
+            <article class="help-card dark">
+                <div class="help-card-title"><span><svg class="rb-icon"><use href="{% static 'icons/ui.svg' %}#shield"></use></svg></span><h3>Rutina recomendada</h3></div>
+                <ol class="help-routine">
+                    <li><span>Inicio del día</span><p>Revisa alertas graves, expedientes abiertos y obligaciones vencidas.</p></li>
+                    <li><span>Antes de contactar</span><p>Lee los motivos de prioridad y prepara un objetivo verificable.</p></li>
+                    <li><span>Después de gestionar</span><p>Registra acuerdos, responsable, evidencia y fecha de próxima acción.</p></li>
+                    <li><span>Al cerrar</span><p>Comprueba eficacia; una actividad ejecutada no significa que el riesgo esté controlado.</p></li>
+                </ol>
+            </article>
+        </div>
+    </section>
+
+    <section class="help-section priority-section" id="accidentes">
+        <header class="help-section-header">
+            <span class="help-section-number coral">02</span>
+            <div><span class="eyebrow">Flujo prioritario</span><h2>Investigación de accidentes paso a paso</h2><p>Primero protege y comunica. Luego construye un expediente verificable, sin buscar culpables.</p></div>
+        </header>
+
+        <div class="help-emergency-band">
+            <div><span>1</span><strong>Protege la vida</strong><p>Primeros auxilios y asistencia. No expongas a otras personas.</p></div>
+            <div><span>2</span><strong>Detén y aísla</strong><p>Controla energías y preserva el sitio solamente cuando sea seguro.</p></div>
+            <div><span>3</span><strong>Avisa</strong><p>Activa jefatura, cliente y organismo administrador según el procedimiento.</p></div>
+        </div>
+
+        <div class="help-callout danger">
+            <span><svg class="rb-icon"><use href="{% static 'icons/ui.svg' %}#warning"></use></svg></span>
+            <div><strong>Un registro no realiza la denuncia</strong><p>Guardar en RiskBee no presenta la DIAT ni avisa por sí solo a la Dirección del Trabajo o a la SEREMI de Salud. Para un criterio grave/fatal, activa inmediatamente el procedimiento aplicable y conserva cada comprobante.</p></div>
+        </div>
+
+        <h3 class="help-subheading">A. Reporte flash: abrir el expediente desde terreno</h3>
+        <div class="help-procedure">
+            <div><span>01</span><article><h4>Ubica el evento</h4><p>Selecciona empresa, fecha y hora, área o ruta y lugar exacto.</p><small>Usa información observable; los datos se pueden completar después.</small></article></div>
+            <div><span>02</span><article><h4>Clasifica sin investigar todavía</h4><p>Indica tipo, consecuencia inicial y criterio legal grave/fatal. Si falta información, utiliza “Por confirmar” y consulta al organismo administrador.</p></article></div>
+            <div><span>03</span><article><h4>Registra lo ejecutado</h4><p>Describe acciones inmediatas. Adjunta una fotografía sólo si es seguro; el nombre de la persona puede agregarse después.</p></article></div>
+            <div><span>04</span><article><h4>Guarda y activa</h4><p>RiskBee crea el expediente y habilita declaraciones, documentos, investigación causal y alerta de aprendizaje.</p></article></div>
+        </div>
+
+        <h3 class="help-subheading">B. Expediente en cuatro etapas</h3>
+        <div class="help-stage-grid">
+            <article class="done"><span>1</span><h4>Reporte flash</h4><p>Hechos iniciales, respuesta y clasificación.</p></article>
+            <article><span>2</span><h4>Antecedentes</h4><p>Declaraciones confirmadas y documentos recibidos desde la mutualidad.</p></article>
+            <article><span>3</span><h4>Investigación causal</h4><p>Evidencia, causas raíz, medidas y verificación de eficacia.</p></article>
+            <article><span>4</span><h4>Aprendizaje</h4><p>Historia anonimizada, medidas y constancia de difusión.</p></article>
+        </div>
+
+        <h3 class="help-subheading">C. Asistente de investigación causal</h3>
+        <div class="help-wizard-list">
+            <article><span>1</span><div><h4>Respuesta y avisos</h4><p>Registra DIAT, folio, suspensión cuando corresponda y comprobantes de avisos. La casilla documenta; no ejecuta el trámite.</p></div></article>
+            <article><span>2</span><div><h4>Equipo y participación</h4><p>Identifica investigadores, Comité Paritario o representantes, personas conocedoras de la tarea y consideraciones de género y diversidad.</p></div></article>
+            <article><span>3</span><div><h4>Evidencia y secuencia</h4><p>Separa hechos de interpretaciones. Ordena condiciones y acciones en la secuencia antes → evento → respuesta.</p></div></article>
+            <article><span>4</span><div><h4>Análisis de causas</h4><p>Describe desviaciones, condiciones, factores personales relevantes y factores del trabajo. Evita concluir únicamente “descuido”.</p></div></article>
+            <article><span>5</span><div><h4>Causa raíz</h4><p>Profundiza con preguntas sucesivas hasta identificar una condición del sistema controlable por la organización y respaldada por evidencia.</p></div></article>
+            <article><span>6</span><div><h4>Plan de acción</h4><p>Prioriza eliminación o sustitución, ingeniería, medidas administrativas y finalmente EPP. Define responsable y fecha.</p></div></article>
+            <article><span>7</span><div><h4>Verificar y cerrar</h4><p>Una persona responsable comprueba el resultado. El cierre exige causa, controles, responsables y evidencia de eficacia.</p></div></article>
+        </div>
+
+        <div class="help-two-columns">
+            <article class="help-card">
+                <div class="help-card-title"><span><svg class="rb-icon"><use href="{% static 'icons/ui.svg' %}#handshake"></use></svg></span><h3>Declaraciones</h3></div>
+                <p>Registra por separado el relato de la persona accidentada, testigos y supervisión. Mantén la declaración como borrador hasta que sea confirmada por quien declara.</p>
+            </article>
+            <article class="help-card">
+                <div class="help-card-title"><span><svg class="rb-icon"><use href="{% static 'icons/ui.svg' %}#clipboard"></use></svg></span><h3>Documentos de mutualidad</h3></div>
+                <p>Adjunta los documentos recibidos, como RECA, alta o certificados. RiskBee los conserva en el expediente, pero no los emite.</p>
+            </article>
+        </div>
+    </section>
+
+    <section class="help-section" id="clientes">
+        <header class="help-section-header">
+            <span class="help-section-number">03</span>
+            <div><span class="eyebrow">Relación preventiva</span><h2>Gestión inteligente de clientes</h2><p>La recomendación ordena señales registradas; no predice accidentes ni reemplaza el juicio profesional.</p></div>
+        </header>
+
+        <div class="help-two-columns client-help-grid">
+            <div>
+                <h3 class="help-subheading first">Cómo usar una recomendación</h3>
+                <div class="help-procedure compact">
+                    <div><span>01</span><article><h4>Lee el puntaje y sus motivos</h4><p>Identifica si la prioridad nace de un accidente, un vencimiento o falta de contacto.</p></article></div>
+                    <div><span>02</span><article><h4>Valida el contexto</h4><p>Confirma con criterio profesional que la acción propuesta es adecuada.</p></article></div>
+                    <div><span>03</span><article><h4>Agenda con objetivo</h4><p>Selecciona llamada, correo, videollamada o visita y prepara el resultado esperado.</p></article></div>
+                    <div><span>04</span><article><h4>Cierra la gestión</h4><p>Registra acuerdos, asistentes, resultado, próxima acción y su fecha.</p></article></div>
+                </div>
+            </div>
+            <article class="score-explainer">
+                <span class="score-example">82</span>
+                <div><span class="eyebrow">Puntaje explicable · máximo 100</span><h3>¿Cómo se construye?</h3></div>
+                <dl>
+                    <div><dt>+30</dt><dd>por caso grave o con alerta legal</dd></div>
+                    <div><dt>+12</dt><dd>por otra investigación abierta</dd></div>
+                    <div><dt>+10</dt><dd>por obligación vencida</dd></div>
+                    <div><dt>+4</dt><dd>por vencimiento en los próximos 30 días</dd></div>
+                    <div><dt>+5 a +20</dt><dd>según días sin gestión realizada</dd></div>
+                    <div><dt>+25</dt><dd>si nunca se registró una gestión realizada</dd></div>
+                    <div><dt>−6</dt><dd>cuando ya existe una gestión próxima</dd></div>
+                </dl>
+                <p>Los motivos visibles permiten revisar el cálculo y decidir si se mantiene o se ajusta la acción.</p>
+            </article>
+        </div>
+
+        <div class="help-callout success">
+            <span><svg class="rb-icon"><use href="{% static 'icons/ui.svg' %}#target"></use></svg></span>
+            <div><strong>Una visita útil termina con un siguiente paso</strong><p>Evita registrar sólo “reunión realizada”. Deja un acuerdo verificable, una persona responsable, evidencia esperada y una fecha de seguimiento.</p></div>
+        </div>
+    </section>
+
+    <section class="help-section" id="iper">
+        <header class="help-section-header">
+            <span class="help-section-number">04</span>
+            <div><span class="eyebrow">Identificación y evaluación</span><h2>Matriz IPER por empresa</h2><p>Registra el trabajo real y usa la matriz como fuente para controles, vigilancia y revisión.</p></div>
+        </header>
+        <div class="help-step-grid four">
+            <article><span>1</span><svg class="rb-icon"><use href="{% static 'icons/ui.svg' %}#building"></use></svg><h3>Selecciona empresa</h3><p>Desde Empresas, abre la ficha del cliente y crea o ingresa a su matriz.</p></article>
+            <article><span>2</span><svg class="rb-icon"><use href="{% static 'icons/ui.svg' %}#table"></use></svg><h3>Describe la tarea</h3><p>Registra proceso, puesto o tarea y cantidades de personas expuestas.</p></article>
+            <article><span>3</span><svg class="rb-icon"><use href="{% static 'icons/ui.svg' %}#warning"></use></svg><h3>Identifica el peligro</h3><p>Selecciona familia, riesgo y condiciones de exposición mediante el catálogo.</p></article>
+            <article><span>4</span><svg class="rb-icon"><use href="{% static 'icons/ui.svg' %}#shield"></use></svg><h3>Evalúa y controla</h3><p>Completa evaluación, controles existentes, medidas adicionales y responsables.</p></article>
+        </div>
+        <div class="help-callout info"><span><svg class="rb-icon"><use href="{% static 'icons/ui.svg' %}#health"></use></svg></span><div><strong>Conexión IPER → MINSAL</strong><p>Los agentes y factores registrados pueden sugerir protocolos que conviene evaluar. La sugerencia orienta; la aplicabilidad final debe ser determinada y justificada técnicamente.</p></div></div>
+    </section>
+
+    <section class="help-section" id="minsal">
+        <header class="help-section-header">
+            <span class="help-section-number">05</span>
+            <div><span class="eyebrow">Salud ocupacional</span><h2>Protocolos MINSAL</h2><p>Construye una cartera sanitaria por empresa con justificación, medidas y evidencia.</p></div>
+        </header>
+        <div class="protocol-manual-grid">
+            <article><strong>PREXOR</strong><span>Ruido ocupacional</span></article>
+            <article><strong>TMERT</strong><span>Sobrecarga musculoesquelética</span></article>
+            <article><strong>Sílice</strong><span>Polvo con sílice respirable</span></article>
+            <article><strong>Psicosocial</strong><span>CEAL-SM/SUSESO y gestión</span></article>
+            <article><strong>UV solar</strong><span>Trabajo al aire libre</span></article>
+            <article><strong>MMC</strong><span>Manejo manual de cargas</span></article>
+            <article><strong>Hipobaria</strong><span>Trabajo en gran altitud</span></article>
+        </div>
+        <div class="help-procedure horizontal">
+            <div><span>01</span><article><h4>Revisa la pregunta guía</h4><p>Contrasta la actividad de la empresa con el agente o factor.</p></article></div>
+            <div><span>02</span><article><h4>Define estado</h4><p>Registra si aplica, no aplica, está por evaluar o en implementación.</p></article></div>
+            <div><span>03</span><article><h4>Justifica</h4><p>Documenta puestos, exposición, antecedentes y la decisión técnica.</p></article></div>
+            <div><span>04</span><article><h4>Gestiona</h4><p>Asigna responsables, medidas, evidencias y fecha de revisión.</p></article></div>
+        </div>
+    </section>
+
+    <section class="help-section" id="cumplimiento">
+        <header class="help-section-header">
+            <span class="help-section-number">06</span>
+            <div><span class="eyebrow">Trazabilidad</span><h2>Calendario y biblioteca legal</h2><p>Convierte una referencia normativa en una obligación gestionable y demostrable.</p></div>
+        </header>
+        <div class="help-two-columns">
+            <article class="help-card">
+                <div class="help-card-title"><span><svg class="rb-icon"><use href="{% static 'icons/ui.svg' %}#calendar"></use></svg></span><h3>Calendario legal</h3></div>
+                <p>Registra obligación, empresa, responsable, vencimiento y recurrencia. Al completar, conserva el respaldo correspondiente y verifica la próxima fecha.</p>
+            </article>
+            <article class="help-card">
+                <div class="help-card-title"><span><svg class="rb-icon"><use href="{% static 'icons/ui.svg' %}#scale"></use></svg></span><h3>Biblioteca legal</h3></div>
+                <p>Mantén referencias y fuentes para consulta. La biblioteca ayuda a encontrar información; no reemplaza la interpretación jurídica ni la actualización de la fuente oficial.</p>
+            </article>
+        </div>
+        <div class="help-callout warning"><span><svg class="rb-icon"><use href="{% static 'icons/ui.svg' %}#clock"></use></svg></span><div><strong>No esperes al vencimiento</strong><p>Usa las señales del dashboard y las visitas a clientes para acordar responsables y evidencia antes de que la obligación quede fuera de plazo.</p></div></div>
+    </section>
+
+    <section class="help-section" id="preguntas">
+        <header class="help-section-header">
+            <span class="help-section-number">07</span>
+            <div><span class="eyebrow">Resolución rápida</span><h2>Preguntas frecuentes</h2><p>Respuestas breves para evitar errores habituales durante la operación.</p></div>
+        </header>
+        <div class="help-faq">
+            <details open><summary>¿RiskBee realiza la DIAT o avisa a la autoridad?</summary><p>No. RiskBee registra estado, folio, fechas y comprobantes. La denuncia y los avisos deben ejecutarse por los canales oficiales aplicables.</p></details>
+            <details><summary>¿Puedo guardar una investigación incompleta?</summary><p>Sí. Usa “Guardar borrador”. El cierre definitivo valida que existan equipo, participación, causa raíz, controles, responsables y evidencia de eficacia.</p></details>
+            <details><summary>¿El puntaje de clientes decide a quién visitar?</summary><p>No. Ordena señales existentes y explica los motivos. El prevencionista valida el contexto y toma la decisión.</p></details>
+            <details><summary>¿Una sugerencia MINSAL significa que el protocolo aplica?</summary><p>No necesariamente. Es una señal derivada de riesgos registrados. Debes evaluar y justificar técnicamente la aplicabilidad.</p></details>
+            <details><summary>¿Cuándo se considera cerrado un hallazgo o accidente?</summary><p>Cuando la medida fue implementada y además existe evidencia de que produjo el efecto esperado sobre el riesgo.</p></details>
+            <details><summary>¿Qué hago si un dato todavía no está disponible?</summary><p>Registra lo observable, usa los estados “Por confirmar” o borrador cuando existan y define la siguiente acción para completar el antecedente.</p></details>
+        </div>
+    </section>
+
+    <section class="help-final-checklist">
+        <div><span class="help-kicker"><svg class="rb-icon"><use href="{% static 'icons/ui.svg' %}#check"></use></svg> Antes de terminar</span><h2>Una gestión demostrable responde cinco preguntas.</h2></div>
+        <ol>
+            <li><span>Qué</span> ocurrió o debe corregirse</li>
+            <li><span>Por qué</span> importa y cómo fue priorizado</li>
+            <li><span>Quién</span> es responsable de actuar y verificar</li>
+            <li><span>Cuándo</span> vence o se revisa nuevamente</li>
+            <li><span>Con qué</span> evidencia se demostrará el cierre</li>
+        </ol>
+        <p>RiskBee apoya la organización de la gestión preventiva. La validación técnica, sanitaria y legal permanece en la organización y en los organismos competentes según corresponda.</p>
+    </section>
+</article>

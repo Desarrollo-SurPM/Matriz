@@ -1,20 +1,39 @@
 # gestion_riesgos/forms.py
-
+from django.core.validators import validate_email
+from django.core.exceptions import ValidationError
 from django import forms
 from .models import Empresa, Matriz, Proceso, Tarea, Riesgo, Documento, Peligro, MatrizIPER
 
 radio_widget = forms.RadioSelect(attrs={'class': 'form-check-input'})
+
 class EmpresaForm(forms.ModelForm):
     class Meta:
         model = Empresa
-        fields = ['razon_social', 'rut', 'direccion', 'telefono']
+        # CORRECCIÓN AQUÍ: Lista explícita de campos (sin comillas alrededor de la lista)
+        fields = ['razon_social', 'rut', 'direccion', 'telefono', 'correos_contacto']
         widgets = {
             'razon_social': forms.TextInput(attrs={'class': 'form-control'}),
             'rut': forms.TextInput(attrs={'class': 'form-control'}),
             'direccion': forms.TextInput(attrs={'class': 'form-control'}),
             'telefono': forms.TextInput(attrs={'class': 'form-control'}),
+            'correos_contacto': forms.Textarea(attrs={'rows': 3, 'class': 'form-control', 'placeholder': 'correo1@ejemplo.com, correo2@ejemplo.com'}),
         }
 
+    def clean_correos_contacto(self):
+        data = self.cleaned_data['correos_contacto']
+        if data:
+            # Separar por comas y limpiar espacios
+            correos = [c.strip() for c in data.split(',') if c.strip()]
+            
+            for correo in correos:
+                try:
+                    validate_email(correo)
+                except ValidationError:
+                    raise ValidationError(f"El correo '{correo}' no es válido. Verifica el formato.")
+            
+            # Devolvemos el texto limpio (sin espacios extra)
+            return ", ".join(correos)
+        return data
 class MatrizForm(forms.ModelForm):
     class Meta:
         model = Matriz
@@ -180,10 +199,18 @@ class RiesgoEvaluarForm(forms.ModelForm):
 class MatrizIPERForm(forms.ModelForm):
     class Meta:
         model = MatrizIPER
-        exclude = ['fecha_creacion']
+        exclude = ['empresa', 'fecha_creacion', 'mapa_actualizado_en']
         widgets = {
             'empresa': forms.Select(attrs={'class': 'form-select form-control-modern'}),
             'fecha_documento': forms.DateInput(attrs={'class': 'form-control-modern', 'type': 'date'}),
+            'mapa_riesgos_archivo': forms.FileInput(attrs={
+                'class': 'form-control-modern',
+                'accept': '.pdf,.png,.jpg,.jpeg,.svg',
+            }),
+            'mapa_version': forms.TextInput(attrs={'class': 'form-control-modern', 'placeholder': 'Ej: 1.0'}),
+            'mapa_ubicaciones': forms.Textarea(attrs={'class': 'form-control-modern', 'rows': 2}),
+            'mapa_participacion': forms.Textarea(attrs={'class': 'form-control-modern', 'rows': 2}),
+            'mapa_publicado': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
             # Aplicar estilo moderno a todos los campos de texto
             'departamento_sucursal': forms.TextInput(attrs={'class': 'form-control-modern'}),
             'proyecto': forms.TextInput(attrs={'class': 'form-control-modern'}),

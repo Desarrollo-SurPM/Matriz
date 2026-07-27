@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% block title %}Protocolos MINSAL · RiskBee{% endblock %}
+{% block page_context %}Protocolos MINSAL{% endblock %}
+
+{% block content %}
+<div class="page-shell">
+    <header class="page-header">
+        <div><span class="eyebrow">Salud ocupacional por empresa</span><h1 class="page-title">De la aplicabilidad a la vigilancia</h1><p class="page-lead">Identifica agentes y tareas, justifica la decisión, coordina evaluaciones y conserva la evidencia de cada protocolo.</p></div>
+        <div class="page-actions"><a class="btn btn-brand" href="{% url 'protocolo_create' %}"><i class="fa-solid fa-plus"></i> Nueva evaluación</a></div>
+    </header>
+
+    <div class="legal-alert info mb-4"><i class="fa-solid fa-circle-info"></i><div><strong>Asistente de gestión, no certificador automático</strong><p>La aplicabilidad y las medidas deben validarse con antecedentes del puesto, el profesional competente y el organismo administrador de la Ley N.º 16.744. Los accesos de “Fuente” abren el repositorio oficial MINSAL.</p></div></div>
+
+    {% if empresa_obj %}
+    <section class="surface mb-4">
+        <div class="surface-header"><div><h2>Señales detectadas en la IPER · {{ empresa_obj.razon_social }}</h2><span class="surface-subtitle">Reglas transparentes basadas en los códigos del catálogo entregado; cada señal requiere validación técnica.</span></div><span class="app-badge {% if sugerencias_iper %}badge-warning{% else %}badge-success{% endif %}">{% if sugerencias_iper %}{{ sugerencias_iper|length }} revisión(es){% else %}Sin señales codificadas{% endif %}</span></div>
+        <div class="surface-body smart-suggestion-grid">
+            {% for sugerencia in sugerencias_iper %}
+            <article class="smart-suggestion">
+                <span class="entity-icon"><i class="fa-solid fa-wand-magic-sparkles"></i></span>
+                <div><strong>{{ sugerencia.nombre }}</strong><small>Código(s): {{ sugerencia.codigos }}</small><p>{{ sugerencia.motivos }}</p></div>
+                {% if sugerencia.evaluado %}<span class="app-badge badge-success">Ya evaluado</span>{% else %}<a class="btn btn-brand btn-sm" href="{% url 'protocolo_create' %}?protocolo={{ sugerencia.codigo }}&empresa={{ empresa_obj.pk }}">Evaluar ahora</a>{% endif %}
+            </article>
+            {% empty %}<div class="mini-empty">No se encontraron códigos con reglas de asociación directa. Esto no demuestra que los protocolos no apliquen: revisa tareas, agentes y condiciones reales.</div>{% endfor %}
+        </div>
+    </section>
+    {% endif %}
+
+    <section class="kpi-grid mb-4">
+        <article class="metric-card"><div class="metric-top"><span class="metric-label">Cobertura</span><span class="metric-icon"><i class="fa-solid fa-chart-pie"></i></span></div><div class="metric-value">{{ cobertura }}%</div><div class="metric-note">protocolos revisados por empresa</div></article>
+        <article class="metric-card blue"><div class="metric-top"><span class="metric-label">Evaluaciones</span><span class="metric-icon"><i class="fa-solid fa-clipboard-check"></i></span></div><div class="metric-value">{{ registradas }}</div><div class="metric-note">decisiones trazables</div></article>
+        <article class="metric-card warning"><div class="metric-top"><span class="metric-label">En acción</span><span class="metric-icon"><i class="fa-solid fa-person-digging"></i></span></div><div class="metric-value">{{ requieren_accion }}</div><div class="metric-note">aplican o implementan medidas</div></article>
+        <article class="metric-card danger"><div class="metric-top"><span class="metric-label">Revisión vencida</span><span class="metric-icon"><i class="fa-regular fa-clock"></i></span></div><div class="metric-value">{{ revisiones_vencidas }}</div><div class="metric-note">fechas que requieren atención</div></article>
+    </section>
+
+    <div class="section-heading">
+        <div><h2>Mapa de exposición</h2><p>Comienza con una pregunta de aplicabilidad y documenta la respuesta.</p></div>
+        <form method="get"><label class="visually-hidden" for="empresaFilter">Filtrar empresa</label><select id="empresaFilter" class="form-select form-select-sm" name="empresa" onchange="this.form.submit()" style="min-width:230px;"><option value="">Todas las empresas</option>{% for empresa in empresas %}<option value="{{ empresa.pk }}" {% if empresa_seleccionada == empresa.pk %}selected{% endif %}>{{ empresa.razon_social }}</option>{% endfor %}</select></form>
+    </div>
+    <section class="protocol-grid">
+        {% for protocolo in protocolos %}
+        <article class="protocol-card" data-color="{{ protocolo.color }}">
+            <span class="protocol-icon"><i class="fa-solid {{ protocolo.icono }}"></i></span>
+            <h3>{{ protocolo.sigla }}</h3><div class="protocol-name">{{ protocolo.nombre }}</div>
+            <p class="protocol-question">{{ protocolo.pregunta }}</p>
+            <div class="protocol-footer">
+                <span class="small text-muted">{{ protocolo.total }} evaluadas · {{ protocolo.activos }} activas</span>
+                <span class="d-flex gap-2"><a class="icon-button" href="{{ protocolo.fuente }}" target="_blank" rel="noopener" title="Fuente oficial MINSAL"><i class="fa-solid fa-arrow-up-right-from-square"></i></a><a class="btn btn-brand btn-sm" href="{% url 'protocolo_create' %}?protocolo={{ protocolo.codigo }}{% if empresa_seleccionada %}&empresa={{ empresa_seleccionada }}{% endif %}">Evaluar</a></span>
+            </div>
+        </article>
+        {% endfor %}
+    </section>
+
+    <section class="surface mt-4">
+        <div class="surface-header"><div><h2>Seguimiento registrado</h2><span class="surface-subtitle">Aplicabilidad, expuestos, responsables y próxima revisión</span></div></div>
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead><tr><th>Empresa</th><th>Protocolo</th><th>Estado</th><th>Expuestos</th><th>Responsable</th><th>Próxima revisión</th><th class="text-end">Acción</th></tr></thead>
+                <tbody>
+                {% for evaluacion in evaluaciones %}
+                    <tr>
+                        <td><strong>{{ evaluacion.empresa.razon_social }}</strong></td>
+                        <td><span class="small fw-semibold">{{ evaluacion.get_protocolo_display }}</span></td>
+                        <td>{% if evaluacion.estado == 'NO_APLICA' %}<span class="app-badge badge-neutral">No aplica</span>{% elif evaluacion.estado == 'CONTROLADO' %}<span class="app-badge badge-success">Controlado</span>{% elif evaluacion.estado == 'VIGILANCIA' %}<span class="app-badge badge-info">Vigilancia</span>{% elif evaluacion.estado == 'POR_EVALUAR' %}<span class="app-badge badge-warning">Por evaluar</span>{% else %}<span class="app-badge badge-warning">{{ evaluacion.get_estado_display }}</span>{% endif %}</td>
+                        <td>{{ evaluacion.personas_expuestas }}</td>
+                        <td>{{ evaluacion.responsable|default:"Sin asignar" }}</td>
+                        <td>{% if evaluacion.proxima_revision %}<span class="{% if evaluacion.esta_vencida %}text-danger fw-bold{% endif %}">{{ evaluacion.proxima_revision|date:"d/m/Y" }}</span>{% else %}<span class="text-muted">Sin fecha</span>{% endif %}</td>
+                        <td class="text-end"><a class="btn btn-quiet btn-sm" href="{% url 'protocolo_update' evaluacion.pk %}">Actualizar <i class="fa-solid fa-arrow-right"></i></a></td>
+                    </tr>
+                {% empty %}<tr><td colspan="7"><div class="empty-state"><i class="fa-solid fa-stethoscope"></i><strong>Sin evaluaciones para esta vista</strong><p>Selecciona un protocolo y registra la primera decisión de aplicabilidad.</p></div></td></tr>{% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+</div>
+{% endblock %}

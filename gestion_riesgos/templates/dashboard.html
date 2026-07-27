@@ -1,268 +1,105 @@
 {% extends 'base.html' %}
-{% block title %}Dashboard Principal{% endblock %}
+{% load static %}
+{% block title %}Panel ejecutivo · RiskBee{% endblock %}
+{% block page_context %}Panel ejecutivo{% endblock %}
 
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <div>
-        <h1 class="text-gradient" style="font-size: 2.5rem; font-weight: 700; margin-bottom: 0.5rem;">Dashboard Principal</h1>
-        <p style="color: var(--text-secondary); margin: 0;">Bienvenido a tu panel de control</p>
-    </div>
-    <div class="d-flex gap-2">
-        <a href="{% url 'recordatorio_create' %}" class="btn-outline-modern">
-            <i class="bi bi-bell me-1"></i> Recordatorio
-        </a>
-        <a href="{% url 'visita_create' %}" class="btn-primary-modern">
-            <i class="bi bi-plus-circle me-1"></i> Agendar Visita
-        </a>
-    </div>
-</div>
-
-<style>
-.nav-tabs {
-    border-bottom: 2px solid var(--border-color);
-    margin-bottom: 2rem;
-}
-.nav-tabs .nav-link {
-    color: var(--text-secondary);
-    border: none;
-    border-bottom: 3px solid transparent;
-    padding: 1rem 1.5rem;
-    font-weight: 600;
-    transition: all var(--transition-base);
-}
-.nav-tabs .nav-link:hover {
-    color: var(--text-primary);
-    border-bottom-color: var(--accent-primary);
-    background: rgba(244, 166, 35, 0.08);
-}
-.nav-tabs .nav-link.active {
-    color: var(--accent-primary);
-    background: transparent;
-    border-bottom-color: var(--accent-primary);
-}
-.list-group-item {
-    background: var(--bg-card);
-    border: 1px solid var(--border-color);
-    color: var(--text-primary);
-    transition: all var(--transition-base);
-}
-.list-group-item:hover {
-    background: var(--bg-hover);
-    border-color: var(--border-light);
-    transform: translateX(4px);
-}
-.list-group-item h6 {
-    color: var(--text-primary);
-}
-.badge-legend {
-    display: inline-block;
-    width: 16px;
-    height: 16px;
-    border-radius: 4px;
-    margin-right: 8px;
-}
-</style>
-
-<ul class="nav nav-tabs" id="dashboardTabs" role="tablist">
-    <li class="nav-item" role="presentation">
-        <button class="nav-link active" id="planificacion-tab" data-bs-toggle="tab" data-bs-target="#planificacion" type="button" role="tab" aria-controls="planificacion" aria-selected="true">
-            <i class="bi bi-calendar-week me-2"></i> Planificación
-        </button>
-    </li>
-    <li class="nav-item" role="presentation">
-        <button class="nav-link" id="riesgos-tab" data-bs-toggle="tab" data-bs-target="#riesgos" type="button" role="tab" aria-controls="riesgos" aria-selected="false">
-            <i class="bi bi-graph-up me-2"></i> Inteligencia de Riesgos
-        </button>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" href="{% url 'reporte_accidente_list' %}">
-            <i class="bi bi-clipboard-pulse me-2"></i> Reporte de Accidentes
-        </a>
-    </li>
-</ul>
-
-<div class="tab-content" id="dashboardTabsContent">
-
-    <div class="tab-pane fade show active" id="planificacion" role="tabpanel" aria-labelledby="planificacion-tab">
-        <div class="card-modern">
-            <div class="card-header-modern">
-                <h3><i class="bi bi-calendar3 me-2"></i>Calendario de Eventos</h3>
+<div class="page-shell dashboard-page">
+    <section class="hero-panel dashboard-hero">
+        <div class="hero-copy">
+            <span class="eyebrow">Resumen de hoy · {% now "d \d\e F" %}</span>
+            <h1>Hola, {{ user.first_name|default:user.username }}. La prevención empieza por la próxima decisión.</h1>
+            <p>Reunimos accidentes, compromisos legales, protocolos y contactos para que puedas actuar con contexto y demostrar avance.</p>
+            <div class="hero-actions">
+                <a class="btn btn-light" href="{% url 'reporte_accidente_list' %}"><svg class="rb-icon"><use href="{% static 'icons/ui.svg' %}#investigation"></use></svg> Revisar investigaciones</a>
+                <a class="btn btn-outline-light" href="{% url 'visita_list' %}"><svg class="rb-icon"><use href="{% static 'icons/ui.svg' %}#sparkles"></use></svg> Ver plan inteligente</a>
             </div>
-                <div id='calendar'></div>
-
-                <div class="divider"></div>
-                <h5 class="mt-4 mb-3" style="color: var(--text-primary);"><i class="bi bi-list-check me-2"></i>Próximos Eventos</h5>
-                <div class="list-group">
-                    {% for evento in proximos_eventos %}
-                        {% if evento.asunto %} {# Es una Visita #}
-                            <a href="{% url 'visita_update' evento.pk %}" class="list-group-item list-group-item-action">
-                                <div class="d-flex w-100 justify-content-between align-items-start">
-                                    <div>
-                                        <h6 class="mb-1"><i class="bi bi-building" style="color: var(--info);"></i> Visita: {{ evento.asunto }}</h6>
-                                        <p class="mb-0 small" style="color: var(--text-secondary);">{{ evento.empresa.razon_social }}</p>
-                                    </div>
-                                    <span class="badge-modern">{{ evento.fecha_hora|date:"d M, H:i" }}</span>
-                                </div>
-                            </a>
-                        {% else %} {# Es un Recordatorio #}
-                            <a href="{% url 'recordatorio_update' evento.pk %}" class="list-group-item list-group-item-action">
-                                <div class="d-flex w-100 justify-content-between align-items-start">
-                                    <div>
-                                        <h6 class="mb-1"><i class="bi bi-bell" style="color: var(--success);"></i> Recordatorio: {{ evento.titulo }}</h6>
-                                        <p class="mb-0 small" style="color: var(--text-secondary);">{{ evento.descripcion|truncatewords:15 }}</p>
-                                    </div>
-                                    <span class="badge-modern">{{ evento.fecha_hora|date:"d M, H:i" }}</span>
-                                </div>
-                            </a>
-                        {% endif %}
-                    {% empty %}
-                        <div class="list-group-item text-center">
-                            <i class="bi bi-calendar-x" style="font-size: 3rem; color: var(--text-muted); opacity: 0.3;"></i>
-                            <p style="color: var(--text-muted); margin-top: 1rem;">No tienes eventos próximos agendados.</p>
-                        </div>
-                    {% endfor %}
-                </div>
-
-                <div class="mt-4 d-flex gap-3 flex-wrap" style="font-size: 0.9rem;">
-                    <div><span class="badge-legend" style="background-color:#dc3545;"></span> Vencimiento Legal</div>
-                    <div><span class="badge-legend" style="background-color:#0d6efd;"></span> Visita</div>
-                    <div><span class="badge-legend" style="background-color:#198754;"></span> Recordatorio</div>
-                </div>
         </div>
-    </div>
+        <div class="hero-aside">
+            <div class="hero-signal"><span class="hero-signal-icon danger"><svg class="rb-icon"><use href="{% static 'icons/ui.svg' %}#warning"></use></svg></span><span><strong>{{ accidentes_abiertos }} investigaciones abiertas</strong><small>{{ accidentes_alerta }} con señal grave/fatal activa</small></span></div>
+            <div class="hero-signal"><span class="hero-signal-icon warning"><svg class="rb-icon"><use href="{% static 'icons/ui.svg' %}#clock"></use></svg></span><span><strong>{{ obligaciones_vencidas }} obligaciones vencidas</strong><small>Requieren responsable o evidencia</small></span></div>
+            <div class="hero-signal"><span class="hero-signal-icon"><svg class="rb-icon"><use href="{% static 'icons/ui.svg' %}#health"></use></svg></span><span><strong>{{ protocolos_accion }} protocolos en acción</strong><small>Aplican o están implementándose</small></span></div>
+        </div>
+    </section>
 
-    <div class="tab-pane fade" id="riesgos" role="tabpanel" aria-labelledby="riesgos-tab">
-        <div class="card-modern">
-            <div class="card-header-modern">
-                <h3><i class="bi bi-pie-chart me-2"></i>Análisis de Riesgos</h3>
+    <section class="dashboard-onboarding" aria-label="Ayuda para comenzar">
+        <span><svg class="rb-icon"><use href="{% static 'icons/ui.svg' %}#bulb"></use></svg></span>
+        <div><strong>¿Es tu primera vez en RiskBee?</strong><small>Revisa el recorrido inicial y aprende el flujo completo de accidentes, clientes, IPER y MINSAL.</small></div>
+        <div class="dashboard-onboarding-actions">
+            <a class="btn btn-quiet btn-sm" href="{% url 'centro_ayuda' %}">Ver guía <svg class="rb-icon"><use href="{% static 'icons/ui.svg' %}#arrow-right"></use></svg></a>
+            <a class="btn btn-brand btn-sm" href="{% static 'docs/Manual_de_Usuario_RiskBee.pdf' %}" target="_blank" rel="noopener"><svg class="rb-icon"><use href="{% static 'icons/ui.svg' %}#clipboard"></use></svg> Manual PDF</a>
+        </div>
+    </section>
+
+    <div class="section-heading icon-heading">
+        <span class="section-heading-icon"><svg class="rb-icon"><use href="{% static 'icons/ui.svg' %}#chart"></use></svg></span>
+        <div><h2>Estado de la cartera</h2><p>Cuatro señales para saber dónde concentrar la jornada.</p></div>
+    </div>
+    <section class="kpi-grid" aria-label="Indicadores principales">
+        <article class="metric-card">
+            <div class="metric-top"><span class="metric-label">Empresas</span><span class="metric-icon"><svg class="rb-icon"><use href="{% static 'icons/ui.svg' %}#building"></use></svg></span></div>
+            <div class="metric-value">{{ total_empresas }}</div><div class="metric-note"><svg class="rb-icon"><use href="{% static 'icons/ui.svg' %}#building"></use></svg> clientes bajo gestión</div>
+        </article>
+        <article class="metric-card danger">
+            <div class="metric-top"><span class="metric-label">Accidentes</span><span class="metric-icon"><svg class="rb-icon"><use href="{% static 'icons/ui.svg' %}#investigation"></use></svg></span></div>
+            <div class="metric-value">{{ accidentes_abiertos }}</div><div class="metric-note"><svg class="rb-icon"><use href="{% static 'icons/ui.svg' %}#warning"></use></svg> expedientes aún abiertos</div>
+        </article>
+        <article class="metric-card warning">
+            <div class="metric-top"><span class="metric-label">Cumplimiento</span><span class="metric-icon"><svg class="rb-icon"><use href="{% static 'icons/ui.svg' %}#scale"></use></svg></span></div>
+            <div class="metric-value">{{ obligaciones_vencidas }}</div><div class="metric-note"><svg class="rb-icon"><use href="{% static 'icons/ui.svg' %}#clock"></use></svg> hitos fuera de plazo</div>
+        </article>
+        <article class="metric-card blue">
+            <div class="metric-top"><span class="metric-label">Agenda</span><span class="metric-icon"><svg class="rb-icon"><use href="{% static 'icons/ui.svg' %}#calendar"></use></svg></span></div>
+            <div class="metric-value">{{ kpi_confirmadas }}</div><div class="metric-note"><svg class="rb-icon"><use href="{% static 'icons/ui.svg' %}#check"></use></svg> gestiones confirmadas</div>
+        </article>
+    </section>
+
+    <nav class="quick-action-grid" aria-label="Acciones rápidas">
+        <a class="quick-action urgent" href="{% url 'reporte_accidente_create' %}"><span><svg class="rb-icon"><use href="{% static 'icons/ui.svg' %}#bolt"></use></svg></span><div><strong>Acción inmediata</strong><small>Registrar un accidente desde terreno</small></div><svg class="rb-icon quick-arrow"><use href="{% static 'icons/ui.svg' %}#arrow-right"></use></svg></a>
+        <a class="quick-action" href="{% url 'visita_create' %}"><span><svg class="rb-icon"><use href="{% static 'icons/ui.svg' %}#handshake"></use></svg></span><div><strong>Nueva gestión</strong><small>Contacto, reunión o visita a cliente</small></div><svg class="rb-icon quick-arrow"><use href="{% static 'icons/ui.svg' %}#arrow-right"></use></svg></a>
+        <a class="quick-action" href="{% url 'protocolo_create' %}"><span><svg class="rb-icon"><use href="{% static 'icons/ui.svg' %}#health"></use></svg></span><div><strong>Evaluar protocolo</strong><small>Registrar aplicabilidad MINSAL</small></div><svg class="rb-icon quick-arrow"><use href="{% static 'icons/ui.svg' %}#arrow-right"></use></svg></a>
+        <a class="quick-action" href="{% url 'empresa_list' %}"><span><svg class="rb-icon"><use href="{% static 'icons/ui.svg' %}#table"></use></svg></span><div><strong>Matrices IPER</strong><small>Abrir riesgos por empresa</small></div><svg class="rb-icon quick-arrow"><use href="{% static 'icons/ui.svg' %}#arrow-right"></use></svg></a>
+    </nav>
+
+    <div class="content-grid dashboard-content">
+        <section class="surface">
+            <div class="surface-header">
+                <div class="surface-title-group"><span class="surface-heading-icon"><svg class="rb-icon"><use href="{% static 'icons/ui.svg' %}#target"></use></svg></span><div><h2>Prioridades recomendadas</h2><span class="surface-subtitle">Puntaje explicable según señales registradas</span></div></div>
+                <a class="btn btn-quiet btn-sm" href="{% url 'visita_list' %}">Ver cartera <svg class="rb-icon"><use href="{% static 'icons/ui.svg' %}#arrow-right"></use></svg></a>
             </div>
-                <div class="row">
-                    <div class="col-lg-6 mb-4">
-                        <h5 style="color: var(--text-primary); margin-bottom: 1.5rem; text-align: center;">
-                            <i class="bi bi-pie-chart-fill me-2"></i>Distribución de Riesgos por Clasificación
-                        </h5>
-                        <div style="background: var(--bg-secondary); padding: 1.5rem; border-radius: var(--radius-lg);">
-                            <canvas id="clasificacionChart"></canvas>
-                        </div>
+            {% for item in prioridades_clientes %}
+                <article class="priority-item">
+                    <span class="score-ring">{{ item.score }}</span>
+                    <div class="priority-main">
+                        <div class="priority-title"><svg class="rb-icon priority-company-icon"><use href="{% static 'icons/ui.svg' %}#building"></use></svg><strong>{{ item.empresa.razon_social }}</strong><span class="app-badge badge-{{ item.color }}">{{ item.nivel }}</span></div>
+                        <p class="priority-reason">{{ item.motivos|join:" · " }}</p>
+                        <div class="priority-action"><svg class="rb-icon"><use href="{% static 'icons/ui.svg' %}#target"></use></svg>{{ item.accion }}</div>
                     </div>
-                    <div class="col-lg-6 mb-4">
-                        <h5 style="color: var(--text-primary); margin-bottom: 1.5rem; text-align: center;">
-                            <i class="bi bi-bar-chart-fill me-2"></i>Jerarquía de Medidas de Control
-                        </h5>
-                        <div style="background: var(--bg-secondary); padding: 1.5rem; border-radius: var(--radius-lg);">
-                            <canvas id="jerarquiaChart"></canvas>
-                        </div>
+                    <a class="icon-button" href="{% url 'visita_create' %}?empresa={{ item.empresa.pk }}&tipo={{ item.tipo }}&asunto={{ item.accion|urlencode }}" title="Agendar recomendación" aria-label="Agendar recomendación para {{ item.empresa.razon_social }}"><svg class="rb-icon"><use href="{% static 'icons/ui.svg' %}#arrow-right"></use></svg></a>
+                </article>
+            {% empty %}
+                <div class="empty-state"><svg class="rb-icon empty-icon"><use href="{% static 'icons/ui.svg' %}#building"></use></svg><strong>Agrega tu primera empresa</strong><p>El panel podrá ordenar seguimientos cuando exista una cartera.</p><a class="btn btn-brand" href="{% url 'empresa_create' %}"><svg class="rb-icon"><use href="{% static 'icons/ui.svg' %}#plus"></use></svg> Crear empresa</a></div>
+            {% endfor %}
+        </section>
+
+        <aside class="stack">
+            <section class="surface">
+                <div class="surface-header"><div class="surface-title-group"><span class="surface-heading-icon blue"><svg class="rb-icon"><use href="{% static 'icons/ui.svg' %}#calendar"></use></svg></span><div><h2>Próximas gestiones</h2><span class="surface-subtitle">Contactos y visitas confirmadas</span></div></div><a class="icon-button" href="{% url 'visita_create' %}" title="Nueva gestión" aria-label="Nueva gestión"><svg class="rb-icon"><use href="{% static 'icons/ui.svg' %}#plus"></use></svg></a></div>
+                {% for gestion in proximas_gestiones %}
+                    <div class="priority-item">
+                        <span class="entity-icon"><svg class="rb-icon"><use href="{% static 'icons/ui.svg' %}#calendar"></use></svg></span>
+                        <div class="priority-main"><div class="priority-title"><strong>{{ gestion.empresa.razon_social }}</strong></div><p class="priority-reason">{{ gestion.get_tipo_gestion_display }} · {{ gestion.fecha_hora|date:"d M, H:i" }}</p><div class="priority-action"><svg class="rb-icon"><use href="{% static 'icons/ui.svg' %}#target"></use></svg>{{ gestion.asunto }}</div></div>
                     </div>
-                </div>
-        </div>
+                {% empty %}
+                    <div class="empty-state compact-empty"><svg class="rb-icon empty-icon"><use href="{% static 'icons/ui.svg' %}#calendar"></use></svg><p>No hay gestiones próximas.</p><a class="btn btn-quiet btn-sm" href="{% url 'visita_create' %}"><svg class="rb-icon"><use href="{% static 'icons/ui.svg' %}#plus"></use></svg> Agendar ahora</a></div>
+                {% endfor %}
+            </section>
+
+            <section class="surface insight-card">
+                <span class="insight-icon"><svg class="rb-icon"><use href="{% static 'icons/ui.svg' %}#bulb"></use></svg></span>
+                <div><span class="eyebrow">Cómo leer el panel</span><h3>La recomendación ordena, no decide.</h3><p>El puntaje combina casos abiertos, alertas, vencimientos y días sin contacto. Siempre muestra sus motivos para que puedas aplicar criterio profesional.</p></div>
+            </section>
+        </aside>
     </div>
 </div>
-
-<div class="modal fade" id="eventDetailModal" tabindex="-1" aria-labelledby="eventDetailModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content" style="background: var(--bg-card); border: 1px solid var(--border-color);">
-            <div class="modal-header" style="border-bottom: 1px solid var(--border-color);">
-                <h5 class="modal-title text-gradient" id="eventDetailModalLabel">Detalles del Evento</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="filter: invert(1);"></button>
-            </div>
-            <div class="modal-body">
-                <p style="color: var(--text-primary);"><strong>Evento:</strong> <span id="eventTitle" style="color: var(--text-secondary);"></span></p>
-                <p style="color: var(--text-primary);"><strong>Fecha:</strong> <span id="eventDate" style="color: var(--text-secondary);"></span></p>
-            </div>
-            <div class="modal-footer" style="border-top: 1px solid var(--border-color);">
-                <button type="button" class="btn-ghost" data-bs-dismiss="modal">Cerrar</button>
-                <a id="editEventButton" href="#" class="btn-primary-modern">Editar / Ver Detalles</a>
-            </div>
-        </div>
-    </div>
-</div>
-{% endblock %}
-
-{% block extra_js %}
-{{ block.super }}
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-    // --- LÓGICA DEL CALENDARIO ---
-    var calendarEl = document.getElementById('calendar');
-    var eventModal = new bootstrap.Modal(document.getElementById('eventDetailModal'));
-
-    var calendar = new FullCalendar.Calendar(calendarEl, {
-        initialView: 'dayGridMonth',
-        headerToolbar: {
-            left: 'prev,next today',
-            center: 'title',
-            right: 'dayGridMonth,timeGridWeek,listWeek'
-        },
-        events: "{% url 'all_events' %}",
-        locale: 'es',
-        buttonText: { today: 'Hoy', month: 'Mes', week: 'Semana', list: 'Lista' },
-        
-        eventClick: function(info) {
-            info.jsEvent.preventDefault(); 
-            
-            document.getElementById('eventTitle').textContent = info.event.title;
-            
-            let eventDate = info.event.start;
-            let dateOptions = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false };
-            let formattedDate = eventDate ? eventDate.toLocaleDateString('es-CL', dateOptions).replace(',', '') : 'Todo el día';
-            document.getElementById('eventDate').textContent = formattedDate;
-
-            document.getElementById('editEventButton').href = info.event.url;
-            
-            eventModal.show();
-        }
-    });
-    calendar.render();
-
-    // --- LÓGICA DE LOS GRÁFICOS DE RIESGOS ---
-    const riskTab = document.getElementById('riesgos-tab');
-    let chartsLoaded = false;
-    
-    riskTab.addEventListener('shown.bs.tab', function () {
-        if (!chartsLoaded) {
-            fetch("{% url 'dashboard_chart_data' %}")
-                .then(response => response.json())
-                .then(data => {
-                    // Gráfico de Clasificación
-                    const ctxClasificacion = document.getElementById('clasificacionChart').getContext('2d');
-                    new Chart(ctxClasificacion, {
-                        type: 'doughnut',
-                        data: {
-                            labels: data.clasificacion_labels,
-                            datasets: [{
-                                label: 'N° de Riesgos',
-                                data: data.clasificacion_counts,
-                                backgroundColor: ['rgba(217, 83, 79, 0.7)', 'rgba(240, 173, 78, 0.7)', 'rgba(255, 243, 205, 0.9)', 'rgba(212, 237, 218, 0.9)', 'rgba(200, 200, 200, 0.7)'],
-                                borderColor: 'white',
-                                borderWidth: 2
-                            }]
-                        },
-                        options: { responsive: true, plugins: { legend: { position: 'top' } } }
-                    });
-
-                    // Gráfico de Jerarquía
-                    const ctxJerarquia = document.getElementById('jerarquiaChart').getContext('2d');
-                    new Chart(ctxJerarquia, {
-                        type: 'bar',
-                        data: {
-                            labels: data.jerarquia_labels,
-                            datasets: [{
-                                label: 'Cantidad de Controles Implementados',
-                                data: data.jerarquia_counts,
-                                backgroundColor: 'rgba(54, 162, 235, 0.6)',
-                                borderColor: 'rgba(54, 162, 235, 1)',
-                                borderWidth: 1
-                            }]
-                        },
-                        options: { indexAxis: 'y', responsive: true, scales: { x: { beginAtZero: true } }, plugins: { legend: { display: false } } }
-                    });
-
-                    chartsLoaded = true;
-                });
-        }
-    });
-});
-</script>
 {% endblock %}

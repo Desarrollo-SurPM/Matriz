@@ -1,5 +1,11 @@
 from django.contrib import admin
-from .models import ReporteAccidente, InvestigacionAccidente
+from .models import (
+    AlertaAprendizaje,
+    DeclaracionAccidente,
+    DocumentoMutualAccidente,
+    InvestigacionAccidente,
+    ReporteAccidente,
+)
 
 @admin.register(ReporteAccidente)
 class ReporteAccidenteAdmin(admin.ModelAdmin):
@@ -43,3 +49,24 @@ class InvestigacionAccidenteAdmin(admin.ModelAdmin):
     )
     list_filter = ('completada', 'fecha_plazo')
     search_fields = ('reporte__empresa__razon_social', 'responsable_implementacion')
+
+
+@admin.register(DeclaracionAccidente)
+class DeclaracionAccidenteAdmin(admin.ModelAdmin):
+    list_display = ('reporte', 'nombre_completo', 'tipo_participacion', 'fecha_declaracion', 'confirmada_por_declarante')
+    list_filter = ('tipo_participacion', 'confirmada_por_declarante')
+    search_fields = ('nombre_completo', 'rut', 'reporte__empresa__razon_social')
+
+
+@admin.register(DocumentoMutualAccidente)
+class DocumentoMutualAccidenteAdmin(admin.ModelAdmin):
+    list_display = ('reporte', 'tipo_documento', 'emitido_por', 'fecha_documento', 'subido_en')
+    list_filter = ('tipo_documento', 'emitido_por')
+    search_fields = ('reporte__empresa__razon_social', 'observacion')
+
+
+@admin.register(AlertaAprendizaje)
+class AlertaAprendizajeAdmin(admin.ModelAdmin):
+    list_display = ('reporte', 'titulo', 'revision_privacidad', 'difundida', 'fecha_difusion')
+    list_filter = ('revision_privacidad', 'difundida')
+    search_fields = ('titulo', 'relato_anonimizado', 'reporte__empresa__razon_social')

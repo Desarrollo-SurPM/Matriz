@@ -39,3 +39,65 @@ class TareaLegal(models.Model):
         if not self.pk:
             self.proxima_fecha_vencimiento = self.fecha_inicio
         super().save(*args, **kwargs)
+
+    @property
+    def esta_vencida(self):
+        from django.utils import timezone
+        return not self.completada and self.proxima_fecha_vencimiento < timezone.localdate()
+
+
+class EvaluacionProtocolo(models.Model):
+    PROTOCOLOS = [
+        ('prexor', 'PREXOR · Exposición ocupacional a ruido'),
+        ('tmert', 'TMERT · Trastornos musculoesqueléticos'),
+        ('silice', 'Sílice · Vigilancia ambiental y de salud'),
+        ('psicosocial', 'Riesgos psicosociales · CEAL-SM/SUSESO'),
+        ('uv_solar', 'Radiación UV solar'),
+        ('mmc', 'Manejo o manipulación manual de carga'),
+        ('hipobaria', 'Hipobaria intermitente crónica por gran altitud'),
+    ]
+
+    ESTADOS = [
+        ('POR_EVALUAR', 'Por evaluar'),
+        ('NO_APLICA', 'No aplica con justificación'),
+        ('APLICA', 'Aplica · diagnóstico pendiente'),
+        ('IMPLEMENTACION', 'Medidas en implementación'),
+        ('VIGILANCIA', 'En vigilancia'),
+        ('CONTROLADO', 'Controlado · mantener seguimiento'),
+    ]
+
+    empresa = models.ForeignKey(Empresa, on_delete=models.CASCADE, related_name='evaluaciones_protocolos')
+    protocolo = models.CharField(max_length=30, choices=PROTOCOLOS)
+    estado = models.CharField(max_length=20, choices=ESTADOS, default='POR_EVALUAR')
+    agente_identificado = models.BooleanField(default=False, verbose_name="Peligro o agente identificado")
+    diagnostico_exposicion = models.TextField(
+        blank=True,
+        verbose_name="Diagnóstico de exposición o justificación",
+        help_text="Describa tareas, puestos, fuente, duración y evidencia usada para decidir aplicabilidad."
+    )
+    personas_expuestas = models.PositiveIntegerField(default=0, verbose_name="Personas potencialmente expuestas")
+    responsable = models.CharField(max_length=255, blank=True)
+    organismo_administrador = models.CharField(
+        max_length=255,
+        blank=True,
+        verbose_name="Organismo administrador Ley N.º 16.744"
+    )
+    fecha_evaluacion = models.DateField(null=True, blank=True, verbose_name="Fecha de evaluación")
+    proxima_revision = models.DateField(null=True, blank=True, verbose_name="Próxima revisión")
+    medidas_control = models.TextField(blank=True, verbose_name="Medidas y acciones comprometidas")
+    evidencia = models.FileField(upload_to='protocolos_minsal/', blank=True, null=True)
+    actualizado_en = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        unique_together = ('empresa', 'protocolo')
+        ordering = ['empresa__razon_social', 'protocolo']
+        verbose_name = "Evaluación de protocolo MINSAL"
+        verbose_name_plural = "Evaluaciones de protocolos MINSAL"
+
+    def __str__(self):
+        return f"{self.get_protocolo_display()} · {self.empresa.razon_social}"
+
+    @property
+    def esta_vencida(self):
+        from django.utils import timezone
+        return bool(self.proxima_revision and self.proxima_revision < timezone.localdate())

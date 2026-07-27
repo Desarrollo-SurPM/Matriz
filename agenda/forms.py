@@ -1,32 +1,45 @@
 from django import forms
-from .models import Recordatorio, Visita
-from gestion_riesgos.models import Empresa
+from .models import Visita, Recordatorio
 
+# ==========================================
+# FORMULARIO DE VISITA
+# ==========================================
 class VisitaForm(forms.ModelForm):
     class Meta:
         model = Visita
-        fields = ['empresa', 'asunto', 'descripcion', 'fecha_hora', 'estado']
+        fields = [
+            'empresa', 'tipo_gestion', 'asunto', 'objetivo', 'fecha_hora', 'duracion_minutos',
+            'email_solicitud', 'estado', 'resultado', 'proxima_accion', 'fecha_proxima_accion', 'notas'
+        ]
         widgets = {
-            'empresa': forms.Select(attrs={'class': 'form-control'}),
-            'asunto': forms.TextInput(attrs={'class': 'form-control'}),
-            'descripcion': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
-            'fecha_hora': forms.DateTimeInput(attrs={'class': 'form-control', 'type': 'datetime-local'}),
-            'estado': forms.Select(attrs={'class': 'form-control'}),
+            'fecha_hora': forms.DateTimeInput(attrs={'type': 'datetime-local', 'class': 'form-control-modern'}),
+            'fecha_proxima_accion': forms.DateInput(attrs={'type': 'date', 'class': 'form-control-modern'}),
+            'objetivo': forms.Textarea(attrs={'rows': 3, 'class': 'form-control-modern', 'placeholder': 'Ej: validar cierre de medidas críticas y acordar evidencias pendientes'}),
+            'resultado': forms.Textarea(attrs={'rows': 3, 'class': 'form-control-modern'}),
+            'notas': forms.Textarea(attrs={'rows': 3, 'class': 'form-control-modern'}),
         }
 
     def __init__(self, *args, **kwargs):
-        # Filtramos el queryset del campo 'empresa' para mostrar solo las del usuario logueado.
-        user = kwargs.pop('user', None)
+        user = kwargs.pop('user', None) # Recibimos el usuario para filtrar empresas
         super().__init__(*args, **kwargs)
+        for field in self.fields.values():
+            current = field.widget.attrs.get('class', '')
+            if not isinstance(field.widget, forms.CheckboxInput):
+                field.widget.attrs['class'] = f'{current} form-control-modern'.strip()
+        
         if user:
+            # Filtramos empresas asignadas al prevencionista
+            from gestion_riesgos.models import Empresa
             self.fields['empresa'].queryset = Empresa.objects.filter(prevencionista=user)
 
+# ==========================================
+# FORMULARIO DE RECORDATORIO
+# ==========================================
 class RecordatorioForm(forms.ModelForm):
     class Meta:
         model = Recordatorio
-        fields = ['titulo', 'descripcion', 'fecha_hora']
+        fields = ['titulo', 'fecha_hora', 'descripcion', 'completado']
         widgets = {
-            'titulo': forms.TextInput(attrs={'class': 'form-control'}),
-            'descripcion': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
-            'fecha_hora': forms.DateTimeInput(attrs={'class': 'form-control', 'type': 'datetime-local'}),
+            'fecha_hora': forms.DateTimeInput(attrs={'type': 'datetime-local', 'class': 'form-control'}),
+            'descripcion': forms.Textarea(attrs={'rows': 3}),
         }

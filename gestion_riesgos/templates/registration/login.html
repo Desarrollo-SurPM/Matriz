@@ -1,63 +1,53 @@
 {% extends 'base.html' %}
 {% load static %}
+{% block title %}Ingresar · RiskBee{% endblock %}
 
-{% block title %}Iniciar Sesión - Risk-Bee{% endblock %}
-
-{% block content %}
-<div class="row justify-content-center mt-5">
-    <div class="col-md-5">
-        <div class="card-modern">
-            <div class="text-center mb-4">
-                <div class="d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px; background: var(--accent-gradient); border-radius: var(--radius-xl);">
-                    <i class="bi bi-shield-check" style="font-size: 2.5rem; color: white;"></i>
-                </div>
-                <h2 class="text-gradient mb-2" style="font-size: 2rem; font-weight: 700;">Iniciar Sesión</h2>
-                <p style="color: var(--text-secondary);">Accede a tu cuenta de Risk-Bee</p>
+{% block public_content %}
+<section class="login-page">
+    <div class="container login-shell">
+        <aside class="login-story">
+            <div>
+                <span class="login-story-kicker"><svg class="rb-icon"><use href="{% static 'icons/ui.svg' %}#sparkles"></use></svg> Prevención en control</span>
+                <h1>Tu jornada comienza con la <em>próxima acción clara.</em></h1>
+                <p>Entra a un espacio de trabajo que reúne investigación, clientes, compromisos y salud ocupacional.</p>
             </div>
+            <div class="login-benefits">
+                <div><span><svg class="rb-icon"><use href="{% static 'icons/ui.svg' %}#investigation"></use></svg></span><p><strong>Investiga paso a paso</strong><small>Del aviso inmediato a la eficacia del cierre.</small></p></div>
+                <div><span><svg class="rb-icon"><use href="{% static 'icons/ui.svg' %}#target"></use></svg></span><p><strong>Prioriza con contexto</strong><small>Señales claras para decidir a quién atender.</small></p></div>
+                <div><span><svg class="rb-icon"><use href="{% static 'icons/ui.svg' %}#clipboard"></use></svg></span><p><strong>Demuestra la gestión</strong><small>Responsables, plazos y evidencia por empresa.</small></p></div>
+            </div>
+            <div class="login-story-proof"><svg class="rb-icon"><use href="{% static 'icons/ui.svg' %}#shield"></use></svg><span><strong>Diseñado para la operación preventiva en Chile</strong><small>D.S. N.º 44 · Ley N.º 16.744 · Protocolos MINSAL</small></span></div>
+        </aside>
 
-            {% if form.errors %}
-                <div class="alert alert-danger" style="background: rgba(239, 68, 68, 0.1); border: 1px solid var(--danger); border-radius: var(--radius-md); color: var(--danger); padding: 1rem; margin-bottom: 1.5rem;">
-                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
-                    Tu nombre de usuario o contraseña son incorrectos. Por favor, inténtalo de nuevo.
-                </div>
-            {% endif %}
+        <div class="login-form-column">
+            <a class="login-back" href="{% url 'landing' %}"><span>←</span> Volver al inicio</a>
+            <div class="login-card">
+                <span class="login-security-icon"><svg class="rb-icon"><use href="{% static 'icons/ui.svg' %}#lock"></use></svg></span>
+                <span class="eyebrow">Acceso seguro</span>
+                <h2>Bienvenido de vuelta</h2>
+                <p class="login-intro">Ingresa tus datos para continuar con tu gestión preventiva.</p>
 
-            <form method="post" action="{% url 'login' %}">
-                {% csrf_token %}
-                <div class="mb-3">
-                    <label for="id_username" class="form-label-modern">
-                        <i class="bi bi-person me-1"></i>Usuario
-                    </label>
-                    <input type="text" name="username" autofocus autocapitalize="none" autocomplete="username" class="form-control-modern" required id="id_username" placeholder="Ingresa tu usuario">
-                </div>
+                {% if form.errors %}
+                    <div class="login-error" role="alert"><svg class="rb-icon"><use href="{% static 'icons/ui.svg' %}#warning"></use></svg><p>Usuario o contraseña incorrectos. Revisa los datos e intenta nuevamente.</p></div>
+                {% endif %}
 
-                <div class="mb-4">
-                    <label for="id_password" class="form-label-modern">
-                        <i class="bi bi-lock me-1"></i>Contraseña
-                    </label>
-                    <input type="password" name="password" autocomplete="current-password" class="form-control-modern" required id="id_password" placeholder="Ingresa tu contraseña">
-                </div>
+                <form method="post" novalidate class="login-form">
+                    {% csrf_token %}
+                    <div class="login-field">
+                        <label for="{{ form.username.id_for_label }}">Usuario</label>
+                        <div class="login-input-wrap"><svg class="rb-icon"><use href="{% static 'icons/ui.svg' %}#building"></use></svg>{{ form.username }}</div>
+                    </div>
+                    <div class="login-field">
+                        <label for="{{ form.password.id_for_label }}">Contraseña</label>
+                        <div class="login-input-wrap"><svg class="rb-icon"><use href="{% static 'icons/ui.svg' %}#lock"></use></svg>{{ form.password }}</div>
+                    </div>
+                    {% if next %}<input type="hidden" name="next" value="{{ next }}">{% endif %}
+                    <button class="btn btn-brand btn-lg login-submit" type="submit">Ingresar a RiskBee <svg class="rb-icon"><use href="{% static 'icons/ui.svg' %}#arrow-right"></use></svg></button>
+                </form>
 
-                <div class="d-grid mb-3">
-                    <button type="submit" class="btn-primary-modern w-100">
-                        <i class="bi bi-box-arrow-in-right me-2"></i>
-                        Ingresar
-                    </button>
-                </div>
-
-                <div class="text-center">
-                    <a href="#" style="color: var(--accent-primary); text-decoration: none; font-size: 0.9rem;">
-                        ¿Olvidaste tu contraseña?
-                    </a>
-                </div>
-            </form>
-        </div>
-
-        <div class="text-center mt-4">
-            <a href="{% url 'landing' %}" style="color: var(--text-secondary); text-decoration: none;">
-                <i class="bi bi-arrow-left me-2"></i>Volver al inicio
-            </a>
+                <p class="login-privacy"><svg class="rb-icon"><use href="{% static 'icons/ui.svg' %}#shield"></use></svg> Tu sesión y la información de tus empresas permanecen separadas por usuario.</p>
+            </div>
         </div>
     </div>
-</div>
+</section>
 {% endblock %}

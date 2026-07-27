@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block title %}{{ titulo }} · RiskBee{% endblock %}
+{% block page_context %}Protocolos MINSAL{% endblock %}
+
+{% block content %}
+<div class="page-shell" style="max-width:1050px;">
+    <header class="page-header">
+        <div><span class="eyebrow">Evaluación guiada</span><h1 class="page-title">{{ titulo }}</h1><p class="page-lead">Deja trazabilidad de por qué aplica —o no aplica— y qué debe ocurrir después.</p></div>
+        <div class="page-actions"><a class="btn btn-quiet" href="https://www.minsal.cl/salud-ocupacional/" target="_blank" rel="noopener"><i class="fa-solid fa-arrow-up-right-from-square"></i> Fuente MINSAL</a><a class="btn btn-quiet" href="{% url 'protocolos_minsal' %}"><i class="fa-solid fa-arrow-left"></i> Volver</a></div>
+    </header>
+
+    {% if form.errors %}<div class="legal-alert mb-4"><i class="fa-solid fa-circle-exclamation"></i><div><strong>La evaluación necesita revisión</strong><p>Corrige los campos marcados. Una justificación “no aplica” debe señalar las tareas y antecedentes considerados.</p></div></div>{% endif %}
+    <form method="post" enctype="multipart/form-data" class="stack">
+        {% csrf_token %}{{ form.non_field_errors }}
+        <section class="form-section">
+            <div class="form-section-header"><span class="step-number">1</span><div><h2>Alcance</h2><p>Selecciona empresa y protocolo antes de evaluar la exposición.</p></div></div>
+            <div class="field-group field-grid-2">
+                <div><label class="form-label" for="{{ form.empresa.id_for_label }}">Empresa</label>{{ form.empresa }}{{ form.empresa.errors }}</div>
+                <div><label class="form-label" for="{{ form.protocolo.id_for_label }}">Protocolo o guía</label>{{ form.protocolo }}{{ form.protocolo.errors }}</div>
+            </div>
+        </section>
+
+        <section class="form-section">
+            <div class="form-section-header"><span class="step-number">2</span><div><h2>Aplicabilidad y diagnóstico</h2><p>Describe exposición real por tarea y puesto; no decidas sólo por el rubro de la empresa.</p></div></div>
+            <div class="check-card mb-3">{{ form.agente_identificado }}<label for="{{ form.agente_identificado.id_for_label }}"><strong>Peligro o agente identificado</strong><small>Existe una tarea, fuente o factor verificable que activa la evaluación.</small>{{ form.agente_identificado.errors }}</label></div>
+            <div class="mb-3"><label class="form-label" for="{{ form.diagnostico_exposicion.id_for_label }}">Diagnóstico o justificación</label>{{ form.diagnostico_exposicion }}<span class="form-text">Incluye fuente, tareas, puestos, duración/frecuencia y antecedentes revisados. Si no aplica, explica la ausencia de exposición.</span>{{ form.diagnostico_exposicion.errors }}</div>
+            <div class="field-group field-grid-2">
+                <div><label class="form-label" for="{{ form.personas_expuestas.id_for_label }}">Personas potencialmente expuestas</label>{{ form.personas_expuestas }}{{ form.personas_expuestas.errors }}</div>
+                <div><label class="form-label" for="{{ form.estado.id_for_label }}">Estado de gestión</label>{{ form.estado }}{{ form.estado.errors }}</div>
+            </div>
+        </section>
+
+        <section class="form-section">
+            <div class="form-section-header"><span class="step-number">3</span><div><h2>Responsables y seguimiento</h2><p>Coordina evaluación, medidas, vigilancia y revisión con plazos visibles.</p></div></div>
+            <div class="field-group field-grid-2">
+                <div><label class="form-label" for="{{ form.responsable.id_for_label }}">Responsable interno</label>{{ form.responsable }}{{ form.responsable.errors }}</div>
+                <div><label class="form-label" for="{{ form.organismo_administrador.id_for_label }}">Organismo administrador</label>{{ form.organismo_administrador }}{{ form.organismo_administrador.errors }}</div>
+                <div><label class="form-label" for="{{ form.fecha_evaluacion.id_for_label }}">Fecha de evaluación</label>{{ form.fecha_evaluacion }}{{ form.fecha_evaluacion.errors }}</div>
+                <div><label class="form-label" for="{{ form.proxima_revision.id_for_label }}">Próxima revisión</label>{{ form.proxima_revision }}{{ form.proxima_revision.errors }}</div>
+            </div>
+            <div class="mt-3"><label class="form-label" for="{{ form.medidas_control.id_for_label }}">Medidas y acciones comprometidas</label>{{ form.medidas_control }}<span class="form-text">Prioriza controles sobre la fuente y el proceso antes de depender sólo de conducta o EPP.</span>{{ form.medidas_control.errors }}</div>
+            <div class="mt-3"><label class="form-label" for="{{ form.evidencia.id_for_label }}">Evidencia</label>{{ form.evidencia }}<span class="form-text">Adjunta informe, evaluación, acta o respaldo principal. Evita incorporar datos clínicos sensibles innecesarios.</span>{{ form.evidencia.errors }}</div>
+        </section>
+
+        <div class="d-flex justify-content-end gap-2"><a class="btn btn-quiet" href="{% url 'protocolos_minsal' %}">Cancelar</a><button class="btn btn-brand px-4" type="submit"><i class="fa-regular fa-floppy-disk"></i> Guardar evaluación</button></div>
+    </form>
+</div>
+{% endblock %}

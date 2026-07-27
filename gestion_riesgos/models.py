@@ -14,6 +14,12 @@ class Empresa(models.Model):
     rut = models.CharField(max_length=12, unique=True, help_text="Ej: 76.123.456-7")
     direccion = models.CharField(max_length=255, blank=True)
     telefono = models.CharField(max_length=20, blank=True)
+    correos_contacto = models.TextField(
+        verbose_name="Correos para Notificaciones",
+        help_text="Ingresa los correos separados por comas (Ej: gerente@empresa.com, prevencion@empresa.com)",
+        blank=True, 
+        null=True
+    )
     fecha_creacion = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -328,8 +334,37 @@ class MatrizIPER(models.Model):
     # Logo específico para esta matriz (opcional, si difiere del de la empresa)
     logo_cliente = models.ImageField(upload_to='logos_matrices/', blank=True, null=True, verbose_name="Logo Cliente")
 
+    # Mapa de riesgos derivado de la matriz, conforme a la guía de mapas laborales.
+    mapa_riesgos_archivo = models.FileField(
+        upload_to='mapas_riesgo/',
+        blank=True,
+        null=True,
+        verbose_name='Mapa de riesgos publicado',
+    )
+    mapa_version = models.CharField(max_length=30, blank=True, verbose_name='Versión del mapa')
+    mapa_actualizado_en = models.DateTimeField(null=True, blank=True, verbose_name='Fecha de actualización del mapa')
+    mapa_ubicaciones = models.TextField(
+        blank=True,
+        verbose_name='Ubicaciones visibles donde se instaló',
+        help_text='Registre los sitios físicos y, si aplica, el enlace o QR de difusión.',
+    )
+    mapa_participacion = models.TextField(
+        blank=True,
+        verbose_name='Participación en la elaboración',
+        help_text='Comité Paritario, delegado/a, trabajadores y asistencia técnica que participaron.',
+    )
+    mapa_publicado = models.BooleanField(default=False, verbose_name='Mapa vigente y visible en el lugar de trabajo')
+
     def __str__(self):
         return f"IPER {self.codigo_documento} - {self.empresa.razon_social}"
+
+    @property
+    def mapa_requiere_revision(self):
+        if not self.mapa_riesgos_archivo or not self.mapa_publicado or not self.mapa_actualizado_en:
+            return True
+        from django.db.models import Max
+        ultima_fila = self.filas.aggregate(fecha=Max('actualizado_en'))['fecha']
+        return bool(ultima_fila and ultima_fila > self.mapa_actualizado_en)
 
 # ==========================================
 # 2. FILAS DE LA MATRIZ (El "Excel")
@@ -343,7 +378,9 @@ class DetalleIPER(models.Model):
     
     # 1. Identificación
     proceso = models.CharField(max_length=255, verbose_name="Proceso", blank=True, null=True)
-    genero = models.CharField(max_length=50, verbose_name="Género", blank=True, null=True, help_text="Hombre - Mujer - Ambos - Otro")
+    genero = models.CharField(max_length=50, verbose_name="Género", blank=True, null=True, help_text="Hombre - Mujer - Ambos")
+    cantidad_hombres = models.PositiveIntegerField(default=0, verbose_name="Cant. Hombres")
+    cantidad_mujeres = models.PositiveIntegerField(default=0, verbose_name="Cant. Mujeres")
     puesto_trabajo = models.CharField(max_length=255, verbose_name="Puesto de Trabajo", blank=True, null=True)
     tarea = models.TextField(verbose_name="Tarea", blank=True, null=True)
     tipo_rutina = models.CharField(max_length=50, verbose_name="Rutinaria/No Rutinaria", blank=True, null=True)
@@ -357,10 +394,28 @@ class DetalleIPER(models.Model):
     
     # 3. Evaluación Inicial (Pura)
     medida_control_actual = models.TextField(verbose_name="Medida Control Actual", blank=True, null=True)
-    eval_probabilidad = models.IntegerField(verbose_name="P", blank=True, null=True, default=0)
-    eval_severidad = models.IntegerField(verbose_name="S", blank=True, null=True, default=0)
-    eval_valor = models.IntegerField(verbose_name="Valor Riesgo", blank=True, null=True, default=0)
-    eval_clasificacion = models.CharField(max_length=50, verbose_name="Clasificación", blank=True, null=True)
+    eval_prob_seguridad = models.IntegerField(null=True, blank=True)
+    eval_sev_seguridad = models.IntegerField(null=True, blank=True)
+    eval_valor_seguridad = models.IntegerField(null=True, blank=True)
+    eval_clasif_seguridad = models.CharField(max_length=20, null=True, blank=True)
+
+# Higiénicos
+    eval_prob_higienicos = models.IntegerField(null=True, blank=True)
+    eval_sev_higienicos = models.IntegerField(null=True, blank=True)
+    eval_valor_higienicos = models.IntegerField(null=True, blank=True)
+    eval_clasif_higienicos = models.CharField(max_length=20, null=True, blank=True)
+
+# Psicosociales
+    eval_prob_psicosociales = models.IntegerField(null=True, blank=True)
+    eval_sev_psicosociales = models.IntegerField(null=True, blank=True)
+    eval_valor_psicosociales = models.IntegerField(null=True, blank=True)
+    eval_clasif_psicosociales = models.CharField(max_length=20, null=True, blank=True)
+
+# Músculo esqueléticos
+    eval_prob_musculo = models.IntegerField(null=True, blank=True)
+    eval_sev_musculo = models.IntegerField(null=True, blank=True)
+    eval_valor_musculo = models.IntegerField(null=True, blank=True)
+    eval_clasif_musculo = models.CharField(max_length=20, null=True, blank=True)
     
     # 4. Gestión
     requisito_legal = models.TextField(verbose_name="Requisito Legal", blank=True, null=True)
@@ -368,14 +423,15 @@ class DetalleIPER(models.Model):
     responsable_seguimiento = models.CharField(max_length=255, verbose_name="Resp. Seguimiento", blank=True, null=True)
     
     # 5. Riesgo Residual (Post-Control)
-    residual_probabilidad = models.IntegerField(verbose_name="P (Res)", blank=True, null=True, default=0)
-    residual_severidad = models.IntegerField(verbose_name="S (Res)", blank=True, null=True, default=0)
-    residual_valor = models.IntegerField(verbose_name="Valor (Res)", blank=True, null=True, default=0)
+    residual_probabilidad = models.IntegerField(verbose_name="P (Res)", blank=True, null=True)
+    residual_severidad = models.IntegerField(verbose_name="S (Res)", blank=True, null=True)
+    residual_valor = models.IntegerField(verbose_name="Valor (Res)", blank=True, null=True)
     residual_clasificacion = models.CharField(max_length=50, verbose_name="Clasificación (Res)", blank=True, null=True)
     
     # 6. Otros
     condicion_especial = models.TextField(verbose_name="Condición Especial", blank=True, null=True, help_text="Si no cuenta con trabajadores...")
     reevaluacion = models.TextField(verbose_name="Reevaluación Especial", blank=True, null=True)
+    actualizado_en = models.DateTimeField(auto_now=True, null=True)
 
     class Meta:
         ordering = ['id'] # Para mantener el orden de creación

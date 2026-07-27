@@ -1,196 +1,164 @@
-<!DOCTYPE html>
-<html lang="es-cl">
+{% load static %}
+<!doctype html>
+<html lang="es-CL">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>{% block title %}Risk-Bee{% endblock %}</title>
-    
-    {% load static %}
-    
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#132a2e">
+    <meta name="description" content="RiskBee: gestión preventiva, cumplimiento y salud ocupacional para empresas en Chile.">
+    <title>{% block title %}RiskBee · Gestión preventiva{% endblock %}</title>
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font-awesome.min.css">
-
-    <link rel="stylesheet" href="{% static 'css/main.css' %}?v=2.0">
-
-    <style>
-        /* AJUSTES EXTRA PARA EL NAVBAR APP-STYLE */
-        
-        /* Efecto Cristal (Glassmorphism) */
-        .navbar-glass {
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border-bottom: 1px solid rgba(0,0,0,0.05);
-            box-shadow: 0 4px 20px rgba(0,0,0,0.03);
-            transition: all 0.3s ease;
-        }
-
-        /* Link Activo con indicador */
-        .nav-link {
-            position: relative;
-            font-weight: 500;
-            color: var(--text-secondary);
-            transition: color 0.3s;
-        }
-        .nav-link:hover {
-            color: var(--accent-primary);
-        }
-        .nav-link.active {
-            color: var(--accent-primary) !important;
-            font-weight: 700;
-        }
-        .nav-link.active::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 20px;
-            height: 3px;
-            background: var(--accent-gradient);
-            border-radius: 10px;
-        }
-
-        /* Offcanvas (Menú móvil) mejorado */
-        .offcanvas {
-            border-radius: 20px 0 0 20px; /* Borde redondeado a la izquierda */
-        }
-        
-        /* Footer animado */
-        .footer-hover:hover span {
-            display: inline-block;
-            animation: fly 1s ease-in-out infinite alternate;
-        }
-        @keyframes fly { from { transform: translateY(0); } to { transform: translateY(-5px); } }
-    </style>
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/main.css' %}?v=3.0">
+    <link rel="stylesheet" href="{% static 'css/product.css' %}?v=1.3">
     {% block extra_css %}{% endblock %}
 </head>
-<body class="d-flex flex-column min-vh-100 bg-light">
+<body class="{% if user.is_authenticated %}app-body{% else %}public-body{% endif %}">
+    <a class="skip-link" href="#main-content">Saltar al contenido</a>
 
-    <nav class="navbar navbar-expand-lg navbar-glass sticky-top py-3">
-        <div class="container">
-            
-            <a class="navbar-brand d-flex align-items-center gap-2 fw-bold fs-4" href="{% url 'dashboard' %}">
-                <div class="d-flex align-items-center justify-content-center bg-warning bg-opacity-10 rounded-circle" style="width: 40px; height: 40px;">
-                    <i class="fas fa-shield-alt text-warning"></i>
-                </div>
-                <span class="text-gradient">Risk-Bee</span>
+    {% if user.is_authenticated %}
+        <aside class="app-sidebar d-none d-xl-flex" aria-label="Navegación principal">
+            <a class="brand-lockup" href="{% url 'dashboard' %}" aria-label="RiskBee, inicio">
+                <span class="brand-mark"><svg class="rb-icon" aria-hidden="true"><use href="{% static 'icons/ui.svg' %}#shield"></use></svg></span>
+                <span><strong>RiskBee</strong><small>Prevención en control</small></span>
             </a>
 
-            <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar">
-                <i class="fas fa-bars fs-3 text-secondary"></i>
-            </button>
+            <nav class="side-nav">
+                <span class="side-nav-label">Operación</span>
+                <a class="side-nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}" href="{% url 'dashboard' %}">
+                    <i class="fa-solid fa-grid-2"></i><span>Panel ejecutivo</span>
+                </a>
+                <a class="side-nav-link {% if 'empresa' in request.resolver_match.url_name %}active{% endif %}" href="{% url 'empresa_list' %}">
+                    <i class="fa-regular fa-building"></i><span>Empresas</span>
+                </a>
+                <a class="side-nav-link {% if 'agenda' in request.path or 'visitas' in request.path %}active{% endif %}" href="{% url 'visita_list' %}">
+                    <i class="fa-regular fa-handshake"></i><span>Relación con clientes</span>
+                    <span class="nav-pill">IA</span>
+                </a>
 
-            <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar">
-                
-                <div class="offcanvas-header border-bottom">
-                    <h5 class="offcanvas-title fw-bold text-gradient">Menú</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+                <span class="side-nav-label">Prevención</span>
+                <a class="side-nav-link priority {% if 'accidentes' in request.path %}active{% endif %}" href="{% url 'reporte_accidente_list' %}">
+                    <i class="fa-solid fa-shield-heart"></i><span>Investigación</span>
+                </a>
+                <a class="side-nav-link {% if 'matriz_iper' in request.path %}active{% endif %}" href="{% url 'empresa_list' %}">
+                    <i class="fa-solid fa-table-cells-large"></i><span>Matrices IPER</span>
+                </a>
+
+                <span class="side-nav-label">Cumplimiento</span>
+                <a class="side-nav-link {% if 'protocolos-minsal' in request.path %}active{% endif %}" href="{% url 'protocolos_minsal' %}">
+                    <i class="fa-solid fa-stethoscope"></i><span>Protocolos MINSAL</span>
+                </a>
+                <a class="side-nav-link {% if 'calendario' in request.path %}active{% endif %}" href="{% url 'calendario_legal' %}">
+                    <i class="fa-regular fa-calendar-check"></i><span>Calendario legal</span>
+                </a>
+                <a class="side-nav-link {% if 'normativas' in request.path %}active{% endif %}" href="{% url 'normativa_list' %}">
+                    <i class="fa-solid fa-scale-balanced"></i><span>Biblioteca legal</span>
+                </a>
+
+                <span class="side-nav-label">Soporte</span>
+                <a class="side-nav-link {% if request.resolver_match.url_name == 'centro_ayuda' %}active{% endif %}" href="{% url 'centro_ayuda' %}">
+                    <svg class="rb-icon" aria-hidden="true"><use href="{% static 'icons/ui.svg' %}#bulb"></use></svg><span>Manual y ayuda</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="user-chip">
+                    <span class="user-avatar">{{ user.first_name|default:user.username|first|upper }}</span>
+                    <span class="min-w-0"><strong>{{ user.first_name|default:user.username }}</strong><small>Prevencionista</small></span>
                 </div>
+                <form action="{% url 'logout' %}" method="post">
+                    {% csrf_token %}
+                    <button class="icon-button" type="submit" title="Cerrar sesión" aria-label="Cerrar sesión"><i class="fa-solid fa-arrow-right-from-bracket"></i></button>
+                </form>
+            </div>
+        </aside>
 
-                <div class="offcanvas-body">
-                    {% if user.is_authenticated %}
-                    <ul class="navbar-nav justify-content-center flex-grow-1 pe-3 gap-lg-3 gap-2">
-                        
-                        <li class="nav-item">
-                            <a class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}" href="{% url 'dashboard' %}">
-                                <i class="fas fa-chart-pie me-1 d-lg-none"></i> Dashboard
-                            </a>
-                        </li>
-
-                        <li class="nav-item">
-                            <a class="nav-link {% if 'empresa' in request.path %}active{% endif %}" href="{% url 'empresa_list' %}">
-                                <i class="fas fa-building me-1 d-lg-none"></i> Empresas
-                            </a>
-                        </li>
-
-                        <li class="nav-item">
-                            <a class="nav-link {% if 'accidentes' in request.path %}active{% endif %}" href="{% url 'reporte_accidente_list' %}">
-                                <i class="fas fa-car-crash me-1 d-lg-none"></i> Accidentes
-                            </a>
-                        </li>
-
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                                Configuración
-                            </a>
-                            <ul class="dropdown-menu border-0 shadow-sm rounded-3">
-                                <li><a class="dropdown-item py-2" href="{% url 'peligro_list' %}"><i class="fas fa-exclamation-triangle me-2 text-warning"></i>Peligros</a></li>
-                                <li><a class="dropdown-item py-2" href="{% url 'normativa_list' %}"><i class="fas fa-book me-2 text-info"></i>Normativas</a></li>
-                            </ul>
-                        </li>
-
-                        <li class="nav-item">
-                            <a class="nav-link {% if 'agenda' in request.path %}active{% endif %}" href="{% url 'calendario_legal' %}">
-                                <i class="fas fa-calendar-alt me-1 d-lg-none"></i> Agenda
-                            </a>
-                        </li>
-                    </ul>
-
-                    <div class="d-flex align-items-center mt-3 mt-lg-0">
-                        <div class="dropdown">
-                            <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle text-dark" data-bs-toggle="dropdown">
-                                <div class="bg-primary text-white rounded-circle d-flex justify-content-center align-items-center me-2 shadow-sm" style="width: 38px; height: 38px; font-weight: bold;">
-                                    {{ user.first_name|first|default:user.username|first|upper }}
-                                </div>
-                                <div class="d-none d-lg-block text-start lh-1">
-                                    <div class="fw-bold small">{{ user.first_name|default:user.username }}</div>
-                                    <small class="text-muted" style="font-size: 0.7rem;">Prevencionista</small>
-                                </div>
-                            </a>
-                            <ul class="dropdown-menu dropdown-menu-end border-0 shadow-lg rounded-3 mt-2">
-                                <li><h6 class="dropdown-header">Mi Cuenta</h6></li>
-                                <li><a class="dropdown-item" href="#"><i class="fas fa-user-cog me-2"></i>Perfil</a></li>
-                                <li><hr class="dropdown-divider"></li>
-                                <li>
-                                    <form action="{% url 'logout' %}" method="post">
-                                        {% csrf_token %}
-                                        <button type="submit" class="dropdown-item text-danger">
-                                            <i class="fas fa-sign-out-alt me-2"></i>Cerrar Sesión
-                                        </button>
-                                    </form>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                    {% else %}
-                    <div class="ms-auto">
-                        <a href="{% url 'login' %}" class="btn btn-primary-modern rounded-pill px-4">
-                            Ingresar <i class="fas fa-arrow-right ms-2"></i>
-                        </a>
-                    </div>
-                    {% endif %}
+        <div class="app-frame">
+            <header class="app-topbar">
+                <button class="icon-button d-xl-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileNavigation" aria-label="Abrir menú">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+                <div class="topbar-context">
+                    <span class="eyebrow">Gestión preventiva · Chile</span>
+                    <strong>{% block page_context %}Centro de control{% endblock %}</strong>
                 </div>
+                <div class="topbar-actions">
+                    <a class="btn btn-quiet topbar-help" href="{% url 'centro_ayuda' %}" title="Abrir manual y centro de ayuda"><svg class="rb-icon" aria-hidden="true"><use href="{% static 'icons/ui.svg' %}#bulb"></use></svg><span class="d-none d-lg-inline"> Ayuda</span></a>
+                    <a class="btn btn-quiet d-none d-md-inline-flex" href="{% url 'visita_create' %}"><i class="fa-regular fa-calendar-plus"></i> Agendar gestión</a>
+                    <a class="btn btn-brand" href="{% url 'reporte_accidente_create' %}"><i class="fa-solid fa-bolt"></i><span class="d-none d-sm-inline"> Acción inmediata</span></a>
+                </div>
+            </header>
+
+            <main id="main-content" class="app-main" tabindex="-1">
+                {% if messages %}
+                    <div class="toast-stack" aria-live="polite">
+                        {% for message in messages %}
+                            <div class="alert app-alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags|default:'info' }}{% endif %} alert-dismissible fade show" role="alert">
+                                <i class="fa-solid fa-circle-info"></i><span>{{ message }}</span>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                {% block content %}{% endblock %}
+            </main>
+
+            <footer class="app-footer">
+                <span>RiskBee · Prevención basada en evidencia</span>
+                <span>La plataforma apoya la gestión; la validación técnica y legal permanece en la organización.</span>
+            </footer>
+        </div>
+
+        <div class="offcanvas offcanvas-start mobile-navigation" tabindex="-1" id="mobileNavigation" aria-labelledby="mobileNavigationLabel">
+            <div class="offcanvas-header">
+                <a class="brand-lockup" href="{% url 'dashboard' %}"><span class="brand-mark"><svg class="rb-icon" aria-hidden="true"><use href="{% static 'icons/ui.svg' %}#shield"></use></svg></span><span><strong id="mobileNavigationLabel">RiskBee</strong><small>Prevención en control</small></span></a>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Cerrar"></button>
+            </div>
+            <div class="offcanvas-body side-nav">
+                <a class="side-nav-link" href="{% url 'dashboard' %}"><i class="fa-solid fa-grid-2"></i> Panel ejecutivo</a>
+                <a class="side-nav-link" href="{% url 'empresa_list' %}"><i class="fa-regular fa-building"></i> Empresas</a>
+                <a class="side-nav-link" href="{% url 'visita_list' %}"><i class="fa-regular fa-handshake"></i> Relación con clientes</a>
+                <a class="side-nav-link priority" href="{% url 'reporte_accidente_list' %}"><i class="fa-solid fa-shield-heart"></i> Investigación</a>
+                <a class="side-nav-link" href="{% url 'protocolos_minsal' %}"><i class="fa-solid fa-stethoscope"></i> Protocolos MINSAL</a>
+                <a class="side-nav-link" href="{% url 'calendario_legal' %}"><i class="fa-regular fa-calendar-check"></i> Calendario legal</a>
+                <a class="side-nav-link" href="{% url 'normativa_list' %}"><i class="fa-solid fa-scale-balanced"></i> Biblioteca legal</a>
+                <a class="side-nav-link" href="{% url 'centro_ayuda' %}"><svg class="rb-icon" aria-hidden="true"><use href="{% static 'icons/ui.svg' %}#bulb"></use></svg> Manual y ayuda</a>
             </div>
         </div>
-    </nav>
-
-    <main class="flex-grow-1">
-        {% block content %}{% endblock %}
-    </main>
-
-    <footer class="mt-auto py-4 bg-white border-top">
-        <div class="container text-center footer-hover">
-            <div class="mb-2">
-                <span class="fs-4">🐝</span>
+    {% else %}
+        <header class="public-header">
+            <div class="container public-nav">
+                <a class="brand-lockup dark" href="{% url 'landing' %}"><span class="brand-mark"><svg class="rb-icon" aria-hidden="true"><use href="{% static 'icons/ui.svg' %}#shield"></use></svg></span><span><strong>RiskBee</strong><small>Prevención en control</small></span></a>
+                <nav class="d-none d-md-flex align-items-center gap-4" aria-label="Navegación pública">
+                    <a href="{% url 'landing' %}#solucion">Solución</a>
+                    <a href="{% url 'landing' %}#modulos">Módulos</a>
+                    <a href="{% url 'landing' %}#normativa">Normativa</a>
+                    <a href="{% url 'centro_ayuda' %}">Manual y ayuda</a>
+                </nav>
+                <a class="btn btn-brand" href="{% url 'login' %}">Ingresar <i class="fa-solid fa-arrow-right"></i></a>
             </div>
-            <p class="mb-0 text-secondary fw-bold">Risk-Bee &copy; {% now "Y" %}</p>
-            <small class="text-muted">Gestión Inteligente de Prevención de Riesgos</small>
-        </div>
-    </footer>
+        </header>
+        <main id="main-content" tabindex="-1">
+            {% if messages %}
+                <div class="container pt-3">
+                    {% for message in messages %}<div class="alert alert-info">{{ message }}</div>{% endfor %}
+                </div>
+            {% endif %}
+            {% block public_content %}{% block content_public_fallback %}{% endblock %}{% endblock %}
+        </main>
+        <footer class="public-footer">
+            <div class="container d-flex flex-column flex-md-row justify-content-between gap-2">
+                <strong>RiskBee</strong><span>Gestión preventiva clara, trazable y preparada para Chile.</span><span>© {% now 'Y' %}</span>
+            </div>
+        </footer>
+    {% endif %}
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="{% static 'js/main.js' %}"></script>
-
-    {% block extra_js %}
-    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.14/index.global.min.js'></script>
-    {% endblock %}
+    <script src="{% static 'js/main.js' %}?v=3.0"></script>
+    {% block extra_js %}{% endblock %}
 </body>
 </html>

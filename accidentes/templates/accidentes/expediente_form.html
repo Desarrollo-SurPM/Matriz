@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ titulo }} · RiskBee{% endblock %}
+{% block page_context %}Expediente #{{ reporte.pk }}{% endblock %}
+
+{% block content %}
+<div class="page-shell compact-shell">
+    <header class="page-header">
+        <div><span class="eyebrow">{{ eyebrow }}</span><h1 class="page-title">{{ titulo }}</h1><p class="page-lead">{{ descripcion }}</p></div>
+        <div class="page-actions"><a class="btn btn-quiet" href="{% url 'reporte_accidente_detail' reporte.pk %}#expediente-documental"><i class="fa-solid fa-arrow-left"></i> Volver al expediente</a></div>
+    </header>
+
+    <div class="case-context mb-4">
+        <span class="app-badge badge-neutral">Caso #{{ reporte.pk }}</span>
+        <strong>{{ reporte.empresa.razon_social }}</strong>
+        <span>{{ reporte.fecha_accidente|date:"d/m/Y H:i" }} · {{ reporte.lugar_exacto }}</span>
+    </div>
+
+    <form class="form-section" method="post" enctype="multipart/form-data" novalidate>
+        {% csrf_token %}
+        {% if form.non_field_errors %}<div class="legal-alert mb-4"><i class="fa-solid fa-circle-exclamation"></i><div>{{ form.non_field_errors }}</div></div>{% endif %}
+
+        {% if tipo_formulario == 'declaracion' %}
+            <div class="legal-alert info mb-4"><i class="fa-solid fa-user-shield"></i><div><strong>Respeta la voz de la persona</strong><p>Registra su relato sin inducir respuestas. Una confirmación en RiskBee deja trazabilidad, pero no reemplaza los requisitos internos de firma que correspondan.</p></div></div>
+        {% elif tipo_formulario == 'documento' %}
+            <div class="legal-alert info mb-4"><i class="fa-solid fa-file-arrow-up"></i><div><strong>El prevencionista adjunta, no emite</strong><p>RECA, alta y certificado de atención deben provenir del organismo competente. Identifica la fuente y conserva el archivo original.</p></div></div>
+        {% else %}
+            <div class="legal-alert info mb-4"><i class="fa-solid fa-user-lock"></i><div><strong>Alerta anónima</strong><p>Comunica el aprendizaje y las medidas. No publiques nombre, RUT, fotografía identificable ni detalle clínico de la persona.</p></div></div>
+        {% endif %}
+
+        <div class="field-grid-2">
+        {% for field in form %}
+            <div class="{% if field.name == 'relato' or field.name == 'relato_anonimizado' or field.name == 'aprendizaje_clave' or field.name == 'medidas_preventivas' or field.name == 'actividad_al_momento' %}grid-span-2{% endif %}">
+                {% if field.field.widget.input_type == 'checkbox' %}
+                    <div class="check-card">{{ field }}<label for="{{ field.id_for_label }}"><strong>{{ field.label }}</strong>{% if field.help_text %}<small>{{ field.help_text }}</small>{% endif %}</label></div>
+                {% else %}
+                    <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>{{ field }}{% if field.help_text %}<span class="form-text">{{ field.help_text }}</span>{% endif %}
+                {% endif %}
+                {{ field.errors }}
+            </div>
+        {% endfor %}
+        </div>
+        <div class="wizard-actions mt-4"><a class="btn btn-quiet" href="{% url 'reporte_accidente_detail' reporte.pk %}#expediente-documental">Cancelar</a><button class="btn btn-brand ms-auto" type="submit"><i class="fa-regular fa-floppy-disk"></i> Guardar en expediente</button></div>
+    </form>
+</div>
+{% endblock %}

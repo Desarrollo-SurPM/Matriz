@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+
+{% block title %}Acción inmediata · RiskBee{% endblock %}
+{% block page_context %}Acción inmediata{% endblock %}
+
+{% block content %}
+<div class="page-shell immediate-shell">
+    <header class="page-header">
+        <div>
+            <span class="eyebrow">Reporte flash · objetivo 60 segundos</span>
+            <h1 class="page-title">Primero actúa. Después completa.</h1>
+            <p class="page-lead">Abre el expediente con datos observables y deja la investigación, declaraciones y respaldos para el siguiente momento seguro.</p>
+        </div>
+        <div class="page-actions"><a class="btn btn-quiet" href="{% url 'reporte_accidente_list' %}"><i class="fa-solid fa-arrow-left"></i> Volver</a></div>
+    </header>
+
+    <section class="immediate-actions" aria-label="Acciones de emergencia">
+        <article class="immediate-action danger">
+            <span class="immediate-number">1</span>
+            <div><strong>Protege la vida</strong><p>Entrega primeros auxilios y solicita asistencia. No expongas a otras personas.</p></div>
+            <a class="btn btn-danger btn-sm" href="tel:131"><i class="fa-solid fa-phone"></i> SAMU 131</a>
+        </article>
+        <article class="immediate-action warning">
+            <span class="immediate-number">2</span>
+            <div><strong>Detén y aísla</strong><p>Controla energías y preserva el sitio sólo cuando sea seguro hacerlo.</p></div>
+        </article>
+        <article class="immediate-action info">
+            <span class="immediate-number">3</span>
+            <div><strong>Avisa por el canal definido</strong><p>Contacta jefatura, cliente y organismo administrador según el procedimiento de la empresa.</p></div>
+        </article>
+    </section>
+
+    <div class="legal-alert info mb-4">
+        <i class="fa-solid fa-circle-info"></i>
+        <div><strong>RiskBee no reemplaza los avisos oficiales</strong><p>Guardar este formulario no presenta la DIAT ni comunica por sí solo a la Dirección del Trabajo o SEREMI de Salud. Conserva los comprobantes de cada canal.</p></div>
+    </div>
+
+    <form method="post" enctype="multipart/form-data" id="immediateReport" novalidate>
+        {% csrf_token %}
+        {% if form.non_field_errors %}<div class="legal-alert mb-4"><i class="fa-solid fa-circle-exclamation"></i><div>{{ form.non_field_errors }}</div></div>{% endif %}
+
+        <section class="form-section">
+            <div class="form-section-header"><span class="step-number">1</span><div><h2>Ubica el evento</h2><p>La respuesta necesita saber dónde y cuándo ocurrió.</p></div></div>
+            <div class="field-grid-2">
+                <div><label class="form-label" for="{{ form.empresa.id_for_label }}">Empresa</label>{{ form.empresa }}{{ form.empresa.errors }}</div>
+                <div><label class="form-label" for="{{ form.fecha_accidente.id_for_label }}">Fecha y hora</label>{{ form.fecha_accidente }}{{ form.fecha_accidente.errors }}</div>
+                <div><label class="form-label" for="{{ form.area_departamento.id_for_label }}">Área, ruta o sucursal</label>{{ form.area_departamento }}{{ form.area_departamento.errors }}</div>
+                <div><label class="form-label" for="{{ form.lugar_exacto.id_for_label }}">Lugar exacto</label>{{ form.lugar_exacto }}{{ form.lugar_exacto.errors }}</div>
+            </div>
+        </section>
+
+        <section class="form-section">
+            <div class="form-section-header"><span class="step-number">2</span><div><h2>Clasifica sin investigar todavía</h2><p>Selecciona lo que se conoce ahora. Las causas se analizan con evidencia en el expediente.</p></div></div>
+            <div class="field-grid-2">
+                <div><label class="form-label" for="{{ form.tipo_accidente.id_for_label }}">Tipo de evento</label>{{ form.tipo_accidente }}{{ form.tipo_accidente.errors }}</div>
+                <div><label class="form-label" for="{{ form.severidad_inicial.id_for_label }}">Consecuencia inicial</label>{{ form.severidad_inicial }}{{ form.severidad_inicial.errors }}</div>
+            </div>
+            <div class="mt-3"><label class="form-label" for="{{ form.criterio_gravedad_legal.id_for_label }}">Criterio legal grave/fatal</label>{{ form.criterio_gravedad_legal }}<span class="form-text">Si falta información, selecciona “Por confirmar” y consulta de inmediato al organismo administrador.</span>{{ form.criterio_gravedad_legal.errors }}</div>
+            <div class="legal-alert mt-3 d-none" id="legal-grave-alert"><i class="fa-solid fa-triangle-exclamation"></i><div><strong>Activa ahora el procedimiento grave/fatal</strong><p>Suspende y controla la faena afectada, evacúa si corresponde e informa inmediatamente a Inspección del Trabajo y SEREMI de Salud. Contacta al organismo administrador.</p></div></div>
+            <div class="mt-3"><label class="form-label" for="{{ form.descripcion_evento.id_for_label }}">¿Qué ocurrió?</label>{{ form.descripcion_evento }}{{ form.descripcion_evento.errors }}</div>
+        </section>
+
+        <section class="form-section">
+            <div class="form-section-header"><span class="step-number">3</span><div><h2>Registra lo que ya se hizo</h2><p>No retrases la atención por conseguir una fotografía o completar datos personales.</p></div></div>
+            <div><label class="form-label" for="{{ form.medidas_inmediatas.id_for_label }}">Acciones inmediatas ejecutadas</label>{{ form.medidas_inmediatas }}{{ form.medidas_inmediatas.errors }}</div>
+            <div class="field-grid-2 mt-3">
+                <div><label class="form-label" for="{{ form.evidencia_fotografica.id_for_label }}">Foto, sólo si es seguro</label>{{ form.evidencia_fotografica }}{{ form.evidencia_fotografica.errors }}</div>
+                <details class="optional-identity">
+                    <summary>Agregar nombre de la persona (opcional ahora)</summary>
+                    <div class="pt-3"><label class="form-label" for="{{ form.nombre_completo_accidentado.id_for_label }}">Nombre completo</label>{{ form.nombre_completo_accidentado }}{{ form.nombre_completo_accidentado.errors }}</div>
+                </details>
+            </div>
+        </section>
+
+        <div class="immediate-submit">
+            <div><strong>Al guardar se crea el expediente</strong><small>El siguiente paso permite completar ficha, declaraciones, documentos e investigación.</small></div>
+            <button class="btn btn-brand btn-lg" type="submit"><i class="fa-solid fa-bolt"></i> Guardar y activar</button>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const criterio = document.getElementById('id_criterio_gravedad_legal');
+    const tipo = document.getElementById('id_tipo_accidente');
+    const alerta = document.getElementById('legal-grave-alert');
+    const actualizar = () => {
+        const activo = criterio && !['', 'ninguno', 'por_confirmar'].includes(criterio.value)
+            && (!tipo || tipo.value !== 'accidente_trayecto');
+        alerta?.classList.toggle('d-none', !activo);
+    };
+    criterio?.addEventListener('change', actualizar);
+    tipo?.addEventListener('change', actualizar);
+    actualizar();
+});
+</script>
+{% endblock %}

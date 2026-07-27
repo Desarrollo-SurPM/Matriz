@@ -1,5 +1,13 @@
 from django.urls import path
-from .views import ReporteAccidenteListView, ReporteFlashCreateView, ReporteInvestigacionView, ReporteUpdateView
+from .views import (
+    AlertaAprendizajeUpdateView,
+    DeclaracionAccidenteCreateView,
+    DocumentoMutualCreateView,
+    ReporteAccidenteListView,
+    ReporteFlashCreateView,
+    ReporteInvestigacionView,
+    ReporteUpdateView,
+)
 
 urlpatterns = [
     # Dashboard / Lista
@@ -10,6 +18,9 @@ urlpatterns = [
     
     # Detalle e Investigación
     path('detalle/<int:pk>/', ReporteInvestigacionView.as_view(), name='reporte_accidente_detail'),
+    path('detalle/<int:pk>/declaracion/', DeclaracionAccidenteCreateView.as_view(), name='declaracion_accidente_create'),
+    path('detalle/<int:pk>/documento-mutual/', DocumentoMutualCreateView.as_view(), name='documento_mutual_create'),
+    path('detalle/<int:pk>/alerta/', AlertaAprendizajeUpdateView.as_view(), name='alerta_aprendizaje_update'),
     
     # Edición (si se requiere)
     path('editar/<int:pk>/', ReporteUpdateView.as_view(), name='reporte_accidente_update'),

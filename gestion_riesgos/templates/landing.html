@@ -1,436 +1,149 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Risk-Bee - Gestión Inteligente de Riesgos</title>
-    {% load static %}
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link rel="stylesheet" href="{% static 'css/main.css' %}">
-</head>
-<body>
-    <!-- Navbar Moderno -->
-    <nav class="navbar navbar-expand-lg navbar-modern">
-        <div class="container">
-            <a class="navbar-brand" href="{% url 'dashboard' %}">
-                <i class="bi bi-shield-check"></i>
-                <span>Risk-Bee</span>
-            </a>
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}RiskBee · Prevención en control{% endblock %}
 
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto align-items-center">
-                    <li class="nav-item">
-                        <a class="nav-link" href="#features">Características</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#benefits">Beneficios</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#about">Acerca de</a>
-                    </li>
-                    <li class="nav-item ms-3">
-                        {% if user.is_authenticated %}
-                            <a href="{% url 'dashboard' %}" class="btn-primary-modern">
-                                <i class="bi bi-speedometer2 me-2"></i>Dashboard
-                            </a>
-                        {% else %}
-                            <button id="loginBtn" class="btn-primary-modern">
-                                <i class="bi bi-box-arrow-in-right me-2"></i>Iniciar Sesión
-                            </button>
-                        {% endif %}
-                    </li>
-                </ul>
+{% block public_content %}
+<section class="landing-hero">
+    <div class="container landing-hero-grid">
+        <div class="landing-hero-copy">
+            <span class="landing-kicker"><svg class="rb-icon"><use href="{% static 'icons/ui.svg' %}#sparkles"></use></svg> Gestión preventiva diseñada para Chile</span>
+            <h1>De la alerta a una <em>acción demostrable.</em></h1>
+            <p>RiskBee transforma accidentes, compromisos, visitas y protocolos MINSAL en un plan diario claro: qué hacer, quién responde, cuándo vence y qué evidencia falta.</p>
+            <div class="landing-actions">
+                <a class="btn btn-brand btn-lg" href="{% url 'login' %}">Entrar a la plataforma <svg class="rb-icon"><use href="{% static 'icons/ui.svg' %}#arrow-right"></use></svg></a>
+                <a class="btn btn-quiet btn-lg" href="#solucion">Conocer la solución</a>
+            </div>
+            <div class="trust-line" aria-label="Atributos principales">
+                <span><svg class="rb-icon"><use href="{% static 'icons/ui.svg' %}#check"></use></svg> Flujos paso a paso</span>
+                <span><svg class="rb-icon"><use href="{% static 'icons/ui.svg' %}#check"></use></svg> Prioridades explicables</span>
+                <span><svg class="rb-icon"><use href="{% static 'icons/ui.svg' %}#check"></use></svg> Evidencia por empresa</span>
             </div>
         </div>
-    </nav>
 
-    <!-- Hero Section -->
-    <section class="hero-section" style="position: relative; overflow: visible;">
-        <div class="hero-particles"></div>
-
-        <div class="hero-content">
-            <h1 class="hero-title">
-                Gestión Profesional de Riesgos Laborales
-            </h1>
-            <p class="hero-subtitle">
-                Identifica peligros, evalúa riesgos y protege tu empresa con una plataforma integral.
-                <br>Organiza tu equipo y mejora la seguridad laboral con herramientas profesionales.
-            </p>
-            <div style="display: flex; justify-content: center; gap: 1rem; margin: 2rem 0; flex-wrap: wrap; font-size: 0.95rem; color: var(--text-secondary);">
-                <div style="display: flex; align-items: center; gap: 0.5rem;">
-                    <i class="bi bi-people-fill" style="font-size: 1.3rem; color: var(--accent-primary);"></i>
-                    <span>Trabajo en Equipo</span>
+        <div class="product-preview" aria-label="Vista previa del centro de control RiskBee">
+            <div class="preview-window">
+                <div class="preview-appbar">
+                    <div class="preview-brand"><span><svg class="rb-icon"><use href="{% static 'icons/ui.svg' %}#shield"></use></svg></span><strong>Centro de control</strong></div>
+                    <span class="preview-live"><i></i> Actualizado hoy</span>
                 </div>
-                <div style="display: flex; align-items: center; gap: 0.5rem;">
-                    <i class="bi bi-grid-3x3-gap-fill" style="font-size: 1.3rem; color: var(--accent-primary);"></i>
-                    <span>Organización Eficiente</span>
-                </div>
-                <div style="display: flex; align-items: center; gap: 0.5rem;">
-                    <i class="bi bi-graph-up-arrow" style="font-size: 1.3rem; color: var(--accent-primary);"></i>
-                    <span>Resultados Medibles</span>
-                </div>
-            </div>
-            <div class="hero-buttons">
-                {% if user.is_authenticated %}
-                    <a href="{% url 'dashboard' %}" class="btn-primary-modern">
-                        <i class="bi bi-speedometer2 me-2"></i>
-                        Ir al Dashboard
-                    </a>
-                    <a href="{% url 'empresa_list' %}" class="btn-outline-modern">
-                        <i class="bi bi-building me-2"></i>
-                        Mis Empresas
-                    </a>
-                {% else %}
-                    <button id="loginBtn2" class="btn-primary-modern">
-                        <i class="bi bi-box-arrow-in-right me-2"></i>
-                        Comenzar Ahora
-                    </button>
-                    <a href="#features" class="btn-outline-modern">
-                        <i class="bi bi-info-circle me-2"></i>
-                        Conocer Más
-                    </a>
-                {% endif %}
-            </div>
-        </div>
-    </section>
-
-    <!-- Sección Beneficios Clave -->
-    <section style="padding: 4rem 2rem; background: linear-gradient(135deg, rgba(200, 230, 201, 0.15) 0%, rgba(232, 245, 233, 0.2) 100%); position: relative; overflow: hidden;">
-        <div class="container">
-            <div style="text-align: center; margin-bottom: 3rem;">
-                <h2 style="font-size: 2.5rem; font-weight: 700; color: var(--text-primary); margin-bottom: 1rem;">
-                    Gestión Inteligente y Colaborativa
-                </h2>
-                <p style="font-size: 1.2rem; color: var(--text-secondary); max-width: 800px; margin: 0 auto;">
-                    Organiza tu equipo, estructura tus procesos y protege tu empresa con herramientas diseñadas para la eficiencia.
-                </p>
-            </div>
-
-            <div class="row g-4" style="max-width: 1000px; margin: 0 auto;">
-                <div class="col-md-4">
-                    <div style="text-align: center; padding: 2rem; background: rgba(255, 255, 255, 0.9); border-radius: var(--radius-xl); border: 2px solid var(--border-color); height: 100%;">
-                        <div style="font-size: 3rem; margin-bottom: 1rem; color: var(--accent-primary);">
-                            <i class="bi bi-people-fill"></i>
+                <div class="preview-dashboard">
+                    <div class="preview-heading">
+                        <div><small>RESUMEN EJECUTIVO</small><strong>Lo que requiere acción</strong></div>
+                        <span>15 JUL</span>
+                    </div>
+                    <div class="preview-metrics">
+                        <article class="preview-metric danger"><span><svg class="rb-icon"><use href="{% static 'icons/ui.svg' %}#investigation"></use></svg></span><div><strong>4</strong><small>Investigaciones abiertas</small></div></article>
+                        <article class="preview-metric warning"><span><svg class="rb-icon"><use href="{% static 'icons/ui.svg' %}#clock"></use></svg></span><div><strong>2</strong><small>Hitos fuera de plazo</small></div></article>
+                        <article class="preview-metric success"><span><svg class="rb-icon"><use href="{% static 'icons/ui.svg' %}#health"></use></svg></span><div><strong>7</strong><small>Protocolos en gestión</small></div></article>
+                    </div>
+                    <div class="preview-task-card">
+                        <div class="preview-task-head"><strong>Siguientes acciones</strong><span>Ver cartera</span></div>
+                        <div class="preview-task-row">
+                            <span class="preview-task-icon coral"><svg class="rb-icon"><use href="{% static 'icons/ui.svg' %}#bolt"></use></svg></span>
+                            <div><strong>Completar evidencia del accidente</strong><small>Astillero Sur · vence hoy</small></div><b>URGENTE</b>
                         </div>
-                        <h4 style="color: var(--accent-primary); font-weight: 700; margin-bottom: 1rem;">Colaboración Efectiva</h4>
-                        <p style="color: var(--text-secondary); line-height: 1.6;">
-                            Tu equipo trabaja unido. Cada miembro tiene su rol y todos colaboran para mantener la seguridad.
-                        </p>
-                    </div>
-                </div>
-
-                <div class="col-md-4">
-                    <div style="text-align: center; padding: 2rem; background: rgba(255, 255, 255, 0.9); border-radius: var(--radius-xl); border: 2px solid var(--border-color); height: 100%;">
-                        <div style="font-size: 3rem; margin-bottom: 1rem; color: var(--accent-primary);">
-                            <i class="bi bi-diagram-3-fill"></i>
+                        <div class="preview-task-row">
+                            <span class="preview-task-icon teal"><svg class="rb-icon"><use href="{% static 'icons/ui.svg' %}#handshake"></use></svg></span>
+                            <div><strong>Confirmar visita recomendada</strong><small>Marine Services · prioridad 82</small></div><b class="normal">AGENDAR</b>
                         </div>
-                        <h4 style="color: var(--accent-primary); font-weight: 700; margin-bottom: 1rem;">Organización Estructurada</h4>
-                        <p style="color: var(--text-secondary); line-height: 1.6;">
-                            Organiza tus procesos y riesgos de manera clara y eficiente para máxima productividad.
-                        </p>
-                    </div>
-                </div>
-
-                <div class="col-md-4">
-                    <div style="text-align: center; padding: 2rem; background: rgba(255, 255, 255, 0.9); border-radius: var(--radius-xl); border: 2px solid var(--border-color); height: 100%;">
-                        <div style="font-size: 3rem; margin-bottom: 1rem; color: var(--accent-primary);">
-                            <i class="bi bi-shield-check-fill"></i>
-                        </div>
-                        <h4 style="color: var(--accent-primary); font-weight: 700; margin-bottom: 1rem;">Protección Integral</h4>
-                        <p style="color: var(--text-secondary); line-height: 1.6;">
-                            Identifica y mitiga riesgos laborales de forma sistemática y profesional.
-                        </p>
+                        <div class="preview-progress"><span><i style="width:72%"></i></span><small>72% de acciones con responsable</small></div>
                     </div>
                 </div>
             </div>
-
-            <div style="text-align: center; margin-top: 3rem; padding: 2rem; background: rgba(107, 142, 115, 0.1); border-radius: var(--radius-xl); border-left: 4px solid var(--accent-primary);">
-                <p style="font-size: 1.1rem; color: var(--text-primary); margin: 0; font-style: italic;">
-                    <strong>"La seguridad es responsabilidad de todos."</strong><br>
-                    <span style="color: var(--text-secondary);">Cuida a tu equipo con una gestión de riesgos eficiente y profesional.</span>
-                </p>
-            </div>
-        </div>
-    </section>
-
-    <!-- Features Section -->
-    <section id="features" class="features-section">
-        <div class="container">
-            <h2 class="section-title">
-                Características Principales
-            </h2>
-
-            <div class="features-grid">
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="bi bi-shield-fill-check"></i>
-                    </div>
-                    <h3 class="feature-title">Matrices IPER</h3>
-                    <p class="feature-description">
-                        Identifica peligros y evalúa riesgos con matrices profesionales
-                        siguiendo estándares internacionales de seguridad.
-                    </p>
-                </div>
-
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="bi bi-diagram-3-fill"></i>
-                    </div>
-                    <h3 class="feature-title">Gestión por Procesos</h3>
-                    <p class="feature-description">
-                        Organiza procesos, tareas y riesgos de manera estructurada.
-                        Cada elemento en su lugar para máxima eficiencia.
-                    </p>
-                </div>
-
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="bi bi-graph-up-arrow"></i>
-                    </div>
-                    <h3 class="feature-title">Análisis y Reportes</h3>
-                    <p class="feature-description">
-                        Visualiza estadísticas, genera reportes profesionales
-                        y toma decisiones informadas basadas en datos reales.
-                    </p>
-                </div>
-
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="bi bi-book-fill"></i>
-                    </div>
-                    <h3 class="feature-title">Biblioteca Normativa</h3>
-                    <p class="feature-description">
-                        Catálogo completo de regulaciones y normativas de seguridad
-                        laboral, siempre actualizado y accesible.
-                    </p>
-                </div>
-
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="bi bi-calendar-check-fill"></i>
-                    </div>
-                    <h3 class="feature-title">Calendario de Actividades</h3>
-                    <p class="feature-description">
-                        Programa inspecciones, controla fechas límite
-                        y mantén tu equipo sincronizado con alertas inteligentes.
-                    </p>
-                </div>
-
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="bi bi-file-earmark-text-fill"></i>
-                    </div>
-                    <h3 class="feature-title">Gestión Documental</h3>
-                    <p class="feature-description">
-                        Almacena documentos, certificados y registros
-                        de forma segura, organizada y fácilmente accesible.
-                    </p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Benefits Section -->
-    <section id="benefits" class="features-section" style="background: linear-gradient(to bottom, rgba(232, 245, 233, 0.3), rgba(248, 250, 249, 0.5)); position: relative;">
-        <div class="container">
-            <h2 class="section-title">
-                ¿Por qué Risk-Bee?
-            </h2>
-            <p style="text-align: center; font-size: 1.1rem; color: var(--text-secondary); margin-bottom: 3rem;">
-                Tu empresa merece la mejor gestión de riesgos
-            </p>
-
-            <div class="row g-4 mt-4">
-                <div class="col-md-6">
-                    <div class="card-modern">
-                        <div class="d-flex align-items-center mb-3">
-                            <div style="font-size: 2.5rem; margin-right: 1rem; color: var(--accent-primary);">
-                                <i class="bi bi-lightning-charge-fill"></i>
-                            </div>
-                            <h4 class="mb-0" style="color: var(--text-primary);">Eficiencia Comprobada</h4>
-                        </div>
-                        <p style="color: var(--text-secondary);">
-                            Reduce el tiempo de creación de matrices IPER hasta en un 70%
-                            con plantillas optimizadas y flujos de trabajo inteligentes.
-                        </p>
-                    </div>
-                </div>
-
-                <div class="col-md-6">
-                    <div class="card-modern">
-                        <div class="d-flex align-items-center mb-3">
-                            <div style="font-size: 2.5rem; margin-right: 1rem; color: var(--accent-primary);">
-                                <i class="bi bi-shield-check"></i>
-                            </div>
-                            <h4 class="mb-0" style="color: var(--text-primary);">Cumplimiento Normativo</h4>
-                        </div>
-                        <p style="color: var(--text-secondary);">
-                            Mantén tu empresa en cumplimiento total con normativas locales
-                            e internacionales de seguridad laboral.
-                        </p>
-                    </div>
-                </div>
-
-                <div class="col-md-6">
-                    <div class="card-modern">
-                        <div class="d-flex align-items-center mb-3">
-                            <div style="font-size: 2.5rem; margin-right: 1rem; color: var(--accent-primary);">
-                                <i class="bi bi-people-fill"></i>
-                            </div>
-                            <h4 class="mb-0" style="color: var(--text-primary);">Colaboración en Tiempo Real</h4>
-                        </div>
-                        <p style="color: var(--text-secondary);">
-                            Tu equipo de prevención colabora en tiempo real desde cualquier lugar,
-                            manteniendo la comunicación fluida y efectiva.
-                        </p>
-                    </div>
-                </div>
-
-                <div class="col-md-6">
-                    <div class="card-modern">
-                        <div class="d-flex align-items-center mb-3">
-                            <div style="font-size: 2.5rem; margin-right: 1rem; color: var(--accent-primary);">
-                                <i class="bi bi-lock-fill"></i>
-                            </div>
-                            <h4 class="mb-0" style="color: var(--text-primary);">Seguridad de Datos</h4>
-                        </div>
-                        <p style="color: var(--text-secondary);">
-                            Tus datos están protegidos con los más altos estándares
-                            de seguridad y encriptación de nivel empresarial.
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- CTA Section -->
-    <section class="features-section" style="position: relative; overflow: hidden;">
-        <div class="container">
-            <div class="card-modern text-center" style="background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-secondary) 100%); border: 3px solid var(--accent-primary); max-width: 800px; margin: 0 auto; position: relative; overflow: visible;">
-                <h2 class="mb-4" style="color: white; font-size: 2.5rem; font-weight: 700; text-shadow: 2px 2px 4px rgba(0,0,0,0.2);">
-                    ¿Listo para Mejorar tu Gestión de Riesgos?
-                </h2>
-                <p class="mb-4" style="color: rgba(255,255,255,0.95); font-size: 1.2rem; text-shadow: 1px 1px 2px rgba(0,0,0,0.1);">
-                    Transforma tu empresa en un lugar más seguro y productivo
-                    <br>con herramientas profesionales de gestión de riesgos.
-                </p>
-                {% if not user.is_authenticated %}
-                    <button id="loginBtn3" class="btn-honeycomb" style="background: white; color: var(--accent-primary); border-color: white;">
-                        <i class="bi bi-box-arrow-in-right me-2"></i>
-                        Comenzar Ahora
-                    </button>
-                {% else %}
-                    <a href="{% url 'dashboard' %}" class="btn-honeycomb" style="background: white; color: var(--accent-primary); border-color: white;">
-                        <i class="bi bi-speedometer2 me-2"></i>
-                        Ir al Dashboard
-                    </a>
-                {% endif %}
-                <p style="margin-top: 1.5rem; color: rgba(255,255,255,0.8); font-size: 0.9rem;">
-                    Únete a los profesionales que confían en Risk-Bee
-                </p>
-            </div>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer class="text-center py-5" style="border-top: 3px solid var(--border-color); background: linear-gradient(to bottom, transparent, rgba(232, 245, 233, 0.2)); position: relative;">
-        <div class="container">
-            <div class="mb-4">
-                <h3 class="text-gradient mb-3" style="font-size: 1.5rem; font-weight: 700;">
-                    <i class="bi bi-shield-check"></i> Risk-Bee
-                </h3>
-                <p style="color: var(--text-secondary);">
-                    Plataforma profesional para la gestión de riesgos laborales
-                </p>
-            </div>
-            <div class="divider"></div>
-            <div style="display: flex; justify-content: center; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
-                <p style="color: var(--text-secondary); margin: 0; font-weight: 500;">
-                    &copy; {% now "Y" %} Risk-Bee
-                </p>
-            </div>
-            <p style="color: var(--text-muted); margin: 0; font-size: 0.85rem;">
-                Gestión profesional de riesgos laborales
-            </p>
-        </div>
-    </footer>
-
-    <!-- Login Modal -->
-    {% if not user.is_authenticated %}
-    <div id="loginModal" class="login-modal">
-        <div class="login-container" style="position: relative;">
-            <button id="closeModal" class="close-modal">
-                <i class="bi bi-x-lg"></i>
-            </button>
-
-            <div class="login-header">
-                <h2 class="login-title">Iniciar Sesión</h2>
-                <p style="color: var(--text-secondary);">
-                    Accede a tu cuenta de Risk-Bee
-                </p>
-            </div>
-
-            <form method="post" action="{% url 'login' %}">
-                {% csrf_token %}
-                <div class="mb-3">
-                    <label class="form-label-modern">Usuario</label>
-                    <input type="text" name="username" class="form-control-modern" required autofocus>
-                </div>
-
-                <div class="mb-4">
-                    <label class="form-label-modern">Contraseña</label>
-                    <input type="password" name="password" class="form-control-modern" required>
-                </div>
-
-                <input type="hidden" name="next" value="{% url 'dashboard' %}">
-
-                <button type="submit" class="btn-primary-modern w-100 mb-3">
-                    <i class="bi bi-box-arrow-in-right me-2"></i>
-                    Iniciar Sesión
-                </button>
-
-                <div class="text-center">
-                    <a href="#" style="color: var(--accent-primary); text-decoration: none; font-size: 0.9rem;">
-                        ¿Olvidaste tu contraseña?
-                    </a>
-                </div>
-            </form>
+            <div class="floating-proof"><svg class="rb-icon"><use href="{% static 'icons/ui.svg' %}#check"></use></svg><span><strong>Siguiente paso definido</strong><small>Responsable, plazo y evidencia</small></span></div>
         </div>
     </div>
-    {% endif %}
+</section>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="{% static 'js/main.js' %}"></script>
-    <script>
-        // Inicializar botones de login adicionales
-        document.addEventListener('DOMContentLoaded', function() {
-            const loginBtn2 = document.getElementById('loginBtn2');
-            const loginBtn3 = document.getElementById('loginBtn3');
-            const loginModal = document.getElementById('loginModal');
+<div class="solution-strip" aria-label="Cobertura de la solución">
+    <div class="container">
+        <span class="solution-strip-label">Una sola fuente para gestionar</span>
+        <span><svg class="rb-icon"><use href="{% static 'icons/ui.svg' %}#investigation"></use></svg> Accidentes</span>
+        <span><svg class="rb-icon"><use href="{% static 'icons/ui.svg' %}#table"></use></svg> Matrices IPER</span>
+        <span><svg class="rb-icon"><use href="{% static 'icons/ui.svg' %}#health"></use></svg> Protocolos MINSAL</span>
+        <span><svg class="rb-icon"><use href="{% static 'icons/ui.svg' %}#handshake"></use></svg> Gestión de clientes</span>
+    </div>
+</div>
 
-            if (loginBtn2 && loginModal) {
-                loginBtn2.addEventListener('click', function() {
-                    loginModal.classList.add('active');
-                    document.body.style.overflow = 'hidden';
-                });
-            }
+<section class="marketing-section" id="solucion">
+    <div class="container">
+        <div class="marketing-heading">
+            <span>Cómo genera valor</span>
+            <h2>Detecta. Prioriza. Demuestra.</h2>
+            <p>La plataforma convierte información técnica en una secuencia de trabajo comprensible para el prevencionista, la jefatura y el cliente.</p>
+        </div>
+        <div class="value-flow" aria-label="Flujo de valor RiskBee">
+            <article><span class="value-step">01</span><div class="value-icon"><svg class="rb-icon"><use href="{% static 'icons/ui.svg' %}#bolt"></use></svg></div><h3>Detecta el evento</h3><p>Registra desde terreno y activa de inmediato la ruta que corresponde.</p></article>
+            <article><span class="value-step">02</span><div class="value-icon"><svg class="rb-icon"><use href="{% static 'icons/ui.svg' %}#target"></use></svg></div><h3>Ordena la decisión</h3><p>Explica la prioridad con datos conocidos, plazos y señales de riesgo.</p></article>
+            <article><span class="value-step">03</span><div class="value-icon"><svg class="rb-icon"><use href="{% static 'icons/ui.svg' %}#clipboard"></use></svg></div><h3>Demuestra el cierre</h3><p>Conserva responsables, acuerdos, archivos y verificación de eficacia.</p></article>
+        </div>
 
-            if (loginBtn3 && loginModal) {
-                loginBtn3.addEventListener('click', function() {
-                    loginModal.classList.add('active');
-                    document.body.style.overflow = 'hidden';
-                });
-            }
-        });
-    </script>
-</body>
-</html>
+        <div class="section-intro" id="modulos">
+            <span class="landing-kicker">Módulos conectados</span>
+            <h2>Una operación preventiva que sí se puede explicar.</h2>
+        </div>
+        <div class="benefit-grid">
+            <article class="benefit-card featured">
+                <div class="benefit-card-top"><span class="protocol-icon"><svg class="rb-icon"><use href="{% static 'icons/ui.svg' %}#investigation"></use></svg></span><span class="feature-label">Prioridad</span></div>
+                <h3>Investigar sin perder el hilo</h3>
+                <p>Un expediente guiado separa la respuesta inmediata, la evidencia, las causas, el plan y la verificación de eficacia.</p>
+                <ul>
+                    <li><svg class="rb-icon"><use href="{% static 'icons/ui.svg' %}#check"></use></svg> Alerta diferenciada para criterios grave/fatal</li>
+                    <li><svg class="rb-icon"><use href="{% static 'icons/ui.svg' %}#check"></use></svg> Participación y enfoque de género</li>
+                    <li><svg class="rb-icon"><use href="{% static 'icons/ui.svg' %}#check"></use></svg> Cierre bloqueado sin causa y evidencia</li>
+                </ul>
+            </article>
+            <article class="benefit-card">
+                <div class="benefit-card-top"><span class="protocol-icon"><svg class="rb-icon"><use href="{% static 'icons/ui.svg' %}#sparkles"></use></svg></span><span class="feature-label neutral">Inteligencia explicable</span></div>
+                <h3>Atender primero lo importante</h3>
+                <p>La agenda ordena clientes según casos abiertos, vencimientos y tiempo desde la última gestión.</p>
+                <ul>
+                    <li><svg class="rb-icon"><use href="{% static 'icons/ui.svg' %}#check"></use></svg> Puntaje transparente, nunca una caja negra</li>
+                    <li><svg class="rb-icon"><use href="{% static 'icons/ui.svg' %}#check"></use></svg> Canal y objetivo recomendados</li>
+                    <li><svg class="rb-icon"><use href="{% static 'icons/ui.svg' %}#check"></use></svg> Acuerdos y próxima acción trazables</li>
+                </ul>
+            </article>
+            <article class="benefit-card">
+                <div class="benefit-card-top"><span class="protocol-icon"><svg class="rb-icon"><use href="{% static 'icons/ui.svg' %}#health"></use></svg></span><span class="feature-label neutral">Cartera sanitaria</span></div>
+                <h3>Ordenar la gestión MINSAL</h3>
+                <p>Una vista por empresa ayuda a evaluar aplicabilidad, exposición, responsables, medidas, evidencias y revisiones.</p>
+                <ul>
+                    <li><svg class="rb-icon"><use href="{% static 'icons/ui.svg' %}#check"></use></svg> PREXOR, TMERT, sílice y psicosocial</li>
+                    <li><svg class="rb-icon"><use href="{% static 'icons/ui.svg' %}#check"></use></svg> UV, MMC e hipobaria</li>
+                    <li><svg class="rb-icon"><use href="{% static 'icons/ui.svg' %}#check"></use></svg> Fuente oficial disponible desde el flujo</li>
+                </ul>
+            </article>
+        </div>
+    </div>
+</section>
+
+<section class="marketing-section alt" id="normativa">
+    <div class="container">
+        <div class="regulatory-band">
+            <div>
+                <span class="landing-kicker dark-kicker"><svg class="rb-icon"><use href="{% static 'icons/ui.svg' %}#scale"></use></svg> Marco chileno</span>
+                <h2>Diseñado alrededor de evidencia, no promesas.</h2>
+                <p>RiskBee apoya la organización del cumplimiento. La determinación técnica y legal debe validarse con el experto, el organismo administrador y la autoridad cuando corresponda.</p>
+                <a class="btn btn-light" href="https://www.bcn.cl/leychile/Navegar?idNorma=1205298" target="_blank" rel="noopener">Consultar D.S. N.º 44 <svg class="rb-icon"><use href="{% static 'icons/ui.svg' %}#arrow-right"></use></svg></a>
+            </div>
+            <div class="regulatory-points">
+                <div class="regulatory-point"><span class="regulatory-icon"><svg class="rb-icon"><use href="{% static 'icons/ui.svg' %}#scale"></use></svg></span><div><strong>D.S. N.º 44</strong><span>Investigación, registros, participación y gestión preventiva desde febrero de 2025.</span></div></div>
+                <div class="regulatory-point"><span class="regulatory-icon"><svg class="rb-icon"><use href="{% static 'icons/ui.svg' %}#shield"></use></svg></span><div><strong>Ley N.º 16.744</strong><span>Denuncia y respuesta frente a accidentes del trabajo y enfermedades profesionales.</span></div></div>
+                <div class="regulatory-point"><span class="regulatory-icon"><svg class="rb-icon"><use href="{% static 'icons/ui.svg' %}#health"></use></svg></span><div><strong>MINSAL</strong><span>Protocolos y guías de vigilancia ocupacional según agentes y factores de riesgo.</span></div></div>
+                <div class="regulatory-point"><span class="regulatory-icon"><svg class="rb-icon"><use href="{% static 'icons/ui.svg' %}#clipboard"></use></svg></span><div><strong>Trazabilidad</strong><span>Responsables, fechas, decisiones y evidencia disponibles por empresa.</span></div></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="marketing-section">
+    <div class="container">
+        <div class="cta-panel">
+            <span class="cta-icon"><svg class="rb-icon"><use href="{% static 'icons/ui.svg' %}#shield"></use></svg></span>
+            <h2>La prevención gana valor cuando el avance se puede ver.</h2>
+            <p>Entrega a cada cliente una gestión ordenada, priorizada y fácil de explicar: desde el hallazgo hasta la evidencia de cierre.</p>
+            <a class="btn btn-brand btn-lg" href="{% url 'login' %}">Comenzar ahora <svg class="rb-icon"><use href="{% static 'icons/ui.svg' %}#arrow-right"></use></svg></a>
+        </div>
+    </div>
+</section>
+{% endblock %}

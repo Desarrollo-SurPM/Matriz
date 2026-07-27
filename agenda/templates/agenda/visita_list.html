@@ -1,43 +1,59 @@
 {% extends 'base.html' %}
-{% block title %}Gestión de Visitas{% endblock %}
+{% block title %}Relación con clientes · RiskBee{% endblock %}
+{% block page_context %}Relación con clientes{% endblock %}
 
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h1>Gestión de Visitas</h1>
-    <a href="{% url 'visita_create' %}" class="btn btn-primary">+ Agendar Visita</a>
-</div>
+<div class="page-shell">
+    <header class="page-header">
+        <div><span class="eyebrow">Seguimiento inteligente y explicable</span><h1 class="page-title">Cada contacto con un propósito</h1><p class="page-lead">Ordena visitas, llamadas, videollamadas y correos según riesgo, cumplimiento y tiempo sin gestión.</p></div>
+        <div class="page-actions"><a class="btn btn-brand" href="{% url 'visita_create' %}"><i class="fa-solid fa-plus"></i> Nueva gestión</a></div>
+    </header>
 
-<div class="card">
-    <div class="card-body">
-        <table class="table table-hover">
-            <thead class="table-dark">
-                <tr>
-                    <th>Fecha y Hora</th>
-                    <th>Empresa</th>
-                    <th>Asunto</th>
-                    <th>Estado</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
+    <section class="kpi-grid mb-4">
+        <article class="metric-card warning"><div class="metric-top"><span class="metric-label">Pendientes</span><span class="metric-icon"><i class="fa-regular fa-clock"></i></span></div><div class="metric-value">{{ pendientes }}</div><div class="metric-note">esperan confirmación</div></article>
+        <article class="metric-card"><div class="metric-top"><span class="metric-label">Confirmadas</span><span class="metric-icon"><i class="fa-regular fa-calendar-check"></i></span></div><div class="metric-value">{{ confirmadas }}</div><div class="metric-note">próximas acciones acordadas</div></article>
+        <article class="metric-card blue"><div class="metric-top"><span class="metric-label">Realizadas</span><span class="metric-icon"><i class="fa-solid fa-check"></i></span></div><div class="metric-value">{{ realizadas }}</div><div class="metric-note">con trazabilidad histórica</div></article>
+        <article class="metric-card"><div class="metric-top"><span class="metric-label">Total</span><span class="metric-icon"><i class="fa-regular fa-handshake"></i></span></div><div class="metric-value">{{ total_gestiones }}</div><div class="metric-note">interacciones registradas</div></article>
+    </section>
+
+    <section class="surface mb-4">
+        <div class="surface-header">
+            <div><h2>Ruta recomendada de clientes</h2><span class="surface-subtitle">Mayor puntaje = más señales pendientes; cada motivo es visible</span></div>
+            <button class="btn btn-quiet btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#algorithmInfo"><i class="fa-solid fa-circle-info"></i> Cómo se calcula</button>
+        </div>
+        <div class="collapse" id="algorithmInfo"><div class="surface-body border-bottom"><div class="legal-alert info"><i class="fa-solid fa-wand-magic-sparkles"></i><div><strong>Reglas transparentes, no predicción</strong><p>Suma señales por investigaciones graves o abiertas, obligaciones vencidas o próximas y días sin contacto; descuenta una gestión futura ya agendada. El máximo es 100. No predice accidentes ni reemplaza tu criterio.</p></div></div></div></div>
+        {% for item in prioridades %}
+        <article class="priority-item">
+            <span class="score-ring">{{ item.score }}</span>
+            <div class="priority-main">
+                <div class="priority-title"><strong>{{ item.empresa.razon_social }}</strong><span class="app-badge badge-{{ item.color }}">{{ item.nivel }}</span><span class="app-badge badge-neutral">{{ item.tipo_label }}</span></div>
+                <p class="priority-reason">{{ item.motivos|join:" · " }}</p>
+                <div class="priority-action">{{ item.accion }}</div>
+            </div>
+            <a class="btn btn-brand btn-sm" href="{% url 'visita_create' %}?empresa={{ item.empresa.pk }}&tipo={{ item.tipo }}&asunto={{ item.accion|urlencode }}">Agendar <i class="fa-solid fa-arrow-right"></i></a>
+        </article>
+        {% empty %}<div class="empty-state"><i class="fa-regular fa-building"></i><p>No hay empresas para priorizar.</p><a class="btn btn-brand" href="{% url 'empresa_create' %}">Crear empresa</a></div>{% endfor %}
+    </section>
+
+    <section class="surface">
+        <div class="surface-header"><div><h2>Historial y agenda</h2><span class="surface-subtitle">Decisión, resultado y siguiente acción por contacto</span></div></div>
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead><tr><th>Fecha / canal</th><th>Empresa</th><th>Propósito</th><th>Estado</th><th>Próxima acción</th><th class="text-end">Acciones</th></tr></thead>
+                <tbody>
                 {% for visita in visitas %}
-                <tr>
-                    <td>{{ visita.fecha_hora|date:"d-m-Y H:i" }}</td>
-                    <td>{{ visita.empresa.razon_social }}</td>
-                    <td>{{ visita.asunto }}</td>
-                    <td><span class="badge bg-info text-dark">{{ visita.get_estado_display }}</span></td>
-                    <td>
-                        <a href="{% url 'visita_update' visita.pk %}" class="btn btn-sm btn-info">Editar</a>
-                        <a href="{% url 'visita_delete' visita.pk %}" class="btn btn-sm btn-danger">Eliminar</a>
-                    </td>
-                </tr>
-                {% empty %}
-                <tr>
-                    <td colspan="5" class="text-center">No hay visitas agendadas.</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
+                    <tr>
+                        <td><strong>{{ visita.fecha_hora|date:"d M Y" }}</strong><small class="d-block text-muted">{{ visita.fecha_hora|date:"H:i" }} · {{ visita.get_tipo_gestion_display }}</small></td>
+                        <td><div class="table-entity"><span class="entity-icon"><i class="fa-regular fa-building"></i></span><span><strong>{{ visita.empresa.razon_social }}</strong><small>{{ visita.email_solicitud|default:"Sin correo registrado" }}</small></span></div></td>
+                        <td><strong class="small">{{ visita.asunto }}</strong><small class="d-block text-muted">{{ visita.objetivo|default:visita.notas|truncatewords:16 }}</small></td>
+                        <td>{% if visita.estado == 'REALIZADA' %}<span class="app-badge badge-success">Realizada</span>{% elif visita.estado == 'CANCELADA' %}<span class="app-badge badge-danger">Cancelada</span>{% elif visita.estado == 'CONFIRMADA' %}<span class="app-badge badge-info">Confirmada</span>{% else %}<span class="app-badge badge-warning">Pendiente</span>{% endif %}</td>
+                        <td><span class="small">{{ visita.proxima_accion|default:"Sin acuerdo registrado" }}</span>{% if visita.fecha_proxima_accion %}<small class="d-block text-muted">{{ visita.fecha_proxima_accion|date:"d/m/Y" }}</small>{% endif %}</td>
+                        <td class="text-end"><div class="d-inline-flex gap-2"><a class="icon-button" href="{% url 'visita_update' visita.pk %}" title="Editar"><i class="fa-solid fa-pen"></i></a><a class="icon-button text-danger" href="{% url 'visita_delete' visita.pk %}" title="Eliminar"><i class="fa-regular fa-trash-can"></i></a></div></td>
+                    </tr>
+                {% empty %}<tr><td colspan="6"><div class="empty-state"><i class="fa-regular fa-handshake"></i><strong>Aún no hay gestiones</strong><p>Agenda el primer contacto y deja claro su resultado esperado.</p></div></td></tr>{% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
 </div>
 {% endblock %}

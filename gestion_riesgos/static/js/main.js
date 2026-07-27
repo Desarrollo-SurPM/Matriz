@@ -8,7 +8,45 @@ document.addEventListener('DOMContentLoaded', function() {
     initAnimations();
     initParticles();
     initSmoothScroll();
+    initMobileNavigationFallback();
 });
+
+function initMobileNavigationFallback() {
+    if (window.bootstrap) return;
+    const navigation = document.getElementById('mobileNavigation');
+    const opener = document.querySelector('[data-bs-target="#mobileNavigation"]');
+    if (!navigation || !opener) return;
+
+    let backdrop = null;
+    const close = () => {
+        navigation.classList.remove('show');
+        navigation.setAttribute('aria-hidden', 'true');
+        document.body.classList.remove('mobile-nav-open');
+        backdrop?.remove();
+        backdrop = null;
+        opener.focus();
+    };
+    const open = () => {
+        navigation.classList.add('show');
+        navigation.setAttribute('aria-hidden', 'false');
+        document.body.classList.add('mobile-nav-open');
+        backdrop = document.createElement('button');
+        backdrop.type = 'button';
+        backdrop.className = 'mobile-nav-backdrop border-0';
+        backdrop.setAttribute('aria-label', 'Cerrar menú');
+        backdrop.addEventListener('click', close);
+        document.body.appendChild(backdrop);
+        navigation.querySelector('a, button')?.focus();
+    };
+
+    opener.addEventListener('click', open);
+    navigation.querySelectorAll('[data-bs-dismiss="offcanvas"], a').forEach(element => {
+        element.addEventListener('click', close);
+    });
+    document.addEventListener('keydown', event => {
+        if (event.key === 'Escape' && navigation.classList.contains('show')) close();
+    });
+}
 
 // ============================================
 // MODAL DE LOGIN
